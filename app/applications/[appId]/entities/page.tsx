@@ -1,25 +1,25 @@
 import ItemRow from "@/app/_components/ItemRow";
 
-interface AccountItem {
+interface EntityItem {
   id: string;
   name: string;
 }
 
-const accountTestObj: AccountItem[] = [
+const entityTestObj: EntityItem[] = [
   {
     id: "1",
-    name: "Sales Account",
+    name: "Monolith UK",
   },
   {
     id: "2",
-    name: "Fleet Account",
+    name: "Microsoft",
   },
 ];
 
 export default function Page() {
   return (
     <ul className="flex flex-col">
-      <ItemRow items={accountTestObj} urlPath="accounts" />
+      <ItemRow items={entityTestObj} urlPath="accounts" />
     </ul>
   );
 }

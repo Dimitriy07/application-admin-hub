@@ -35,8 +35,8 @@ export default function BreadcrumbsNav({
         </li>
         {pathNames.length > 0 && " " + separator}
         {pathNames.map((pathName, index) => {
-          if (index % 2 === 0 && index <= pathNames.length - 1) {
-            let crumbHref = "/" + pathNames.slice(0, index + 2).join("/");
+          if (index % 2 === 0) {
+            let crumbHref = "/" + pathNames.slice(0, index + 1).join("/");
             let crumbClass =
               path === crumbHref ? `${listClass} ${activeClass}` : listClass;
             let crumbLabel =

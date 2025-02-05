@@ -24,7 +24,7 @@ const appTestObj: AppItem[] = [
 export default function Page() {
   return (
     <ul className="flex flex-col">
-      <ItemRow items={appTestObj} urlPath="applications" />
+      <ItemRow items={appTestObj} urlPath="entities" />
     </ul>
   );
 }

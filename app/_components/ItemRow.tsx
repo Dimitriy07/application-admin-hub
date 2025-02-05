@@ -21,9 +21,9 @@ export default function ItemRow({ items, urlPath }: ItemRowProps) {
     <>
       {items.map((item) => (
         <Link
-          href={`${
-            urlPath !== "applications" ? pathname + "/" : ""
-          }${urlPath}/${item.id}`}
+          href={`${urlPath !== "applications" ? pathname + "/" : ""}${
+            item.id
+          }/${urlPath}`}
           key={item.id}
         >
           <li className="flex border border-plum-500">
