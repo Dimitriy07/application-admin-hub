@@ -16,14 +16,14 @@ interface ItemRowProps {
 }
 
 export default function ItemRow({ items, urlPath }: ItemRowProps) {
-  const path = usePathname();
+  const pathname = usePathname();
   return (
     <>
       {items.map((item) => (
         <Link
-          href={`${urlPath !== "applications" ? path + "/" : ""}${urlPath}/${
-            item.id
-          }`}
+          href={`${
+            urlPath !== "applications" ? pathname + "/" : ""
+          }${urlPath}/${item.id}`}
           key={item.id}
         >
           <li className="flex border border-plum-500">

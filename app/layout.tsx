@@ -1,3 +1,4 @@
+import BreadcrumbsNav from "./_components/BreadcrumbsNav";
 import Navigation from "./_components/Navigation";
 
 import "./globals.css";
@@ -11,9 +12,14 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className="h-full flex flex-col">
         <Navigation />
-        <div>breadcrumb navigation</div>
+        <BreadcrumbsNav
+          separator="&rarr;"
+          homeElement="Home"
+          listClass="hover:underline mx-2 font-bold "
+          activeClass="text-coral-800 pointer-events-none cursor-default"
+          containerClass="flex text-ocean-800"
+        />
         <main className="bg-ocean-100 h-screen flex-1">{children}</main>
-        
       </body>
     </html>
   );
