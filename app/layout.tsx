@@ -1,5 +1,7 @@
 import BreadcrumbsNav from "./_components/BreadcrumbsNav";
+import Button from "./_components/Button";
 import Navigation from "./_components/Navigation";
+import ToolboxBar from "./_components/ToolboxBar";
 
 import "./globals.css";
 
@@ -20,6 +22,9 @@ export default function RootLayout({
           containerClass="flex text-ocean-800"
         />
         <main className="bg-ocean-100 h-screen flex-1">{children}</main>
+        <ToolboxBar>
+          <Button>Add</Button>
+        </ToolboxBar>
       </body>
     </html>
   );
