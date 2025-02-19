@@ -1,5 +1,6 @@
-/* eslint-disable no-var */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { MongoClient } from "mongodb";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 // Change in .env file
 const uri = process.env.MONGODB_URI;
@@ -11,8 +12,13 @@ if (!uri) {
 
 let client;
 let clientPromise: Promise<MongoClient>;
-
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "test") {
+  let mongoServer: MongoMemoryServer;
+  clientPromise = MongoMemoryServer.create().then((server) => {
+    mongoServer = server;
+    return new MongoClient(server.getUri(), options).connect();
+  });
+} else if (process.env.NODE_ENV === "development") {
   // In development mode, to preserve the connection across hot reloads
   if (!global._mongoClientPromise) {
     client = new MongoClient(uri, options);

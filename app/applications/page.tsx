@@ -1,6 +1,6 @@
 import ItemRow from "@/app/_components/ItemRow";
 
-import { getApplications } from "@/app/_lib/applicationService";
+import { getApplications } from "@/app/_services/applicationService";
 
 // Change after configuring fetching from db
 
