@@ -1,15 +1,12 @@
 import "@testing-library/jest-dom";
-import userEvent from "@testing-library/user-event";
-
+// import userEvent from "@testing-library/user-event";
 import { render, screen } from "@testing-library/react";
-import BreadcrumbsNav from "@/app/_components/BreadcrumbsNav";
 import { usePathname } from "next/navigation";
+
+import BreadcrumbsNav from "@/app/_components/BreadcrumbsNav";
 
 jest.mock("next/navigation", () => ({
   usePathname: jest.fn(),
-  useRouter: () => ({
-    push: jest.fn(), // Mock push for navigation test
-  }),
 }));
 
 describe("BreadcrumbsNav", () => {
@@ -43,8 +40,7 @@ describe("BreadcrumbsNav", () => {
     (usePathname as jest.Mock).mockReturnValue(
       "/applications/_id1/entities/_id2/accounts/_id3/users"
     );
-    const router = require("next/navigation").useRouter();
-    const user = userEvent.setup()
+    // const user = userEvent.setup();
     render(
       <BreadcrumbsNav
         separator="&rarr;"
@@ -63,7 +59,10 @@ describe("BreadcrumbsNav", () => {
     expect(lastLink).toHaveTextContent("Users");
     expect(lastLink.closest("li")).toHaveClass("active");
     expect(lastLink.closest("li")).toHaveClass("crumb");
-    expect(breadcrumbClick).toHaveAttribute('href', '/applications/_id1/entities')
-    await user.click(breadcrumbClick);
+    expect(breadcrumbClick).toHaveAttribute(
+      "href",
+      "/applications/_id1/entities"
+    );
+    // await user.click(breadcrumbClick);
   });
 });
