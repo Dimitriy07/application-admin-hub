@@ -14,7 +14,11 @@ let client;
 let clientPromise: Promise<MongoClient>;
 if (process.env.NODE_ENV === "test") {
   let mongoServer: MongoMemoryServer;
-  clientPromise = MongoMemoryServer.create().then((server) => {
+  clientPromise = MongoMemoryServer.create({
+    binary: {
+      version: "6.0.8",
+    },
+  }).then((server) => {
     mongoServer = server;
     return new MongoClient(server.getUri(), options).connect();
   });

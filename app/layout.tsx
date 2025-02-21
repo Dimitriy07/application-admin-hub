@@ -1,7 +1,9 @@
-import BreadcrumbsNav from "./_components/BreadcrumbsNav";
-import Button from "./_components/Button";
-import Navigation from "./_components/Navigation";
-import ToolboxBar from "./_components/ToolboxBar";
+import React from "react";
+
+import BreadcrumbsNav from "@/app/_components/BreadcrumbsNav";
+import Button from "@/app/_components/Button";
+import Navigation from "@/app/_components/Navigation";
+import ToolboxBar from "@/app/_components/ToolboxBar";
 
 import "./globals.css";
 

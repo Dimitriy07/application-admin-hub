@@ -18,13 +18,14 @@ interface BreadcrumbsNavProps {
 }
 
 export default function BreadcrumbsNav({
-  separator = "|",
+  separator = "&rarr;",
   homeElement,
   activeClass,
   listClass,
   containerClass,
 }: BreadcrumbsNavProps) {
   const path = usePathname();
+  // /applications/_id/entities/_id/accounts/_id/users...
   const pathNames = path.split("/").filter((path) => path);
 
   return (
