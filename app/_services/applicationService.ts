@@ -14,6 +14,8 @@ export async function getApplications(): Promise<Item[]> {
       id: doc._id instanceof ObjectId ? doc._id.toString() : doc._id,
       name: doc.name,
       icon: doc.icon,
+      ...(doc.password && {password: doc.password}),
+      ...(doc.settings && {settings: doc.settings}),
     }));
     return applications;
   } catch (error) {

@@ -1,25 +1,12 @@
-import ItemRow from "@/app/_components/ItemRow";
+import ItemsContainer from "@/app/_components/ItemsContainer";
+import { getAccounts } from "@/app/_services/accountService";
 
-interface AccountItem {
-  id: string;
-  name: string;
-}
-
-const accountTestObj: AccountItem[] = [
-  {
-    id: "1",
-    name: "Sales Account",
-  },
-  {
-    id: "2",
-    name: "Fleet Account",
-  },
-];
-
-export default function Page() {
-  return (
-    <ul className="flex flex-col">
-      <ItemRow items={accountTestObj} urlPath="users" />
-    </ul>
-  );
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ entityId: string }>;
+}) {
+  const id = await params;
+  const accounts = await getAccounts(id.entityId);
+  return <ItemsContainer items={accounts} urlPath="users" />;
 }

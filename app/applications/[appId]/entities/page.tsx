@@ -1,25 +1,12 @@
-import ItemRow from "@/app/_components/ItemRow";
+import ItemsContainer from "@/app/_components/ItemsContainer";
+import { getEntities } from "@/app/_services/entityService";
 
-interface EntityItem {
-  id: string;
-  name: string;
-}
-
-const entityTestObj: EntityItem[] = [
-  {
-    id: "1",
-    name: "Monolith UK",
-  },
-  {
-    id: "2",
-    name: "Microsoft",
-  },
-];
-
-export default function Page() {
-  return (
-    <ul className="flex flex-col">
-      <ItemRow items={entityTestObj} urlPath="accounts" />
-    </ul>
-  );
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ appId: string }>;
+}) {
+  const id = await params;
+  const entities = await getEntities(id.appId);
+  return <ItemsContainer items={entities} urlPath="accounts" />;
 }
