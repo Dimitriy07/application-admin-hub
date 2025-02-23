@@ -1,5 +1,3 @@
-import ItemRow from "@/app/_components/ItemRow";
-
 import { getApplications } from "@/app/_services/applicationService";
 import ItemsContainer from "../_components/ItemsContainer";
 

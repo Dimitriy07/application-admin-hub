@@ -13,13 +13,11 @@ if (!uri) {
 let client;
 let clientPromise: Promise<MongoClient>;
 if (process.env.NODE_ENV === "test") {
-  let mongoServer: MongoMemoryServer;
   clientPromise = MongoMemoryServer.create({
     binary: {
-      version: "6.0.8",
+      version: "7.0.14",
     },
   }).then((server) => {
-    mongoServer = server;
     return new MongoClient(server.getUri(), options).connect();
   });
 } else if (process.env.NODE_ENV === "development") {

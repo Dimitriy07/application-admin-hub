@@ -6,7 +6,7 @@ import { ItemContainerProps } from "@/app/_types/types";
  * Props for the `ItemsContainer` component.
  *
  * @typedef {Object} ItemContainerProps
- * @property {Item[]} items - An array of items to be displayed. Each item should conform to the `Item` type.
+ * @property {Item[] | DynamicResourceItem[]} items - An array of items to be displayed. Each item should conform to the `Item` type.
  * @property {string} urlPath - A string representing the URL path to be appended to the base URL for navigation.
  */
 

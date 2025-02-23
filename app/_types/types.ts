@@ -1,18 +1,18 @@
-interface Settings{
-  maxUsers?: number,
-  accountType?: string,
-}
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+// MANAGEMENT DATA TYPE
+type Settings = Record<string, any>;
 
 export interface Item {
-  id: string,
-  icon?: string,
-  name: string,
-  password?: string,
-  settings?: Settings,
+  readonly id: string;
+  icon?: string;
+  name: string;
+  password?: string;
+  settings?: Settings;
 }
 
 export interface ItemContainerProps {
-  items: Item[];
+  items: Item[] | DynamicResourceItem[];
   urlPath: string;
 }
 
@@ -21,4 +21,12 @@ export interface ItemRowProps {
   item: Item;
   // urlPath - part of url which has to be added to the url
   urlPath: string;
+}
+
+// RESOURCE DATA TYPE
+
+export interface DynamicResourceItem {
+  readonly id: string;
+  name: string;
+  [key: string]: string;
 }

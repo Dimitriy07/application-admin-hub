@@ -2,7 +2,7 @@ import clientPromise from "@/app/_lib/mongodb";
 import { getApplications } from "@/app/_services/applicationService";
 import { MongoClient } from "mongodb";
 
-describe("Application Service", () => {
+describe("Management DB Service", () => {
   let client: MongoClient;
 
   beforeAll(async () => {
@@ -26,7 +26,7 @@ describe("Application Service", () => {
     }
   });
 
-  test("should fetch all applications", async () => {
+  it("should fetch all applications", async () => {
     const apps = await getApplications();
     expect(apps.length).toBe(2);
     expect(apps[0].name).toBe("App 1");

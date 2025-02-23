@@ -37,10 +37,10 @@ export default function BreadcrumbsNav({
         {pathNames.length > 0 && " " + separator}
         {pathNames.map((pathName, index) => {
           if (index % 2 === 0) {
-            let crumbHref = "/" + pathNames.slice(0, index + 1).join("/");
-            let crumbClass =
+            const crumbHref = "/" + pathNames.slice(0, index + 1).join("/");
+            const crumbClass =
               path === crumbHref ? `${listClass} ${activeClass}` : listClass;
-            let crumbLabel =
+            const crumbLabel =
               pathName[0].toUpperCase() + pathName.slice(1, pathName.length);
             return (
               <React.Fragment key={index}>

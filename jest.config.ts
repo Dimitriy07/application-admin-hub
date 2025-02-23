@@ -12,8 +12,8 @@ const config: Config = {
   //   {
   displayName: "react",
   preset: "ts-jest",
-  // testEnvironment: "node",
-  testEnvironment: "jsdom",
+  testEnvironment: "node",
+  // testEnvironment: "jsdom",
   moduleNameMapper: {
     "^@/app/(.*)$": "<rootDir>/app/$1",
   },
@@ -22,7 +22,8 @@ const config: Config = {
     "^.+.tsx?$": ["ts-jest", {}],
   },
   // coverageProvider: "v8"
-  testMatch: ["<rootDir>/app/__test__/**/*.jsdom.test.ts?(x)"],
+  // testMatch: ["<rootDir>/app/__test__/**/*.jsdom.test.ts?(x)"],
+  testMatch: ["<rootDir>/app/__test__/**/*.node.test.ts?(x)"],
   //   },
   //   {
   //     displayName: "database",
