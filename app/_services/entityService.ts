@@ -1,4 +1,4 @@
-import { getManagementData } from "@/app/_lib/getManagementData";
+import { getManagementData } from "@/app/_lib/managementData";
 
 // fetch all applications from db
 

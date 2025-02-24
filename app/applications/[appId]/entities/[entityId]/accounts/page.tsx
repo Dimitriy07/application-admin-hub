@@ -8,5 +8,5 @@ export default async function Page({
 }) {
   const id = await params;
   const accounts = await getAccounts(id.entityId);
-  return <ItemsContainer items={accounts} urlPath="users" />;
+  return <ItemsContainer items={accounts} urlPath="resources" />;
 }

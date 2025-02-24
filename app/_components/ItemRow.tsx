@@ -10,7 +10,7 @@ import { ItemRowProps } from "@/app/_types/types";
  *
  * @typedef {Object} ItemRowProps
  * @property {Item | DynamicResourceItem} item - An object containing information about the item. This includes `id`, `name`, and dynamic fields.
- * @property {string} urlPath - A string representing the URL path segment to be appended to the base URL for navigation.
+ * @property {string} urlPath - (optional) A string representing the URL path segment to be appended to the base URL for navigation.
  */
 
 /**
@@ -22,7 +22,7 @@ import { ItemRowProps } from "@/app/_types/types";
  *
  * @param {ItemRowProps} props - The props for the `ItemRow` component.
  * @param {Item | DynamicResourceItem} props.item - The item object containing `id`, `name`, and dynamic fields.
- * @param {string} props.urlPath - The URL path segment to append for navigation.
+ * @param {string} props.urlPath - (optional) The URL path segment to append for navigation.
  * @returns {JSX.Element} A `Link` component wrapping an `li` element that displays the item's icon and name.
  */
 export default function ItemRow({ item, urlPath }: ItemRowProps) {

@@ -1,4 +1,4 @@
-import clientPromise from "@/app/_lib/mongodb";
+import clientPromise from "@/app/_lib/db";
 import { getApplications } from "@/app/_services/applicationService";
 import { MongoClient } from "mongodb";
 

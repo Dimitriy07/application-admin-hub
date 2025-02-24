@@ -1,8 +1,8 @@
-import clientPromise from "@/app/_lib/mongodb";
-import { DynamicResourceItem } from "@/app/_types/types";
+import clientPromise from "@/app/_lib/db";
+import { CollectionWithInfo, DynamicResourceItem } from "@/app/_types/types";
 import { ObjectId } from "mongodb";
 
-export function getResourceData(
+export function getResourcesData(
   dbName: string,
   collectionName: string,
   dataId?: string
@@ -52,4 +52,48 @@ export function getResourceData(
       throw new Error(`Failed to fetch ${collectionName} from database`);
     }
   };
+}
+
+export function getResourceData(
+  dbName: string,
+  collectionName: string
+): (id?: string) => Promise<DynamicResourceItem> {
+  return async function getDataDocs(id?: string): Promise<DynamicResourceItem> {
+    let _id;
+    // Validate and convert the input ID to a MongoDB ObjectId
+    if (id) {
+      if (!ObjectId.isValid(id)) {
+        throw new Error(`Invalid ID: ${id}`);
+      }
+      _id = new ObjectId(id);
+    }
+
+    try {
+      // Connect to the MongoDB client
+      const client = await clientPromise;
+      const db = client.db(dbName);
+      const collection = db.collection(collectionName);
+
+      // Fetch documents based on the presence of `id`
+      const data = await collection.findOne({ _id: _id }); // Fetch
+      console.log(data, typeof data);
+
+      return data;
+    } catch (error) {
+      // Log and rethrow the error with a descriptive message
+      console.error(`[DB ERROR] Failed to fetch ${collectionName}: `, error);
+      throw new Error(`Failed to fetch ${collectionName} from database`);
+    }
+  };
+}
+
+export async function getCollectionNames(dbName: string) {
+  const client = await clientPromise;
+  const db = client.db(dbName);
+  const collections = (await db
+    .listCollections()
+    .toArray()) as CollectionWithInfo[];
+  return collections.map((col) => {
+    return { name: col.name, id: col.info?.uuid?.toString() };
+  });
 }

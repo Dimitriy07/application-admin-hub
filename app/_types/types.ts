@@ -13,14 +13,14 @@ export interface Item {
 
 export interface ItemContainerProps {
   items: Item[] | DynamicResourceItem[];
-  urlPath: string;
+  urlPath?: string;
 }
 
 export interface ItemRowProps {
   //items (array of objects with information from db)
   item: Item;
   // urlPath - part of url which has to be added to the url
-  urlPath: string;
+  urlPath?: string;
 }
 
 // RESOURCE DATA TYPE
@@ -30,3 +30,10 @@ export interface DynamicResourceItem {
   name: string;
   [key: string]: string;
 }
+
+// COLLECTION DATA
+
+export type CollectionWithInfo = {
+  name: string;
+  info?: { uuid?: { toString(): string } };
+};

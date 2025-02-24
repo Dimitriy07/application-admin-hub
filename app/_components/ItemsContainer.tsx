@@ -7,7 +7,7 @@ import { ItemContainerProps } from "@/app/_types/types";
  *
  * @typedef {Object} ItemContainerProps
  * @property {Item[] | DynamicResourceItem[]} items - An array of items to be displayed. Each item should conform to the `Item` type.
- * @property {string} urlPath - A string representing the URL path to be appended to the base URL for navigation.
+ * @property {string} urlPath - (optional) A string representing the URL path to be appended to the base URL for navigation.
  */
 
 /**
@@ -19,7 +19,7 @@ import { ItemContainerProps } from "@/app/_types/types";
  *
  * @param {ItemContainerProps} props - The props for the `ItemsContainer` component.
  * @param {Item[]} props.items - The array of items to render.
- * @param {string} props.urlPath - The URL path to append for navigation.
+ * @param {string} props.urlPath - (optional) The URL path to append for navigation.
  * @returns {JSX.Element} A `ul` element containing a list of `ItemRow` components.
  */
 

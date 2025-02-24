@@ -1,5 +1,5 @@
-import clientPromise from "@/app/_lib/mongodb";
-import { getUsers } from "@/app/_services/userService";
+import clientPromise from "@/app/_lib/db";
+import { getUsers } from "@/app/_services/resourcesService";
 import { MongoClient, ObjectId } from "mongodb";
 
 describe("Resource DB Service", () => {
