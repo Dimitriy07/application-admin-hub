@@ -1,13 +1,14 @@
 import ItemsContainer from "@/app/_components/ItemsContainer";
-import { getResourcesByAccountId } from "@/app/_services/resourcesDataService";
+import { getResourcesByCollection } from "@/app/_services/resourcesDataService";
 
 export default async function Page({
   params,
 }: {
-  params: Promise<{ collectionId: string }>;
+  params: Promise<{ collectionId: string; accountId: string }>;
 }) {
-  const collectionName = await params;
-  const resources = await getResourcesByAccountId(collectionName.collectionId);
+  const paramsData = await params;
+  const { collectionId, accountId } = paramsData;
+  const resources = await getResourcesByCollection(collectionId, accountId);
   const resourcesArr = resources.map((res) => JSON.parse(JSON.stringify(res)));
   console.log(resourcesArr);
   return <ItemsContainer items={resourcesArr} />;

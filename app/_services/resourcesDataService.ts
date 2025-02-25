@@ -6,22 +6,24 @@ import { fetchResourcesDB, fetchResourcesNames } from "../_lib/resourcesData";
 
 // Fetch all resources by reference ID to Level 3 collection (as Level 3 is the smallest level of management unit (DB_REFERENCE_TO_COL3))
 
-export async function getResourcesByAccountId(collectionName: string) {
+export async function getResourcesByCollection(
+  collectionName: string,
+  accountId: string
+) {
   const getResources = fetchResourcesDB(
     DB_RESOURCES_NAME,
     collectionName,
     DB_REFERENCE_TO_COL3
   );
-  const resources = await getResources();
+  const resources = await getResources(accountId);
   return resources;
 }
 
-
-export function getResourceByResourceId(collectionName: string, resourceId: string) {
-  const getResource = fetchResourcesDB(
-    DB_RESOURCES_NAME,
-    collectionName
-  );
+export function getResourceByResourceId(
+  collectionName: string,
+  resourceId: string
+) {
+  const getResource = fetchResourcesDB(DB_RESOURCES_NAME, collectionName);
   const resource = getResource(resourceId);
   return resource;
 }

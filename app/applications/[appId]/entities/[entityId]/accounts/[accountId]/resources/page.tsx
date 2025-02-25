@@ -1,7 +1,5 @@
-export default function Page() {
-  return (
-    <div>
-      <p>&larr; Choose the Resource from the side bar</p>
-    </div>
-  );
+import ResourcesMessage from "@/app/_components/ResourcesMessage";
+
+export default async function Page() {
+  return <ResourcesMessage />;
 }
