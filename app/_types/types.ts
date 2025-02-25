@@ -37,3 +37,14 @@ export type CollectionWithInfo = {
   name: string;
   info?: { uuid?: { toString(): string } };
 };
+
+
+// BREADCRUMBS NAVIGATION
+
+export interface BreadcrumbsNavProps {
+  separator: string;
+  homeElement: string;
+  activeClass: string;
+  listClass: string;
+  containerClass: string;
+}
