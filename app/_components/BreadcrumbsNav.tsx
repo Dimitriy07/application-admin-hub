@@ -29,7 +29,7 @@ export default function BreadcrumbsNav({
   const pathNames = path.split("/").filter((path) => path);
 
   return (
-    <div>
+    <nav aria-label="breadcrumb-navigation">
       <ul className={containerClass}>
         <li className={listClass}>
           <Link href="/">{homeElement}</Link>
@@ -53,6 +53,6 @@ export default function BreadcrumbsNav({
           }
         })}
       </ul>
-    </div>
+    </nav>
   );
 }

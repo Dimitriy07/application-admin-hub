@@ -1,2 +1,8 @@
 export const DB_MANAGEMENT_NAME = "mtl-admin-app";
 export const DB_RESOURCES_NAME = "mtl-admin-resources";
+export const DB_COLLECTION_LEVEL1 = "applications";
+export const DB_COLLECTION_LEVEL2 = "entities";
+export const DB_COLLECTION_LEVEL3 = "accounts";
+export const DB_REFERENCE_TO_COL1 = "applicationId";
+export const DB_REFERENCE_TO_COL2 = "entityId";
+export const DB_REFERENCE_TO_COL3 = "accountId";

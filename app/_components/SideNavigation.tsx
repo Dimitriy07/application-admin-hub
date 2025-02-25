@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { getCollectionNames } from "@/app/_lib/resource-data";
 import { headers } from "next/headers";
 import { DB_RESOURCES_NAME } from "../_constants/mongodb-config";
+import { getResourcesNames } from "../_services/resourcesDataService";
 
 async function SideNavigation() {
-  const resources = await getCollectionNames(DB_RESOURCES_NAME);
+  const resources = await getResourcesNames();
   const headersList = await headers();
   const header = headersList.get("x-full-url");
   return (

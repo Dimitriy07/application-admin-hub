@@ -1,5 +1,5 @@
 import ItemsContainer from "@/app/_components/ItemsContainer";
-import { getEntities } from "@/app/_services/entityService";
+import { getEntities } from "@/app/_services/managementDataService";
 
 export default async function Page({
   params,

@@ -1,5 +1,5 @@
-import { getApplications } from "@/app/_services/applicationService";
 import ItemsContainer from "../_components/ItemsContainer";
+import { getApplications } from "../_services/managementDataService";
 
 export default async function Page() {
   const applications = await getApplications();

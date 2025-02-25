@@ -26,19 +26,19 @@ import { ObjectId } from "mongodb";
  * const entities = await getEntitiesByApplicationId("64f8e4a7e4b0d0a8f0e4a7b2");
  * console.log(entities);
  */
-export function getManagementData(
+export function fetchManagementDB(
   dbName: string,
   collectionName: string,
-  dataId?: string
+  dataFilterId?: string
 ): (id?: string) => Promise<Item[]> {
-  return async function getDataDocs(id?: string): Promise<Item[]> {
-    let _id;
+  return async function fetchDataDocs(id?: string): Promise<Item[]> {
+    let objectId;
     // Validate and convert the input ID to a MongoDB ObjectId
     if (id) {
       if (!ObjectId.isValid(id)) {
         throw new Error(`Invalid ID: ${id}`);
       }
-      _id = new ObjectId(id);
+      objectId = new ObjectId(id);
     }
 
     try {
@@ -47,10 +47,10 @@ export function getManagementData(
       const db = client.db(dbName);
       const collection = db.collection(collectionName);
 
-      // Fetch documents based on the presence of `id` and `dataId`
+      // Fetch documents based on the presence of `id` and `dataFilterId`
       const data =
-        id && dataId
-          ? await collection.find({ [dataId]: _id }).toArray() // Filter by referenced ID
+        id && dataFilterId
+          ? await collection.find({ [dataFilterId]: objectId }).toArray() // Filter by referenced ID
           : await collection.find({}).toArray(); // Fetch all documents
 
       // Map the documents to the `Item` type
