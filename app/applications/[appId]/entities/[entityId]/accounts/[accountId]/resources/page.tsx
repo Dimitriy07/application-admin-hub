@@ -2,23 +2,48 @@ import ItemsContainer from "@/app/_components/ItemsContainer";
 import ResourcesMessage from "@/app/_components/ResourcesMessage";
 import { getResourcesByCollection } from "@/app/_services/resourcesDataService";
 
-export default async function Page({ searchParams,params }: { searchParams: Promise<{resourcesType: string}>, params: Promise<{accountId:string}> }) {
-  const {resourcesType:collectionName} = await searchParams;
-  const {accountId} = await params
+export default async function Page({
+  searchParams,
+  params,
+}: {
+  searchParams: Promise<{ resourceType?: string; resourceId: string }>;
+  params: Promise<{ accountId: string }>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const resolvedParams = await params;
 
-let resourcesArr= []
+  const collectionName = resolvedSearchParams.resourceType;
+  const accountId = resolvedParams.accountId;
 
-if (collectionName){
-try{
+  const resourceId = resolvedSearchParams.resourceId;
 
-  const resources = await getResourcesByCollection(collectionName, accountId);
-  resourcesArr = resources.map((res) => JSON.parse(JSON.stringify(res)));
-} catch(err){ console.error('Failed to fetch resources')}
+  let resourcesArr = [];
 
+  if (collectionName) {
+    try {
+      const resources = await getResourcesByCollection(
+        collectionName,
+        accountId
+      );
+      resourcesArr = resources.map((res) => JSON.parse(JSON.stringify(res)));
+    } catch (err) {
+      console.error("Failed to fetch resources", err);
+    }
+  }
+
+  return (
+    <>
+      {collectionName ? (
+        <ItemsContainer
+          items={resourcesArr}
+          resourceId={resourceId}
+          collectionName={collectionName}
+        />
+      ) : (
+        <ResourcesMessage />
+      )}
+    </>
+  );
 }
-  return<>
-  {collectionName ?  <ItemsContainer items={resourcesArr} />: <ResourcesMessage />
-}
-  </>
-    // return <ItemsContainer items={} />;
-}
+
+export const fetchCache = "force-no-store";

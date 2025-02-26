@@ -2,7 +2,11 @@ import {
   DB_REFERENCE_TO_COL3,
   DB_RESOURCES_NAME,
 } from "../_constants/mongodb-config";
-import { fetchResourcesDB, fetchResourcesNames } from "../_lib/resourcesData";
+import {
+  fetchResourceById,
+  fetchResourcesDB,
+  fetchResourcesNames,
+} from "../_lib/resourcesData";
 
 // Fetch all resources by reference ID to Level 3 collection (as Level 3 is the smallest level of management unit (DB_REFERENCE_TO_COL3))
 
@@ -19,12 +23,12 @@ export async function getResourcesByCollection(
   return resources;
 }
 
-export function getResourceByResourceId(
+export async function getResourceByResourceId(
   collectionName: string,
   resourceId: string
 ) {
-  const getResource = fetchResourcesDB(DB_RESOURCES_NAME, collectionName);
-  const resource = getResource(resourceId);
+  const getResource = fetchResourceById(DB_RESOURCES_NAME, collectionName);
+  const resource = await getResource(resourceId);
   return resource;
 }
 

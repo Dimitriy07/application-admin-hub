@@ -14,6 +14,8 @@ export interface Item {
 export interface ItemContainerProps {
   items: Item[] | DynamicResourceItem[];
   urlPath?: string;
+  resourceId?: string;
+  collectionName?: string;
 }
 
 export interface ItemRowProps {
@@ -21,6 +23,7 @@ export interface ItemRowProps {
   item: Item;
   // urlPath - part of url which has to be added to the url
   urlPath?: string;
+  collectionName?: string;
 }
 
 // RESOURCE DATA TYPE
@@ -37,7 +40,6 @@ export type CollectionWithInfo = {
   name: string;
   info?: { uuid?: { toString(): string } };
 };
-
 
 // BREADCRUMBS NAVIGATION
 
