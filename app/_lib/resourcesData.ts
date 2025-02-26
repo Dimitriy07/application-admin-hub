@@ -5,7 +5,7 @@ import { ObjectId } from "mongodb";
 export function fetchResourcesDB(
   dbName: string,
   collectionName: string,
-  dataId?: string
+  filterDataId?: string
 ): (id?: string) => Promise<DynamicResourceItem[]> {
   return async function fetchDataDocs(
     id?: string
@@ -25,8 +25,8 @@ export function fetchResourcesDB(
       const db = client.db(dbName);
       const collection = db.collection(collectionName);
 
-      if (!dataId) throw new Error("No reference to Account provided");
-      const data = await collection.find({ [dataId]: objectId }).toArray();
+      if (!filterDataId) throw new Error("No reference to Account provided");
+      const data = await collection.find({ [filterDataId]: objectId }).toArray();
 
       // Map the documents to the `DynamicResourceItem` type
       const docsArr = data.map((doc) => {
