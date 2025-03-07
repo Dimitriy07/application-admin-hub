@@ -1,3 +1,4 @@
+// import { redirect } from "next/navigation";
 import ItemsContainer from "../_components/ItemsContainer";
 import { getApplications } from "../_services/managementDataService";
 

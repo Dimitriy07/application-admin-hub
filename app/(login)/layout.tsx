@@ -7,11 +7,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" className="h-full">
-      <body className="h-full flex flex-col">
-        <main className="bg-ocean-100 h-screen flex-1">{children}</main>
-      </body>
-    </html>
-  );
+  return <main className="bg-ocean-100 h-screen flex-1">{children}</main>;
 }

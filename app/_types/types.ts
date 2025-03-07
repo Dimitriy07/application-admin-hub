@@ -50,3 +50,12 @@ export interface BreadcrumbsNavProps {
   listClass: string;
   containerClass: string;
 }
+
+// USER CREDENTIALS
+
+export type User = {
+  id?: string;
+  email: string;
+  password: string;
+  role: string;
+};
