@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Document, WithId } from "mongodb";
 
 // MANAGEMENT DATA TYPE
 type Settings = Record<string, any>;
@@ -53,9 +54,17 @@ export interface BreadcrumbsNavProps {
 
 // USER CREDENTIALS
 
-export type User = {
+export type UserSession = {
   id?: string;
   email: string;
   password: string;
-  role: string;
+  role: "admin" | "superadmin" | "user";
 };
+
+// VERIFICATION TOKEN
+
+export interface VerificationToken extends WithId<Document> {
+  email: string;
+  token: string;
+  expires: Date;
+}

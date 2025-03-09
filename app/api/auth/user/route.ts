@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
-import { getUserFromDb } from "@/app/_services/userDataService";
+import { getUserByEmail } from "@/app/_services/userDataService";
 
 // export const runtime = "nodejs"; // Force Node.js runtime
 
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const user = await getUserFromDb(email, password);
+    const user = await getUserByEmail(email, password);
     if (!user) {
       return NextResponse.json(
         { error: "Invalid credentials" },

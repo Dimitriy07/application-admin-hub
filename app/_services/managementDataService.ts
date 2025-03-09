@@ -1,5 +1,4 @@
-
-import { fetchManagementDB } from "@/app/_lib/managementData";
+import { fetchManagementDB } from "@/app/_lib/data/management-data";
 import {
   DB_COLLECTION_LEVEL1,
   DB_COLLECTION_LEVEL2,

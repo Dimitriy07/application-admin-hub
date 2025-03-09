@@ -6,7 +6,7 @@ import {
   fetchResourceById,
   fetchResourcesDB,
   fetchResourcesNames,
-} from "../_lib/resourcesData";
+} from "../_lib/data/resources-data";
 
 // Fetch all resources by reference ID to Level 3 collection (as Level 3 is the smallest level of management unit (DB_REFERENCE_TO_COL3))
 

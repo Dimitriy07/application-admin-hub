@@ -1,5 +1,7 @@
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { UserSession } from "./app/_types/types";
+// import util from "util";
 
 export default {
   providers: [
@@ -24,9 +26,7 @@ export default {
             }),
           });
           if (!res.ok) throw new Error("Authentication failed");
-
-          const user = await res.json();
-
+          const user: UserSession = await res.json();
           if (!user || !user.password) return null;
           return user;
         } catch (error) {
@@ -36,23 +36,4 @@ export default {
       },
     }),
   ],
-  // session: {
-  //   strategy: "jwt",
-  // },
-  // callbacks: {
-  //   async session({ session, token }) {
-  //     session.user.id = token.id as string;
-
-  //     return session;
-  //   },
-  //   async jwt({ token, user }) {
-  //     if (user) {
-  //       token.id = user.id;
-  //     }
-  //     return token;
-  //   },
-  // },
-  // pages: {
-  //   signIn: "/login",
-  // },
 } satisfies NextAuthConfig;

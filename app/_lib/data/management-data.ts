@@ -1,6 +1,6 @@
-import clientPromise from "@/app/_lib/db";
 import { Item } from "@/app/_types/types";
 import { ObjectId } from "mongodb";
+import { dbConnect } from "../../_utils/db-connector";
 
 /**
  * Creates a reusable function to fetch data from a MongoDB collection.
@@ -43,9 +43,7 @@ export function fetchManagementDB(
 
     try {
       // Connect to the MongoDB client
-      const client = await clientPromise;
-      const db = client.db(dbName);
-      const collection = db.collection(collectionName);
+      const collection = await dbConnect(dbName, collectionName);
 
       // Fetch documents based on the presence of `id` and `dataFilterId`
       const data =

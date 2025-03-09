@@ -1,6 +1,7 @@
-import clientPromise from "@/app/_lib/db";
+import clientPromise from "@/app/_lib/data/db";
 import { CollectionWithInfo, DynamicResourceItem } from "@/app/_types/types";
 import { ObjectId } from "mongodb";
+import { dbConnect } from "../../_utils/db-connector";
 
 export function fetchResourcesDB(
   dbName: string,
@@ -21,12 +22,12 @@ export function fetchResourcesDB(
 
     try {
       // Connect to the MongoDB client
-      const client = await clientPromise;
-      const db = client.db(dbName);
-      const collection = db.collection(collectionName);
+      const collection = await dbConnect(dbName, collectionName);
 
       if (!filterDataId) throw new Error("No reference to Account provided");
-      const data = await collection.find({ [filterDataId]: objectId }).toArray();
+      const data = await collection
+        .find({ [filterDataId]: objectId })
+        .toArray();
 
       // Map the documents to the `DynamicResourceItem` type
       const docsArr = data.map((doc) => {
@@ -67,9 +68,7 @@ export function fetchResourceById(
     } else {
       throw new Error("No ID provided");
     }
-    const client = await clientPromise;
-    const db = client.db(dbName);
-    const collection = db.collection(collectionName);
+    const collection = await dbConnect(dbName, collectionName);
     const data = await collection.findOne<DynamicResourceItem | null>({
       _id: objectId,
     });
