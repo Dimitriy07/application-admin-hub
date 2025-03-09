@@ -25,6 +25,7 @@ export default {
               password: credentials.password,
             }),
           });
+
           if (!res.ok) throw new Error("Authentication failed");
           const user: UserSession = await res.json();
           if (!user || !user.password) return null;

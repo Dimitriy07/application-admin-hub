@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { getRequestHeaderUrl } from "./app/middleware/getRequestHeaderUrl";
+import { getRequestHeaderUrl } from "./app/_middleware/getRequestHeaderUrl";
 import NextAuth from "next-auth";
 import authConfig from "./auth.config";
 // import NextAuth from "next-auth";
@@ -11,14 +11,15 @@ export default auth(async function middleware(request: NextRequest) {
   const session = await auth();
 
   const isLoginRoute = request.nextUrl.pathname === "/login";
+  const isErrorRoute = request.nextUrl.pathname === "/error";
   const isAuthRoute = request.nextUrl.pathname.startsWith("/api/auth");
 
-  if (!session && !isLoginRoute && !isAuthRoute)
+  if (!session && !isLoginRoute && !isAuthRoute && !isErrorRoute)
     return Response.redirect(new URL("/login", request.nextUrl));
 
-  // if (isLoginRoute) {
-  //   if (session) return Response.redirect(new URL("/", request.nextUrl));
-  // }
+  if (isLoginRoute) {
+    if (session) return Response.redirect(new URL("/", request.nextUrl));
+  }
 
   return getRequestHeaderUrl(request);
 });

@@ -6,6 +6,7 @@ import {
   fetchUserInfoFromDb,
 } from "@/app/_lib/data/user-data";
 import { VerificationToken } from "@/app/_types/types";
+// import util from "util";
 
 const VERIFICATION_TOKEN_COLLECTION = "verification-token";
 
@@ -17,18 +18,18 @@ export async function getVerificationTokenByEmail(email: string) {
 
   const fetchedToken = await getVerificationToken(email, "email");
 
-  if (!fetchedToken) throw new Error("There is no verification token");
+  if (!fetchedToken) return null;
 
   return fetchedToken;
 }
 
-export async function getVerificationTokenByToken(token: string) {
+export async function getVerificationTokenByTokenId(id: string) {
   const getVerificationToken = fetchUserInfoFromDb(
     DB_RESOURCES_NAME,
     VERIFICATION_TOKEN_COLLECTION
   );
 
-  const fetchedToken = await getVerificationToken(token, "token");
+  const fetchedToken = await getVerificationToken(id, "id");
 
   if (!fetchedToken) throw new Error("There is no verification token");
 
@@ -46,13 +47,13 @@ export async function generateVerificationToken(email: string) {
       DB_RESOURCES_NAME,
       VERIFICATION_TOKEN_COLLECTION
     );
-    await deleteToken(existingToken.id);
+    await deleteToken(existingToken._id.toString());
   }
   const createNewToken = createUserInfoInDb(
     DB_RESOURCES_NAME,
     VERIFICATION_TOKEN_COLLECTION
   );
-  const verificationToken = createNewToken({
+  const verificationToken = await createNewToken({
     email,
     token,
     expires,

@@ -7,10 +7,21 @@ import type { Adapter } from "next-auth/adapters";
 // export const runtime = "nodejs"; // Ensures NextAuth runs in Node.js environment
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  pages: {
+    signIn: "/login",
+    error: "/error",
+  },
   adapter: MongoDBAdapter(clientPromise) as Adapter,
   ...authConfig,
   session: { strategy: "jwt" },
   callbacks: {
+    async signIn({ user }) {
+      if (!user.id) return false;
+      const existingUser = await getUserById(user.id);
+      console.log(existingUser);
+      if (!existingUser?.emailVerified) return false;
+      return true;
+    },
     async session({ token, session }) {
       console.log({ sessionToken: token });
       if (token.sub && session.user) {

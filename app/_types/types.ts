@@ -59,6 +59,7 @@ export type UserSession = {
   email: string;
   password: string;
   role: "admin" | "superadmin" | "user";
+  emailVerified: string;
 };
 
 // VERIFICATION TOKEN

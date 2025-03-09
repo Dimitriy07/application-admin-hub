@@ -14,6 +14,7 @@ export async function getUserByEmail(email: string, password: string) {
     email: fetchedUser.email,
     id: fetchedUser._id.toString(),
     role: fetchedUser.role,
+    emailVerified: fetchedUser.emailVerified,
   };
   if (user?.password === password) {
     return user;
@@ -25,12 +26,13 @@ export async function getUserById(id: string) {
   const getUser = fetchUserInfoFromDb(DB_RESOURCES_NAME, USER_COLLECTION);
 
   const fetchedUser = await getUser(id, "id");
-  if (!fetchedUser) throw new Error("User is not found (wrong )");
+  if (!fetchedUser) throw new Error("User is not found (wrong Id)");
   const user: UserSession = {
     password: fetchedUser.password,
     email: fetchedUser.email,
     id: fetchedUser._id.toString(),
     role: fetchedUser.role,
+    emailVerified: fetchedUser.emailVerified,
   };
 
   return user;
