@@ -1,7 +1,12 @@
 import { NextRequest } from "next/server";
-import { getRequestHeaderUrl } from "./app/_middleware/getRequestHeaderUrl";
+import { getRequestHeaderUrl } from "@/app/_middleware/getRequestHeaderUrl";
 import NextAuth from "next-auth";
-import authConfig from "./auth.config";
+import authConfig from "@/auth.config";
+import {
+  apiAuthPrefix,
+  authRoutes,
+  DEFAULT_LOGIN_REDIRECT,
+} from "@/app/routes";
 // import NextAuth from "next-auth";
 // import authConfig from "./auth.config";
 
@@ -10,15 +15,17 @@ export default auth(async function middleware(request: NextRequest) {
   //check this
   const session = await auth();
 
-  const isLoginRoute = request.nextUrl.pathname === "/login";
-  const isErrorRoute = request.nextUrl.pathname === "/error";
-  const isAuthRoute = request.nextUrl.pathname.startsWith("/api/auth");
+  const isAuthRoutes = authRoutes.includes(request.nextUrl.pathname);
+  const isApiAuthRoute = request.nextUrl.pathname.startsWith(apiAuthPrefix);
 
-  if (!session && !isLoginRoute && !isAuthRoute && !isErrorRoute)
-    return Response.redirect(new URL("/login", request.nextUrl));
+  if (!session && !isAuthRoutes && !isApiAuthRoute)
+    return Response.redirect(new URL("/auth/login", request.nextUrl));
 
-  if (isLoginRoute) {
-    if (session) return Response.redirect(new URL("/", request.nextUrl));
+  if (isAuthRoutes) {
+    if (session)
+      return Response.redirect(
+        new URL(DEFAULT_LOGIN_REDIRECT, request.nextUrl)
+      );
   }
 
   return getRequestHeaderUrl(request);

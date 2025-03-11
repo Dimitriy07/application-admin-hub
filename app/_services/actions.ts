@@ -2,22 +2,26 @@
 
 import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
-import { getUserByEmail } from "@/app/_services/userDataService";
 import {
+  getUserByEmail,
+  getUserByEmailAndPassword,
+  updateUserById,
+} from "@/app/_services/userDataService";
+import {
+  deleteVerificationTokenById,
   generateVerificationToken,
+  getVerificationTokenByToken,
   getVerificationTokenByTokenId,
 } from "./tokenDataService";
 import { sendVerificationEmail } from "@/app/_lib/mail";
-import util from "util";
 
 export async function login(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const existingUser = await getUserByEmail(email, password);
+  const existingUser = await getUserByEmailAndPassword(email, password);
   if (!existingUser || !existingUser.email || !existingUser.password) {
     return { error: "User doesn't exist!" };
   }
-  console.log("!!!!!*****Existing user " + existingUser);
   if (!existingUser.emailVerified) {
     const verificationTokenId = await generateVerificationToken(
       existingUser.email
@@ -43,13 +47,25 @@ export async function login(formData: FormData) {
           return { error: "Something went wrong!" };
       }
     }
-    // important to throw an error
     throw error;
   }
 }
 
-// 2000-01-01T00:00:00Z
+export async function newVerification(token: string) {
+  const existingToken = await getVerificationTokenByToken(token);
 
-// "emailVerified": {
-//   "$date": "1970-01-01T00:00:00Z"
-// }
+  if (!existingToken) return { error: "Token does not exist!" };
+  const hasExpired = new Date(existingToken.expires) < new Date();
+  if (hasExpired) return { error: "Token has expired!" };
+  const existingUser = await getUserByEmail(existingToken.email);
+
+  const updatedObj = {
+    emailVerified: { date: new Date() },
+    email: existingToken.email,
+  };
+
+  if (!existingUser.id) return { error: "Email does not exist!" };
+  await updateUserById(existingUser.id, updatedObj);
+  await deleteVerificationTokenById(existingToken._id.toString());
+  return { success: "Email verified" };
+}

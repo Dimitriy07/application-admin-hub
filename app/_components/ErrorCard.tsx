@@ -12,7 +12,9 @@ function ErrorCard() {
       </div>
 
       <div>
-        <button onClick={() => router.push("/login")}>Back to Login</button>
+        <button onClick={() => router.push("/auth/login")}>
+          Back to Login
+        </button>
       </div>
     </div>
   );

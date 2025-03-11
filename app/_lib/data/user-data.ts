@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ObjectId } from "mongodb";
 import { dbConnect } from "../../_utils/db-connector";
 
@@ -36,9 +37,21 @@ export function deleteUserInfoFromDb(dbName: string, collectionName: string) {
 }
 
 export function createUserInfoInDb(dbName: string, collectionName: string) {
-  return async function createUserDoc<T extends Document>(createObj: T) {
+  return async function createUserDoc<T extends Document>(createDocObj: T) {
     const collection = await dbConnect(dbName, collectionName);
-    const data = await collection.insertOne(createObj);
+    const data = await collection.insertOne(createDocObj);
+    return data;
+  };
+}
+
+export function updateUserInfoInDb(dbName: string, collectionName: string) {
+  return async function updateUserDoc(id: string, updateDocObj: any) {
+    const collection = await dbConnect(dbName, collectionName);
+    const filteredId = new ObjectId(id);
+    const data = await collection.updateOne(
+      { _id: filteredId },
+      { $set: updateDocObj }
+    );
     return data;
   };
 }

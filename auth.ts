@@ -8,7 +8,7 @@ import type { Adapter } from "next-auth/adapters";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
-    signIn: "/login",
+    signIn: "/auth/login",
     error: "/error",
   },
   adapter: MongoDBAdapter(clientPromise) as Adapter,
