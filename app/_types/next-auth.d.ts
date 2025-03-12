@@ -5,6 +5,6 @@ declare module "next-auth" {
     user?: DefaultUser & { role: "admin" | "superadmin" | "user" };
   }
   interface User extends DefaultUser {
-    role: string;
+    role: "admin" | "superadmin" | "user";
   }
 }
