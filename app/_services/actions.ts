@@ -15,10 +15,11 @@ import {
 } from "./tokenDataService";
 import { sendVerificationEmail } from "@/app/_lib/mail";
 
-export async function login(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+/////////LOGIN SERVER ACTION//////////
+
+export async function login(email: string, password: string) {
   const existingUser = await getUserByEmailAndPassword(email, password);
+  if ("error" in existingUser) return { error: existingUser.error };
   if (!existingUser || !existingUser.email || !existingUser.password) {
     return { error: "User doesn't exist!" };
   }

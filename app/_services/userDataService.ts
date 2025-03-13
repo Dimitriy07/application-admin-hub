@@ -25,7 +25,7 @@ export async function getUserByEmailAndPassword(
   };
   if (user?.password === password) {
     return user;
-  } else throw new Error("Password invalid");
+  } else return { error: "Invalid Password" };
 }
 
 export async function getUserByEmail(email: string) {
