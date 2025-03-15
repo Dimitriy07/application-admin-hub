@@ -1,3 +1,4 @@
+import ResourceToolboxBar from "@/app/_components/ResourceToolboxBar";
 import ItemsContainer from "@/app/_components/ItemsContainer";
 import ResourcesMessage from "@/app/_components/ResourcesMessage";
 import { getResourcesByCollection } from "@/app/_services/resourcesDataService";
@@ -30,18 +31,18 @@ export default async function Page({
       console.error("Failed to fetch resources", err);
     }
   }
+  if (!collectionName) {
+    return <ResourcesMessage />;
+  }
 
   return (
     <>
-      {collectionName ? (
-        <ItemsContainer
-          items={resourcesArr}
-          resourceId={resourceId}
-          collectionName={collectionName}
-        />
-      ) : (
-        <ResourcesMessage />
-      )}
+      <ResourceToolboxBar />
+      <ItemsContainer
+        items={resourcesArr}
+        resourceId={resourceId}
+        collectionName={collectionName}
+      />
     </>
   );
 }
