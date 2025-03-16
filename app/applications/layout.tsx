@@ -26,7 +26,9 @@ export default function RootLayout({
         />
         <main className="bg-ocean-100 h-screen flex-1">{children}</main>
         <ToolboxBar>
-          <Button>Add</Button>
+          <Button size="small" variation="primary">
+            Add
+          </Button>
         </ToolboxBar>
       </SessionProvider>
     </>

@@ -20,7 +20,9 @@ export default function ToolboxBar({ children }: PropsWithChildren) {
 
   // as superadmin can manipulate with all levels of data return the component
   if (role === "superadmin") {
-    return <div className="h-8 flex justify-between">{children}</div>;
+    return (
+      <div className="h-10 flex justify-between items-center">{children}</div>
+    );
   }
   // admin can manipulate with data in entities only
   else if (
