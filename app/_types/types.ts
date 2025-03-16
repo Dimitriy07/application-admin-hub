@@ -69,3 +69,20 @@ export interface VerificationToken extends WithId<Document> {
   token: string;
   expires: Date;
 }
+
+//FORM ELEMENTS
+
+export type FormElement =
+  | {
+      type: "label";
+      content: string;
+      for: string;
+    }
+  | {
+      type: "input" | "email";
+      placeholder: string;
+      id: string;
+      name: string;
+    };
+
+export type FormSchema = FormElement[];

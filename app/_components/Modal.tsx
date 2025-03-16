@@ -50,19 +50,23 @@ function Open({
 function Window({
   children,
   name,
+  isOutsideClickEnabled = false,
 }: {
   children: React.ReactElement;
   name: string;
+  isOutsideClickEnabled?: boolean;
 }) {
   const context = useContext(ModalContext);
   if (!context) {
     throw new Error("Window must be used within a Modal provider");
   }
   const { openName, close } = context;
-  const ref = useOutsideClick(close);
+  const outsideContainer = useOutsideClick(close);
+  let ref;
+  if (isOutsideClickEnabled) ref = outsideContainer;
   if (name !== openName) return null;
   return createPortal(
-    <PopupWindow ref={ref} close={close}>
+    <PopupWindow ref={ref ? ref : null} close={close}>
       {children}
     </PopupWindow>,
     document.body

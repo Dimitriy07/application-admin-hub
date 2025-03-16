@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -16,8 +15,8 @@ interface VariationType {
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  size: keyof SizeType;
-  variation: keyof VariationType;
+  size?: keyof SizeType;
+  variation?: keyof VariationType;
   onClick?: () => void;
   isLoading?: boolean;
 }
@@ -44,6 +43,7 @@ export default function Button({
 
   return (
     <button
+      aria-label={`${children} button`}
       disabled={isLoading}
       {...props}
       onClick={onClick}
