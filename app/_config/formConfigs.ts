@@ -1,7 +1,7 @@
-import { FormSchema } from "../_types/types";
+import { FormConfig } from "../_types/types";
 
 // TO REGISTER NEW USER
-export const registrationFormSchema: FormSchema = [
+export const registrationFormFields: FormConfig = [
   {
     type: "label",
     content: "Name",
@@ -30,15 +30,36 @@ export const registrationFormSchema: FormSchema = [
     for: "password",
   },
   {
-    type: "input",
+    type: "password",
     placeholder: "Password",
     id: "password",
     name: "password",
   },
+  {
+    type: "password",
+    placeholder: "Confirm Password",
+    id: "confirm",
+    name: "confirm",
+  },
+  {
+    type: "label",
+    content: "Choose User Role",
+    for: "role",
+  },
+  {
+    type: "select",
+    options: [
+      { value: "", content: "Choose user role" },
+      { value: "admin", content: "admin" },
+      { value: "user", content: "user" },
+    ],
+    name: "role",
+    id: "role",
+  },
 ];
 
 //TO LOGIN USER
-export const loginFormSchema = [
+export const loginFormFields: FormConfig = [
   {
     type: "label",
     content: "Email",

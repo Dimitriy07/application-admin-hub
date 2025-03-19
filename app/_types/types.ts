@@ -52,13 +52,20 @@ export interface BreadcrumbsNavProps {
   containerClass: string;
 }
 
+// USER ROLE
+export enum UserRole {
+  admin = "admin",
+  superadmin = "superadmin",
+  user = "user",
+}
+
 // USER CREDENTIALS
 
 export type UserSession = {
   id?: string;
   email: string;
   password: string;
-  role: "admin" | "superadmin" | "user";
+  role: UserRole; //  "admin" | "superadmin" | "user";
   emailVerified: string;
 };
 
@@ -79,10 +86,24 @@ export type FormElement =
       for: string;
     }
   | {
-      type: "input" | "email";
-      placeholder: string;
+      type: "input" | "email" | "password";
+      placeholder?: string;
       id: string;
       name: string;
+    }
+  | {
+      type: "select";
+      options: Array<{ value: string; content: string }>;
+      name: string;
+      id: string;
     };
 
-export type FormSchema = FormElement[];
+export type FormConfig = FormElement[];
+
+// export interface RegisterForm {
+//   name: string;
+//   email: string;
+//   id: string;
+//   password: string;
+//   userRole: string;
+// }

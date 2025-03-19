@@ -4,9 +4,15 @@ import Modal from "./Modal";
 import CardWrapper from "./CardWrapper";
 import Button from "./Button";
 import FormGenerator from "./FormGenerator";
-import { registrationFormSchema } from "@/app/_schemas/formSchema";
+import { registrationFormFields } from "@/app/_config/formConfigs";
+import { FormElement } from "@/app/_types/types";
+import { userRegistrationSchema } from "../_lib/validationSchema";
 
 function ResourceToolboxBar() {
+  function handleSubmit(data: FormElement) {
+    console.log(data);
+  }
+
   return (
     <div className="items-center bg-ocean-0 justify-start gap-2">
       <Modal>
@@ -17,13 +23,20 @@ function ResourceToolboxBar() {
           <CardWrapper>
             <CardWrapper.CardLabel>ADD NEW USER</CardWrapper.CardLabel>
             <CardWrapper.CardContent>
-              <FormGenerator formSchema={registrationFormSchema} />
+              <FormGenerator
+                formSchema={registrationFormFields}
+                onSubmit={handleSubmit}
+                formId="registration-form"
+                validationSchema={userRegistrationSchema}
+              />
             </CardWrapper.CardContent>
             <CardWrapper.CardPopupMessage type="success">
               This Is Popup Message
             </CardWrapper.CardPopupMessage>
             <CardWrapper.CardButtons>
-              <Button>Add</Button>
+              <Button type="submit" form="registration-form">
+                Add
+              </Button>
               <Button>Cancel</Button>
             </CardWrapper.CardButtons>
           </CardWrapper>
