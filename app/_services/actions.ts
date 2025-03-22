@@ -14,6 +14,10 @@ import {
   getVerificationTokenByTokenId,
 } from "./tokenDataService";
 import { sendVerificationEmail } from "@/app/_lib/mail";
+import { UserRegistration } from "@/app/_types/types";
+import { createResourceItem } from "./resourcesDataService";
+import bcrypt from "bcryptjs";
+import { ObjectId } from "mongodb";
 
 /////////LOGIN SERVER ACTION//////////
 
@@ -30,6 +34,7 @@ export async function login(email: string, password: string) {
     const verificationToken = await getVerificationTokenByTokenId(
       verificationTokenId.insertedId.toString()
     );
+
     await sendVerificationEmail(
       verificationToken.email,
       verificationToken.token
@@ -59,6 +64,9 @@ export async function newVerification(token: string) {
   const hasExpired = new Date(existingToken.expires) < new Date();
   if (hasExpired) return { error: "Token has expired!" };
   const existingUser = await getUserByEmail(existingToken.email);
+  if ("error" in existingUser) {
+    return { error: "User doesn't exist" };
+  }
 
   const updatedObj = {
     emailVerified: { date: new Date() },
@@ -69,4 +77,45 @@ export async function newVerification(token: string) {
   await updateUserById(existingUser.id, updatedObj);
   await deleteVerificationTokenById(existingToken._id.toString());
   return { success: "Email verified" };
+}
+
+// REGISTER SERVER ACTION
+
+export async function register(
+  userFormData: UserRegistration,
+  collectionName: string
+) {
+  const { email } = userFormData;
+  const existingUser = await getUserByEmail(email);
+  if (!("error" in existingUser))
+    return { error: "User with this email already exists." };
+  const { password } = userFormData;
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(password, salt);
+    const newUserObj = {
+      entityId: new ObjectId(userFormData.entityId),
+      accountId: new ObjectId(userFormData.accountId),
+      name: userFormData.name,
+      email: userFormData.email,
+      password: hashPassword,
+      role: userFormData.role,
+    };
+    await createResourceItem(collectionName, newUserObj);
+    const verificationTokenId = await generateVerificationToken(
+      userFormData.email
+    );
+    const verificationToken = await getVerificationTokenByTokenId(
+      verificationTokenId.insertedId.toString()
+    );
+    await sendVerificationEmail(
+      verificationToken.email,
+      verificationToken.token
+    );
+    return { message: "Verification email was sent" };
+  } catch (err) {
+    return {
+      error: "Something went wrong during Registration Process: " + err,
+    };
+  }
 }

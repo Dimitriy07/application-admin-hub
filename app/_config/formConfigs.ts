@@ -36,6 +36,11 @@ export const registrationFormFields: FormConfig = [
     name: "password",
   },
   {
+    type: "label",
+    content: "Confirm Password",
+    for: "confirm",
+  },
+  {
     type: "password",
     placeholder: "Confirm Password",
     id: "confirm",

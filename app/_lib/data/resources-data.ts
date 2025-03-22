@@ -87,3 +87,14 @@ export async function fetchResourcesNames(dbName: string) {
     return { name: col.name, id: col.info?.uuid?.toString() };
   });
 }
+
+export async function createResourceInDb(
+  dbName: string,
+  collectionName: string
+) {
+  return async function createResourceDoc<T extends Document>(resourceObj: T) {
+    const collection = await dbConnect(dbName, collectionName);
+    const data = await collection.insertOne(resourceObj);
+    return data;
+  };
+}

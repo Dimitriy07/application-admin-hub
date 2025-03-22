@@ -5,6 +5,7 @@ import {
   updateUserInfoInDb,
 } from "@/app/_lib/data/user-data";
 import { UserSession } from "@/app/_types/types";
+import bcrypt from "bcryptjs";
 
 export async function getUserByEmailAndPassword(
   email: string,
@@ -15,7 +16,7 @@ export async function getUserByEmailAndPassword(
 
   const fetchedUser = await getUser(email, "email");
 
-  if (!fetchedUser) throw new Error("User is not found (wrong email)");
+  if (!fetchedUser) throw new Error("User with this email wasn't found");
   const user: UserSession = {
     password: fetchedUser.password,
     email: fetchedUser.email,
@@ -23,18 +24,22 @@ export async function getUserByEmailAndPassword(
     role: fetchedUser.role,
     emailVerified: fetchedUser.emailVerified,
   };
-  if (user?.password === password) {
+  const verifiedPassword = await bcrypt.compare(password, user.password);
+  if (verifiedPassword) {
     return user;
   } else return { error: "Invalid Password" };
 }
 
+// TO USE FOR CHECKING IF WE HAVE THE SAME EMAIL IN THE DB
 export async function getUserByEmail(email: string) {
   const USER_COLLECTION = "users";
   const getUser = fetchUserInfoFromDb(DB_RESOURCES_NAME, USER_COLLECTION);
 
   const fetchedUser = await getUser(email, "email");
 
-  if (!fetchedUser) throw new Error("User is not found (wrong email)");
+  if (!fetchedUser) {
+    return { error: "User with this email wasn't found" };
+  }
   const user: UserSession = {
     password: fetchedUser.password,
     email: fetchedUser.email,
@@ -45,12 +50,13 @@ export async function getUserByEmail(email: string) {
   return user;
 }
 
+// AS ID IS INDEXED TO REDUCE THE WORKLOAD ON DB
 export async function getUserById(id: string) {
   const USER_COLLECTION = "users";
   const getUser = fetchUserInfoFromDb(DB_RESOURCES_NAME, USER_COLLECTION);
 
   const fetchedUser = await getUser(id, "id");
-  if (!fetchedUser) throw new Error("User is not found (wrong Id)");
+  if (!fetchedUser) throw new Error("User with this ID wasn't found");
   const user: UserSession = {
     password: fetchedUser.password,
     email: fetchedUser.email,
@@ -67,6 +73,6 @@ export async function updateUserById(id: string, updatedObj: any) {
   const updateUser = updateUserInfoInDb(DB_RESOURCES_NAME, USER_COLLECTION);
 
   const updatedUser = await updateUser(id, updatedObj);
-  if (!updatedUser) throw new Error("User is not found (wrong Id)");
+  if (!updatedUser) throw new Error("User with this ID wasn't found");
   return updatedUser;
 }

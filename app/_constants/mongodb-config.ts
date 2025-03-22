@@ -1,5 +1,6 @@
 export const DB_MANAGEMENT_NAME = "mtl-admin-app";
 export const DB_RESOURCES_NAME = "mtl-admin-resources";
+export const DB_AUTHENTICATION_NAME = "mtl-admin-authentication";
 export const DB_COLLECTION_LEVEL1 = "applications";
 export const DB_COLLECTION_LEVEL2 = "entities";
 export const DB_COLLECTION_LEVEL3 = "accounts";

@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { newVerification } from "../_services/actions";
+import { newVerification } from "@/app/_services/actions";
 
 function NewVerificationForm() {
   const [error, setError] = useState<string | undefined>();

@@ -69,6 +69,15 @@ export type UserSession = {
   emailVerified: string;
 };
 
+export type UserRegistration = {
+  entityId: string;
+  accountId: string;
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+};
+
 // VERIFICATION TOKEN
 
 export interface VerificationToken extends WithId<Document> {

@@ -27,7 +27,6 @@ function FormGenerator({
     resolver: zodResolver(validationSchema),
   });
 
-  console.log(errors);
   return (
     <form
       id={formId}

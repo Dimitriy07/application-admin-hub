@@ -8,13 +8,11 @@ export default async function Page({
   params,
 }: {
   searchParams: Promise<{ resourceType?: string; resourceId: string }>;
-  params: Promise<{ accountId: string }>;
+  params: Promise<{ accountId: string; entityId: string; appId: string }>;
 }) {
   const resolvedSearchParams = await searchParams;
-  const resolvedParams = await params;
-
+  const { entityId, accountId } = await params;
   const collectionName = resolvedSearchParams.resourceType;
-  const accountId = resolvedParams.accountId;
 
   const resourceId = resolvedSearchParams.resourceId;
 
@@ -37,7 +35,7 @@ export default async function Page({
 
   return (
     <>
-      <ResourceToolboxBar />
+      <ResourceToolboxBar entityId={entityId} accountId={accountId} />
       <ItemsContainer
         items={resourcesArr}
         resourceId={resourceId}
