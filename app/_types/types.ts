@@ -70,8 +70,8 @@ export type UserSession = {
 };
 
 export type UserRegistration = {
-  entityId: string;
-  accountId: string;
+  refToIdCollection2: string; // reference to Id of collection 2 Level (ex. entityId)
+  refToIdCollection3: string; // reference to Id of collection 3 Level (ex. accountId)
   name: string;
   email: string;
   password: string;
@@ -81,6 +81,7 @@ export type UserRegistration = {
 // ITEM TO ADD
 
 export type ItemAdded = {
+  refToIdCollection: string | undefined;
   name: string;
 };
 

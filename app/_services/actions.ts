@@ -18,6 +18,7 @@ import { ItemAdded, UserRegistration } from "@/app/_types/types";
 import { createResourceItem } from "./resourcesDataService";
 import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
+import { createManagementItem } from "./managementDataService";
 
 /////////LOGIN SERVER ACTION//////////
 
@@ -99,8 +100,8 @@ export async function register(
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
     const newUserObj = {
-      entityId: new ObjectId(userFormData.entityId),
-      accountId: new ObjectId(userFormData.accountId),
+      entityId: new ObjectId(userFormData.refToIdCollection2),
+      accountId: new ObjectId(userFormData.refToIdCollection3),
       name: userFormData.name,
       email: userFormData.email,
       password: hashPassword,
@@ -127,14 +128,18 @@ export async function register(
 
 export async function addItem(
   formData: ItemAdded,
-  collectionName: string | undefined
+  collectionName: string | undefined,
+  refToIdCollectionName: string,
+  isResource: boolean
 ) {
   if (!collectionName) return { error: "Collection name is not provided" };
   const newItemObj = {
     name: formData.name,
+    [refToIdCollectionName]: formData.refToIdCollection,
   };
   try {
-    await createResourceItem(collectionName, newItemObj);
+    if (isResource) await createResourceItem(collectionName, newItemObj);
+    else await createManagementItem(collectionName, newItemObj);
   } catch (err) {
     return { error: "Item hasn't been added to database: " + err };
   }

@@ -26,7 +26,7 @@ function FormGenerator({
   } = useForm<RegValidationSchema>({
     resolver: zodResolver(validationSchema),
   });
-
+  console.log(handleSubmit);
   return (
     <form
       id={formId}
@@ -84,13 +84,6 @@ function FormGenerator({
             </div>
           );
       })}
-      {/* <div className="mt-4">
-        {Object.keys(errors).map((fieldName) => (
-          <p key={fieldName} className="text-red-500">
-            {errors[fieldName]?.message as string}
-          </p>
-        ))}
-      </div> */}
     </form>
   );
 }

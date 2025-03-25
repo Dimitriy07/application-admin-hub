@@ -17,13 +17,26 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { addItem, register } from "@/app/_services/actions";
 import { isId } from "../_utils/pageValidation";
 import { useState } from "react";
+import {
+  DB_COLLECTION_LEVEL1,
+  DB_COLLECTION_LEVEL2,
+  DB_COLLECTION_LEVEL3,
+  DB_REFERENCE_TO_COL1,
+  DB_REFERENCE_TO_COL2,
+  DB_REFERENCE_TO_COL3,
+} from "@/app/_constants/mongodb-config";
 
 interface ToolboxButtonsProps {
-  entityId: string;
-  accountId: string;
+  refToIdCollection1: string;
+  refToIdCollection2: string;
+  refToIdCollection3: string;
 }
 
-function ToolboxButtons({ entityId, accountId }: ToolboxButtonsProps) {
+function ToolboxButtons({
+  refToIdCollection1,
+  refToIdCollection2,
+  refToIdCollection3,
+}: ToolboxButtonsProps) {
   const [success, setSuccess] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
   const path = usePathname();
@@ -32,12 +45,18 @@ function ToolboxButtons({ entityId, accountId }: ToolboxButtonsProps) {
   const resourceType = searchParams.get("resourceType");
   let formFields;
   let handleSubmit;
+  let validationSchema;
+  console.log(refToIdCollection3);
   if (resourceType === "users") {
     formFields = registrationFormFields;
+    validationSchema = userRegistrationSchema;
     handleSubmit = async (formData: FormElement) => {
       const result = userRegistrationSchema.safeParse(formData);
       if (result.success) {
-        await register({ ...result.data, entityId, accountId }, resourceType);
+        await register(
+          { ...result.data, refToIdCollection2, refToIdCollection3 },
+          resourceType
+        );
 
         setSuccess("User is added");
       } else {
@@ -52,18 +71,48 @@ function ToolboxButtons({ entityId, accountId }: ToolboxButtonsProps) {
     }
     const isPageNameValid = isId(pageName);
     formFields = generalFormFields;
-
+    validationSchema = addItemSchema;
     handleSubmit = async (formData: FormElement) => {
-      console.log("i am in");
       const result = addItemSchema.safeParse(formData);
       if (result.success) {
         try {
           if (resourceType) {
-            await addItem({ ...result.data }, resourceType);
+            await addItem(
+              { ...result.data, refToIdCollection: refToIdCollection3 },
+              resourceType,
+              DB_REFERENCE_TO_COL3,
+              true
+            );
           } else {
-            if (!isPageNameValid)
-              setError("Wrong format of item collection name!");
-            await addItem({ ...result.data }, pageName);
+            let refToCollectionName;
+            let refToIdCollection;
+            switch (pageName) {
+              case DB_COLLECTION_LEVEL1:
+                break;
+              case DB_COLLECTION_LEVEL2:
+                refToCollectionName = DB_REFERENCE_TO_COL1;
+                refToIdCollection = refToIdCollection1;
+                break;
+              case DB_COLLECTION_LEVEL3:
+                refToCollectionName = DB_REFERENCE_TO_COL2;
+                refToIdCollection = refToIdCollection2;
+                break;
+              default:
+                console.error("A management unit for reference was not found.");
+            }
+            if (!isPageNameValid || refToCollectionName === undefined) {
+              setError("Can't find collection name in database");
+              return;
+            }
+            await addItem(
+              {
+                ...result.data,
+                refToIdCollection,
+              },
+              pageName,
+              refToCollectionName,
+              false
+            );
           }
           setSuccess("Item added to database!");
         } catch (err) {
@@ -94,7 +143,7 @@ function ToolboxButtons({ entityId, accountId }: ToolboxButtonsProps) {
                 formFields={formFields}
                 onSubmit={handleSubmit}
                 formId="item-form"
-                validationSchema={userRegistrationSchema}
+                validationSchema={validationSchema}
               />
             </CardWrapper.CardContent>
             <CardWrapper.CardPopupMessage type={success ? "success" : "error"}>

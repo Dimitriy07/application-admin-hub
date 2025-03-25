@@ -18,7 +18,9 @@ export default async function RootLayout({
   params: Promise<{ accountId: string; entityId: string; appId: string }>;
 }>) {
   // const resolvedSearchParams = await searchParams;
-  const { entityId, accountId } = await params;
+  const resolvedParams = await params;
+  const { appId, entityId, accountId } = resolvedParams;
+  console.log(entityId);
   return (
     <>
       <SessionProvider>
@@ -32,7 +34,11 @@ export default async function RootLayout({
         />
         <main className="bg-ocean-100 h-screen flex-1">{children}</main>
         <ToolboxBar>
-          <ToolboxButtons entityId={entityId} accountId={accountId} />
+          <ToolboxButtons
+            refToIdCollection1={appId}
+            refToIdCollection2={entityId}
+            refToIdCollection3={accountId}
+          />
         </ToolboxBar>
       </SessionProvider>
     </>

@@ -1,4 +1,7 @@
-import { fetchManagementDB } from "@/app/_lib/data/management-data";
+import {
+  createManagementInDb,
+  fetchManagementDB,
+} from "@/app/_lib/data/management-data";
 import {
   DB_COLLECTION_LEVEL1,
   DB_COLLECTION_LEVEL2,
@@ -35,4 +38,16 @@ export async function getAccounts(entityId: string) {
     DB_REFERENCE_TO_COL2
   );
   return await getData(entityId);
+}
+
+export async function createManagementItem<T>(
+  collectionName: string,
+  managementObj: T
+) {
+  const createItem = await createManagementInDb(
+    DB_MANAGEMENT_NAME,
+    collectionName
+  );
+  const createdResourceItem = await createItem(managementObj as T & Document);
+  return createdResourceItem;
 }

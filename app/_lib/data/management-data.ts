@@ -68,3 +68,16 @@ export function fetchManagementDB(
     }
   };
 }
+
+export async function createManagementInDb(
+  dbName: string,
+  collectionName: string
+) {
+  return async function createManagementDoc<T extends Document>(
+    managementObj: T
+  ) {
+    const collection = await dbConnect(dbName, collectionName);
+    const data = await collection.insertOne(managementObj);
+    return data;
+  };
+}
