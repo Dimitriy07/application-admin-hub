@@ -1,18 +1,24 @@
 import React from "react";
 
 import BreadcrumbsNav from "@/app/_components/BreadcrumbsNav";
-import Button from "@/app/_components/Button";
 import Navigation from "@/app/_components/Navigation";
 import ToolboxBar from "@/app/_components/ToolboxBar";
 
 import "@/app/globals.css";
 import { SessionProvider } from "next-auth/react";
+import ToolboxButtons from "@/app/_components/ToolboxButtons";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  // searchParams,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  // searchParams: Promise<{ resourceType?: string; resourceId: string }>;
+  params: Promise<{ accountId: string; entityId: string; appId: string }>;
 }>) {
+  // const resolvedSearchParams = await searchParams;
+  const { entityId, accountId } = await params;
   return (
     <>
       <SessionProvider>
@@ -26,9 +32,7 @@ export default function RootLayout({
         />
         <main className="bg-ocean-100 h-screen flex-1">{children}</main>
         <ToolboxBar>
-          <Button size="small" variation="primary">
-            Add
-          </Button>
+          <ToolboxButtons entityId={entityId} accountId={accountId} />
         </ToolboxBar>
       </SessionProvider>
     </>

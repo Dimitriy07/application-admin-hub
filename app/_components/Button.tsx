@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useContext } from "react";
+import { ModalContext } from "./Modal";
 
 interface SizeType {
   small: string;
@@ -19,6 +20,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variation?: keyof VariationType;
   onClick?: () => void;
   isLoading?: boolean;
+  isModal?: boolean;
 }
 
 export default function Button({
@@ -27,6 +29,7 @@ export default function Button({
   variation = "primary",
   onClick,
   isLoading = false,
+  isModal = false,
   ...props
 }: ButtonProps) {
   const sizes = {
@@ -40,13 +43,30 @@ export default function Button({
     secondary: "bg-gray-300 text-gray-900",
     danger: "bg-red-600 text-white",
   };
-
+  const modalContext = useContext(ModalContext);
+  if (!modalContext) {
+    return (
+      <button
+        aria-label={`${children} button`}
+        disabled={isLoading}
+        {...props}
+        onClick={onClick}
+        className={`${sizes[size]} ${variations[variation]} flex items-center m-1 rounded-md`}
+      >
+        {isLoading ? (
+          <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+        ) : (
+          children
+        )}
+      </button>
+    );
+  }
   return (
     <button
       aria-label={`${children} button`}
       disabled={isLoading}
       {...props}
-      onClick={onClick}
+      onClick={isModal ? modalContext?.close : onClick}
       className={`${sizes[size]} ${variations[variation]} flex items-center m-1 rounded-md`}
     >
       {isLoading ? (

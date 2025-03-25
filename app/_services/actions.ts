@@ -14,7 +14,7 @@ import {
   getVerificationTokenByTokenId,
 } from "./tokenDataService";
 import { sendVerificationEmail } from "@/app/_lib/mail";
-import { UserRegistration } from "@/app/_types/types";
+import { ItemAdded, UserRegistration } from "@/app/_types/types";
 import { createResourceItem } from "./resourcesDataService";
 import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
@@ -24,7 +24,12 @@ import { ObjectId } from "mongodb";
 export async function login(email: string, password: string) {
   const existingUser = await getUserByEmailAndPassword(email, password);
   if ("error" in existingUser) return { error: existingUser.error };
-  if (!existingUser || !existingUser.email || !existingUser.password) {
+  if (
+    !existingUser ||
+    !existingUser.email ||
+    !existingUser.password ||
+    (existingUser.role !== "admin" && existingUser.role !== "superadmin")
+  ) {
     return { error: "User doesn't exist!" };
   }
   if (!existingUser.emailVerified) {
@@ -117,5 +122,20 @@ export async function register(
     return {
       error: "Something went wrong during Registration Process: " + err,
     };
+  }
+}
+
+export async function addItem(
+  formData: ItemAdded,
+  collectionName: string | undefined
+) {
+  if (!collectionName) return { error: "Collection name is not provided" };
+  const newItemObj = {
+    name: formData.name,
+  };
+  try {
+    await createResourceItem(collectionName, newItemObj);
+  } catch (err) {
+    return { error: "Item hasn't been added to database: " + err };
   }
 }

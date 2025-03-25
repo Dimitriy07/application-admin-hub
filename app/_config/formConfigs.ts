@@ -88,3 +88,12 @@ export const loginFormFields: FormConfig = [
     name: "password",
   },
 ];
+
+export const generalFormFields: FormConfig = [
+  {
+    type: "label",
+    content: "name",
+    for: "name",
+  },
+  { type: "input", placeholder: "Name", id: "name", name: "name" },
+];

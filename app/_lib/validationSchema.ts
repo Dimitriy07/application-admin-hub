@@ -30,4 +30,7 @@ const userLoginSchema = z
   })
   .required();
 
-export { userLoginSchema, userRegistrationSchema };
+const addItemSchema = z.object({
+  name: z.string().min(1),
+});
+export { userLoginSchema, userRegistrationSchema, addItemSchema };

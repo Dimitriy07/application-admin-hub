@@ -19,7 +19,7 @@ type ModalType = {
   open: Dispatch<SetStateAction<string | undefined>>;
 };
 
-const ModalContext = createContext<ModalType | null>(null);
+export const ModalContext = createContext<ModalType | null>(null);
 
 function Modal({ children }: PropsWithChildren) {
   const [openName, setOpenName] = useState<string | undefined>("");
@@ -62,11 +62,14 @@ function Window({
   }
   const { openName, close } = context;
   const outsideContainer = useOutsideClick(close);
-  let ref;
-  if (isOutsideClickEnabled) ref = outsideContainer;
+
   if (name !== openName) return null;
+
   return createPortal(
-    <PopupWindow ref={ref ? ref : null} close={close}>
+    <PopupWindow
+      ref={isOutsideClickEnabled ? outsideContainer : null}
+      close={close}
+    >
       {children}
     </PopupWindow>,
     document.body

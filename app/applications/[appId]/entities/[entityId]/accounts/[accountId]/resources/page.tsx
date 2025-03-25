@@ -1,9 +1,8 @@
-import ResourceToolboxBar from "@/app/_components/ResourceToolboxBar";
 import ItemsContainer from "@/app/_components/ItemsContainer";
 import ResourcesMessage from "@/app/_components/ResourcesMessage";
 import { getResourcesByCollection } from "@/app/_services/resourcesDataService";
 
-export default async function Page({
+export default async function ResourcePage({
   searchParams,
   params,
 }: {
@@ -11,7 +10,7 @@ export default async function Page({
   params: Promise<{ accountId: string; entityId: string; appId: string }>;
 }) {
   const resolvedSearchParams = await searchParams;
-  const { entityId, accountId } = await params;
+  const { accountId } = await params;
   const collectionName = resolvedSearchParams.resourceType;
 
   const resourceId = resolvedSearchParams.resourceId;
@@ -35,7 +34,6 @@ export default async function Page({
 
   return (
     <>
-      <ResourceToolboxBar entityId={entityId} accountId={accountId} />
       <ItemsContainer
         items={resourcesArr}
         resourceId={resourceId}

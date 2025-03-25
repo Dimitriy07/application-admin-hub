@@ -78,6 +78,12 @@ export type UserRegistration = {
   role: UserRole;
 };
 
+// ITEM TO ADD
+
+export type ItemAdded = {
+  name: string;
+};
+
 // VERIFICATION TOKEN
 
 export interface VerificationToken extends WithId<Document> {

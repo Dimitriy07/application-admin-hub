@@ -61,7 +61,9 @@ function ResourceToolboxBar({ entityId, accountId }: ResourceToolboxBarProps) {
               <Button type="submit" form="registration-form">
                 Add
               </Button>
-              <Button>Cancel</Button>
+              <Button isModal={true} onClick={close}>
+                Cancel
+              </Button>
             </CardWrapper.CardButtons>
           </CardWrapper>
         </Modal.Window>

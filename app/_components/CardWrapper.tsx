@@ -30,7 +30,7 @@ function CardPopupMessage({
   type,
 }: {
   children: React.ReactNode;
-  type: "success" | "error";
+  type?: "success" | "error";
 }) {
   return (
     <div

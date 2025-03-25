@@ -6,14 +6,14 @@ import { z, ZodType } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface FormGeneratorProps {
-  formSchema: FormConfig;
+  formFields: FormConfig;
   onSubmit: (data: FormElement) => void;
   formId: string;
   validationSchema: ZodType<any, any, any>;
 }
 
 function FormGenerator({
-  formSchema,
+  formFields,
   onSubmit,
   formId,
   validationSchema,
@@ -33,42 +33,42 @@ function FormGenerator({
       className="flex flex-col"
       onSubmit={handleSubmit(onSubmit)}
     >
-      {formSchema.map((schema, i) => {
-        if (schema.type === "label")
+      {formFields.map((field, i) => {
+        if (field.type === "label")
           return (
-            <label key={i} htmlFor={schema.for}>
-              {schema.content}
+            <label key={i} htmlFor={field.for}>
+              {field.content}
             </label>
           );
 
         if (
-          schema.type === "input" ||
-          schema.type === "email" ||
-          schema.type === "password"
+          field.type === "input" ||
+          field.type === "email" ||
+          field.type === "password"
         )
           return (
             <div key={i}>
               <input
-                type={schema.type}
-                id={schema.id}
-                placeholder={schema.placeholder}
-                {...register(schema.name as keyof FormElement)}
+                type={field.type}
+                id={field.id}
+                placeholder={field.placeholder}
+                {...register(field.name as keyof FormElement)}
               />
-              {errors[schema.name]?.message && (
+              {errors[field.name]?.message && (
                 <p className="text-sm text-red-500">
-                  {errors[schema.name]?.message as string}
+                  {errors[field.name]?.message as string}
                 </p>
               )}
             </div>
           );
-        if (schema.type === "select")
+        if (field.type === "select")
           return (
             <div key={i}>
               <select
-                id={schema.id}
-                {...register(schema.name as keyof FormElement)}
+                id={field.id}
+                {...register(field.name as keyof FormElement)}
               >
-                {schema.options.map((option) => {
+                {field.options.map((option) => {
                   return (
                     <option key={option.value} value={option.value}>
                       {option.content}
@@ -76,9 +76,9 @@ function FormGenerator({
                   );
                 })}
               </select>
-              {errors[schema.name]?.message && (
+              {errors[field.name]?.message && (
                 <p className="text-sm text-red-500">
-                  {errors[schema.name]?.message as string}
+                  {errors[field.name]?.message as string}
                 </p>
               )}
             </div>
