@@ -128,14 +128,14 @@ export async function register(
 
 export async function addItem(
   formData: ItemAdded,
-  collectionName: string | undefined,
+  collectionName: string | undefined | null,
   refToIdCollectionName: string,
   isResource: boolean
 ) {
   if (!collectionName) return { error: "Collection name is not provided" };
   const newItemObj = {
     name: formData.name,
-    [refToIdCollectionName]: formData.refToIdCollection,
+    [refToIdCollectionName]: new ObjectId(formData.refToIdCollection),
   };
   try {
     if (isResource) await createResourceItem(collectionName, newItemObj);

@@ -10,17 +10,17 @@ import ToolboxButtons from "@/app/_components/ToolboxButtons";
 
 export default async function RootLayout({
   children,
-  // searchParams,
-  params,
-}: Readonly<{
+}: // searchParams,
+// params,
+Readonly<{
   children: React.ReactNode;
-  // searchParams: Promise<{ resourceType?: string; resourceId: string }>;
-  params: Promise<{ accountId: string; entityId: string; appId: string }>;
+  // // searchParams: Promise<{ resourceType?: string; resourceId: string }>;
+  // params: Promise<{ accountId: string; entityId: string; appId: string }>;
 }>) {
   // const resolvedSearchParams = await searchParams;
-  const resolvedParams = await params;
-  const { appId, entityId, accountId } = resolvedParams;
-  console.log(entityId);
+  // const resolvedParams = await params;
+  // const { appId, entityId, accountId } = resolvedParams;
+  // console.log(entityId);
   return (
     <>
       <SessionProvider>
@@ -34,11 +34,7 @@ export default async function RootLayout({
         />
         <main className="bg-ocean-100 h-screen flex-1">{children}</main>
         <ToolboxBar>
-          <ToolboxButtons
-            refToIdCollection1={appId}
-            refToIdCollection2={entityId}
-            refToIdCollection3={accountId}
-          />
+          <ToolboxButtons />
         </ToolboxBar>
       </SessionProvider>
     </>

@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { FormElement, FormConfig } from "@/app/_types/types";
 import { z, ZodType } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 
 interface FormGeneratorProps {
   formFields: FormConfig;
@@ -18,15 +19,23 @@ function FormGenerator({
   formId,
   validationSchema,
 }: FormGeneratorProps) {
-  type RegValidationSchema = z.infer<typeof validationSchema>;
+  type ValidationSchema = z.infer<typeof validationSchema>;
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<RegValidationSchema>({
+    formState: { errors, isSubmitSuccessful },
+    reset,
+  } = useForm<ValidationSchema>({
     resolver: zodResolver(validationSchema),
   });
-  console.log(handleSubmit);
+  useEffect(
+    function () {
+      if (isSubmitSuccessful) {
+        reset();
+      }
+    },
+    [isSubmitSuccessful, reset]
+  );
   return (
     <form
       id={formId}

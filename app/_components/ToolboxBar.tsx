@@ -22,7 +22,7 @@ export default function ToolboxBar({ children }: PropsWithChildren) {
   const role = session.user.role;
   if (pageAccess === "resources" && !search) return null;
   // as superadmin can manipulate with all levels of data return the component
-  if (role === "superadmin") {
+  if (role === "superadmin" && pageAccess !== DB_COLLECTION_LEVEL1) {
     return (
       <div className="h-10 flex justify-between items-center">{children}</div>
     );

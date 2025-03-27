@@ -13,12 +13,16 @@ import {
   addItemSchema,
   userRegistrationSchema,
 } from "@/app/_lib/validationSchema";
-import { usePathname, useSearchParams } from "next/navigation";
-import { addItem, register } from "@/app/_services/actions";
-import { isId } from "../_utils/pageValidation";
-import { useState } from "react";
 import {
-  DB_COLLECTION_LEVEL1,
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import { addItem, register } from "@/app/_services/actions";
+import { isNotId } from "@/app/_utils/pageValidation";
+import { useCallback, useMemo, useState } from "react";
+import {
   DB_COLLECTION_LEVEL2,
   DB_COLLECTION_LEVEL3,
   DB_REFERENCE_TO_COL1,
@@ -26,103 +30,114 @@ import {
   DB_REFERENCE_TO_COL3,
 } from "@/app/_constants/mongodb-config";
 
-interface ToolboxButtonsProps {
-  refToIdCollection1: string;
-  refToIdCollection2: string;
-  refToIdCollection3: string;
-}
-
-function ToolboxButtons({
-  refToIdCollection1,
-  refToIdCollection2,
-  refToIdCollection3,
-}: ToolboxButtonsProps) {
+function ToolboxButtons() {
   const [success, setSuccess] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
+
+  const router = useRouter();
+  const {
+    appId: refToIdCollection1,
+    entityId: refToIdCollection2,
+    accountId: refToIdCollection3,
+  } = useParams<{
+    appId: string;
+    entityId: string;
+    accountId: string;
+  }>();
   const path = usePathname();
   const searchParams = useSearchParams();
-  let pageName: string | undefined;
   const resourceType = searchParams.get("resourceType");
-  let formFields;
-  let handleSubmit;
-  let validationSchema;
-  console.log(refToIdCollection3);
-  if (resourceType === "users") {
-    formFields = registrationFormFields;
-    validationSchema = userRegistrationSchema;
-    handleSubmit = async (formData: FormElement) => {
-      const result = userRegistrationSchema.safeParse(formData);
-      if (result.success) {
-        await register(
-          { ...result.data, refToIdCollection2, refToIdCollection3 },
-          resourceType
-        );
 
-        setSuccess("User is added");
-      } else {
-        setError(`Validation failed: ${result.error}`);
-      }
-    };
-  } else {
-    pageName = path.split("/").at(-1);
-    if (!pageName) {
-      setError("Page URL is not provided");
-      return;
-    }
-    const isPageNameValid = isId(pageName);
-    formFields = generalFormFields;
-    validationSchema = addItemSchema;
-    handleSubmit = async (formData: FormElement) => {
+  const pageName = useMemo(() => path.split("/").at(-1), [path])!;
+  console.log(pageName);
+  const isPageNameValid = useMemo(() => isNotId(pageName), [pageName]);
+
+  const handleUserRegistration = useCallback(
+    async (formData: FormElement) => {
+      const result = userRegistrationSchema.safeParse(formData);
+      if (!result.success)
+        return setError(`Validation failed: ${result.error}`);
+
+      await register(
+        {
+          ...result.data,
+          refToIdCollection2,
+          refToIdCollection3,
+        },
+        resourceType!
+      );
+      setSuccess("User is added");
+      router.refresh();
+    },
+    [resourceType, refToIdCollection2, refToIdCollection3, router]
+  );
+
+  const handleItemAddition = useCallback(
+    async (formData: FormElement) => {
       const result = addItemSchema.safeParse(formData);
-      if (result.success) {
-        try {
-          if (resourceType) {
-            await addItem(
-              { ...result.data, refToIdCollection: refToIdCollection3 },
-              resourceType,
-              DB_REFERENCE_TO_COL3,
-              true
-            );
-          } else {
-            let refToCollectionName;
-            let refToIdCollection;
-            switch (pageName) {
-              case DB_COLLECTION_LEVEL1:
-                break;
-              case DB_COLLECTION_LEVEL2:
-                refToCollectionName = DB_REFERENCE_TO_COL1;
-                refToIdCollection = refToIdCollection1;
-                break;
-              case DB_COLLECTION_LEVEL3:
-                refToCollectionName = DB_REFERENCE_TO_COL2;
-                refToIdCollection = refToIdCollection2;
-                break;
-              default:
-                console.error("A management unit for reference was not found.");
-            }
-            if (!isPageNameValid || refToCollectionName === undefined) {
-              setError("Can't find collection name in database");
-              return;
-            }
-            await addItem(
-              {
-                ...result.data,
-                refToIdCollection,
-              },
-              pageName,
-              refToCollectionName,
-              false
-            );
+      if (!result.success)
+        return setError(`Validation failed: ${result.error}`);
+
+      try {
+        let refToCollectionName, refToIdCollection;
+
+        if (resourceType) {
+          refToCollectionName = DB_REFERENCE_TO_COL3;
+          refToIdCollection = refToIdCollection3;
+        } else {
+          switch (pageName) {
+            case DB_COLLECTION_LEVEL2:
+              refToCollectionName = DB_REFERENCE_TO_COL1;
+              refToIdCollection = refToIdCollection1;
+              break;
+            case DB_COLLECTION_LEVEL3:
+              refToCollectionName = DB_REFERENCE_TO_COL2;
+              refToIdCollection = refToIdCollection2;
+              break;
+            default:
+              return setError("Invalid collection reference");
           }
-          setSuccess("Item added to database!");
-        } catch (err) {
-          setError("Item hasn't been added to database: " + err);
         }
-      } else {
-        setError(`Validation failed: ${result.error}`);
+
+        if (!isPageNameValid || !refToCollectionName)
+          return setError("Invalid collection reference");
+        await addItem(
+          { ...result.data, refToIdCollection },
+          resourceType ? resourceType : pageName,
+          refToCollectionName,
+          !!resourceType
+        );
+        setSuccess("Item added to database!");
+        router.refresh();
+      } catch (err) {
+        setError(`Item hasn't been added: ${err}`);
       }
+    },
+    [
+      pageName,
+      resourceType,
+      refToIdCollection1,
+      refToIdCollection2,
+      refToIdCollection3,
+      isPageNameValid,
+      router,
+    ]
+  );
+
+  const formConfig = useMemo(() => {
+    if (resourceType === "users") {
+      return {
+        fields: registrationFormFields,
+        schema: userRegistrationSchema,
+        submitHandler: handleUserRegistration,
+      };
+    }
+    return {
+      fields: generalFormFields,
+      schema: addItemSchema,
+      submitHandler: handleItemAddition,
     };
-  }
+  }, [resourceType, handleItemAddition, handleUserRegistration]);
   return (
     <>
       <Modal>
@@ -140,10 +155,10 @@ function ToolboxButtons({
             </CardWrapper.CardLabel>
             <CardWrapper.CardContent>
               <FormGenerator
-                formFields={formFields}
-                onSubmit={handleSubmit}
+                formFields={formConfig.fields}
+                onSubmit={formConfig.submitHandler}
                 formId="item-form"
-                validationSchema={validationSchema}
+                validationSchema={formConfig.schema}
               />
             </CardWrapper.CardContent>
             <CardWrapper.CardPopupMessage type={success ? "success" : "error"}>
