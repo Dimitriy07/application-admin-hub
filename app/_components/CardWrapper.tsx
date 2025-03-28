@@ -52,7 +52,7 @@ function CardPopupMessage({
   );
 }
 function CardButtons({ children }: PropsWithChildren) {
-  return <div className="flex justify-between">{children}</div>;
+  return <div className="flex justify-between mt-6">{children}</div>;
 }
 
 CardWrapper.CardLabel = CardLabel;

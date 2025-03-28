@@ -45,7 +45,7 @@ function FormGenerator({
       {formFields.map((field, i) => {
         if (field.type === "label")
           return (
-            <label key={i} htmlFor={field.for}>
+            <label className="mb-[0.2rem]" key={i} htmlFor={field.for}>
               {field.content}
             </label>
           );
@@ -58,6 +58,7 @@ function FormGenerator({
           return (
             <div key={i}>
               <input
+                className="border mb-3 h-8 w-full"
                 type={field.type}
                 id={field.id}
                 placeholder={field.placeholder}
@@ -74,6 +75,7 @@ function FormGenerator({
           return (
             <div key={i}>
               <select
+                className="border w-full"
                 id={field.id}
                 {...register(field.name as keyof FormElement)}
               >

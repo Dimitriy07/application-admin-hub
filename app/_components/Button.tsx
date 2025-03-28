@@ -20,7 +20,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variation?: keyof VariationType;
   onClick?: () => void;
   isLoading?: boolean;
-  isModal?: boolean;
+  isModalClose?: boolean;
 }
 
 export default function Button({
@@ -29,7 +29,7 @@ export default function Button({
   variation = "primary",
   onClick,
   isLoading = false,
-  isModal = false,
+  isModalClose = false,
   ...props
 }: ButtonProps) {
   const sizes = {
@@ -44,29 +44,21 @@ export default function Button({
     danger: "bg-red-600 text-white",
   };
   const modalContext = useContext(ModalContext);
-  if (!modalContext) {
-    return (
-      <button
-        aria-label={`${children} button`}
-        disabled={isLoading}
-        {...props}
-        onClick={onClick}
-        className={`${sizes[size]} ${variations[variation]} flex items-center m-1 rounded-md`}
-      >
-        {isLoading ? (
-          <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
-        ) : (
-          children
-        )}
-      </button>
-    );
-  }
+  const handleClick = () => {
+    if (isModalClose && modalContext) {
+      modalContext.close();
+    }
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <button
       aria-label={`${children} button`}
       disabled={isLoading}
       {...props}
-      onClick={isModal ? modalContext?.close : onClick}
+      onClick={handleClick}
       className={`${sizes[size]} ${variations[variation]} flex items-center m-1 rounded-md`}
     >
       {isLoading ? (

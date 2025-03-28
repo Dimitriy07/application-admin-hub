@@ -4,7 +4,7 @@ import { FormConfig } from "../_types/types";
 export const registrationFormFields: FormConfig = [
   {
     type: "label",
-    content: "Name",
+    content: "Name:",
     for: "name",
   },
   {
@@ -15,7 +15,7 @@ export const registrationFormFields: FormConfig = [
   },
   {
     type: "label",
-    content: "Email",
+    content: "Email:",
     for: "email",
   },
   {
@@ -26,7 +26,7 @@ export const registrationFormFields: FormConfig = [
   },
   {
     type: "label",
-    content: "Password",
+    content: "Password:",
     for: "password",
   },
   {
@@ -37,7 +37,7 @@ export const registrationFormFields: FormConfig = [
   },
   {
     type: "label",
-    content: "Confirm Password",
+    content: "Confirm Password:",
     for: "confirm",
   },
   {
@@ -48,15 +48,15 @@ export const registrationFormFields: FormConfig = [
   },
   {
     type: "label",
-    content: "Choose User Role",
+    content: "Choose User Role:",
     for: "role",
   },
   {
     type: "select",
     options: [
-      { value: "", content: "Choose user role" },
-      { value: "admin", content: "admin" },
-      { value: "user", content: "user" },
+      { value: "", content: "Select Role" },
+      { value: "admin", content: "Admin" },
+      { value: "user", content: "User" },
     ],
     name: "role",
     id: "role",
@@ -67,7 +67,7 @@ export const registrationFormFields: FormConfig = [
 export const loginFormFields: FormConfig = [
   {
     type: "label",
-    content: "Email",
+    content: "Email:",
     for: "email",
   },
   {
@@ -78,7 +78,7 @@ export const loginFormFields: FormConfig = [
   },
   {
     type: "label",
-    content: "Password",
+    content: "Password:",
     for: "password",
   },
   {
@@ -92,8 +92,8 @@ export const loginFormFields: FormConfig = [
 export const generalFormFields: FormConfig = [
   {
     type: "label",
-    content: "name",
+    content: "Name:",
     for: "name",
   },
-  { type: "input", placeholder: "Name", id: "name", name: "name" },
+  { type: "input", placeholder: "Item Name", id: "name", name: "name" },
 ];

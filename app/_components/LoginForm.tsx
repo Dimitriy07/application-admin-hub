@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { login } from "../_services/actions";
 import { userLoginSchema } from "@/app/_lib/validationSchema";
 import { ZodError } from "zod";
+import Button from "./Button";
 
 function LoginForm() {
   const [error, setError] = useState("");
@@ -61,7 +62,7 @@ function LoginForm() {
       </div>
       {error && <div className="text-black">{error}</div>}
       <div>
-        <button type="submit">Login</button>
+        <Button type="submit">Login</Button>
       </div>
     </form>
   );

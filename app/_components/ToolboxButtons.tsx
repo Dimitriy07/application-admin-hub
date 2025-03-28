@@ -150,8 +150,8 @@ function ToolboxButtons() {
           <CardWrapper>
             <CardWrapper.CardLabel>
               {resourceType
-                ? `Add Item to ${resourceType} collection`
-                : `Add Item to ${pageName} collection`}
+                ? `ADD TO "${resourceType.toUpperCase()}" ITEM`
+                : `ADD TO "${pageName.toUpperCase()}" ITEM`}
             </CardWrapper.CardLabel>
             <CardWrapper.CardContent>
               <FormGenerator
@@ -161,14 +161,24 @@ function ToolboxButtons() {
                 validationSchema={formConfig.schema}
               />
             </CardWrapper.CardContent>
-            <CardWrapper.CardPopupMessage type={success ? "success" : "error"}>
-              {success || error || ""}
-            </CardWrapper.CardPopupMessage>
+            {success || error ? (
+              <CardWrapper.CardPopupMessage
+                type={success ? "success" : "error"}
+              >
+                {success || error || ""}
+              </CardWrapper.CardPopupMessage>
+            ) : null}
             <CardWrapper.CardButtons>
               <Button type="submit" form="item-form">
                 Add
               </Button>
-              <Button isModal={true} onClick={close}>
+              <Button
+                isModalClose={true}
+                onClick={() => {
+                  setError("");
+                  setSuccess("");
+                }}
+              >
                 Cancel
               </Button>
             </CardWrapper.CardButtons>
