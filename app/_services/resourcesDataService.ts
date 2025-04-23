@@ -7,6 +7,7 @@ import {
   fetchResourceById,
   fetchResourcesDB,
   fetchResourcesNames,
+  updateResourceInDb,
 } from "@/app/_lib/data/resources-data";
 
 // Fetch all resources by reference ID to Level 3 collection (as Level 3 is the smallest level of management unit (DB_REFERENCE_TO_COL3))
@@ -48,4 +49,20 @@ export async function createResourceItem<T>(
   );
   const createdResourceItem = await createItem(resourceObj as T & Document);
   return createdResourceItem;
+}
+
+export async function updateResourceItem<T>(
+  collectionName: string,
+  resourceId: string,
+  updateObj: T
+) {
+  const updateItem = await updateResourceInDb(
+    DB_RESOURCES_NAME,
+    collectionName
+  );
+  const updatedResourceItem = await updateItem(
+    resourceId,
+    updateObj as T & Document
+  );
+  return updatedResourceItem;
 }

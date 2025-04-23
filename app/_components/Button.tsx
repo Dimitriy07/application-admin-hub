@@ -21,6 +21,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   onClick?: () => void;
   isLoading?: boolean;
   isModalClose?: boolean;
+  disabled?: boolean;
 }
 
 export default function Button({
@@ -30,6 +31,7 @@ export default function Button({
   onClick,
   isLoading = false,
   isModalClose = false,
+  disabled = false,
   ...props
 }: ButtonProps) {
   const sizes = {
@@ -40,10 +42,12 @@ export default function Button({
 
   const variations = {
     primary: "bg-coral-800 text-coral-100",
-    secondary: "bg-gray-300 text-gray-900",
+    secondary: "bg-coral-0 text-ocean-800",
     danger: "bg-red-600 text-white",
+    disabled: "bg-gray-400 text-white cursor-not-allowed opacity-70",
   };
   const modalContext = useContext(ModalContext);
+  const isButtonDisabled = isLoading || disabled;
   const handleClick = () => {
     if (isModalClose && modalContext) {
       modalContext.close();
@@ -59,7 +63,9 @@ export default function Button({
       disabled={isLoading}
       {...props}
       onClick={handleClick}
-      className={`${sizes[size]} ${variations[variation]} flex items-center m-1 rounded-md`}
+      className={`${sizes[size]} flex items-center m-1 rounded-md ${
+        isButtonDisabled ? variations["disabled"] : variations[variation]
+      }`}
     >
       {isLoading ? (
         <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>

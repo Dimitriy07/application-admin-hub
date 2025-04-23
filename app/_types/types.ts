@@ -17,6 +17,11 @@ export interface ItemContainerProps {
   urlPath?: string;
   resourceId?: string;
   collectionName?: string;
+  appId?: string;
+  isEdit?: string;
+  isSettings?: string;
+  managementId?: string;
+  currentPage?: string;
 }
 
 export interface ItemRowProps {
@@ -95,26 +100,19 @@ export interface VerificationToken extends WithId<Document> {
 
 //FORM ELEMENTS
 
-export type FormElement =
-  | {
-      type: "label";
-      content: string;
-      for: string;
-    }
-  | {
-      type: "input" | "email" | "password";
-      placeholder?: string;
-      id: string;
-      name: string;
-    }
-  | {
-      type: "select";
-      options: Array<{ value: string; content: string }>;
-      name: string;
-      id: string;
-    };
+export type FormElementType = {
+  type: "text" | "email" | "password" | "select" | "number";
+  id: string;
+  name: string;
+  labelName: string;
+  placeholder?: string;
+  options?: ReadonlyArray<{ value: string; content: string }>;
+  min?: number;
+  max?: number;
+};
 
-export type FormConfig = FormElement[];
+export type FormConfig = Record<string, FormElementType>;
+// export type FormConfig = FormElementType[];
 
 // export interface RegisterForm {
 //   name: string;

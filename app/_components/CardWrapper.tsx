@@ -1,5 +1,3 @@
-"use client";
-
 // import { createContext } from "react";
 import { PropsWithChildren } from "react";
 import { HiOutlineCheckCircle } from "react-icons/hi2";
@@ -10,7 +8,7 @@ import { HiExclamationTriangle } from "react-icons/hi2";
 function CardWrapper({ children }: PropsWithChildren) {
   return (
     // <CardWrapperContext.Provider value={{}}>
-    <div>{children}</div>
+    <div className="w-full flex flex-col h-full">{children}</div>
     // </CardWrapperContext.Provider>
   );
 }

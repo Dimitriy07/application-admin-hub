@@ -8,11 +8,8 @@ import {
   generalFormFields,
   registrationFormFields,
 } from "@/app/_config/formConfigs";
-import { FormElement } from "@/app/_types/types";
-import {
-  addItemSchema,
-  userRegistrationSchema,
-} from "@/app/_lib/validationSchema";
+import { FormElementType } from "@/app/_types/types";
+import createZodSchema from "@/app/_lib/validationSchema";
 import {
   useParams,
   usePathname,
@@ -21,7 +18,7 @@ import {
 } from "next/navigation";
 import { addItem, register } from "@/app/_services/actions";
 import { isNotId } from "@/app/_utils/pageValidation";
-import { useCallback, useMemo, useState } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import {
   DB_COLLECTION_LEVEL2,
   DB_COLLECTION_LEVEL3,
@@ -29,12 +26,17 @@ import {
   DB_REFERENCE_TO_COL2,
   DB_REFERENCE_TO_COL3,
 } from "@/app/_constants/mongodb-config";
+import {
+  ADD_ITEM_SCHEMA,
+  USER_REGISTRATION_SCHEMA,
+} from "@/app/_constants/schema-names";
 
 function ToolboxButtons() {
   const [success, setSuccess] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
 
   const router = useRouter();
+  // GET MANAGEMENT ITEM ID IS USED FOR CURRENT USER AND RENAME IT TO GENERAL NAME
   const {
     appId: refToIdCollection1,
     entityId: refToIdCollection2,
@@ -44,17 +46,25 @@ function ToolboxButtons() {
     entityId: string;
     accountId: string;
   }>();
+
+  // GET PATH AND QUERY PARAMS "RESOURCE TYPE" NAME
+
   const path = usePathname();
   const searchParams = useSearchParams();
   const resourceType = searchParams.get("resourceType");
 
+  // AS LAST NAME EITHER NAME OF THE MANAGEMENT ITEM OR QUERY PARAMS, GET LAST PART OF URL AS THE INDICATOR WHAT PAGE AND COLLECTION IN DB HAS TO BE USED TO MANIPULATE WITH DATA
   const pageName = useMemo(() => path.split("/").at(-1), [path])!;
-  console.log(pageName);
+
+  // CHECK IF PAGENAME IS VALID WORD SO IT IS NOT ID
   const isPageNameValid = useMemo(() => isNotId(pageName), [pageName]);
 
+  //HANDLE USER FORM SEPARATELY FROM OTHER DATA MANIPULATION
   const handleUserRegistration = useCallback(
-    async (formData: FormElement) => {
-      const result = userRegistrationSchema.safeParse(formData);
+    async (formData: Partial<FormElementType>) => {
+      const result = createZodSchema(USER_REGISTRATION_SCHEMA).safeParse(
+        formData
+      );
       if (!result.success)
         return setError(`Validation failed: ${result.error}`);
 
@@ -72,9 +82,10 @@ function ToolboxButtons() {
     [resourceType, refToIdCollection2, refToIdCollection3, router]
   );
 
+  // HANDLE FORM OTHER FROM USER FORM
   const handleItemAddition = useCallback(
-    async (formData: FormElement) => {
-      const result = addItemSchema.safeParse(formData);
+    async (formData: Partial<FormElementType>) => {
+      const result = createZodSchema(ADD_ITEM_SCHEMA).safeParse(formData);
       if (!result.success)
         return setError(`Validation failed: ${result.error}`);
 
@@ -101,13 +112,14 @@ function ToolboxButtons() {
 
         if (!isPageNameValid || !refToCollectionName)
           return setError("Invalid collection reference");
-        await addItem(
+
+        const item = await addItem(
           { ...result.data, refToIdCollection },
           resourceType ? resourceType : pageName,
           refToCollectionName,
           !!resourceType
         );
-        setSuccess("Item added to database!");
+        if (item.success) setSuccess(item.message);
         router.refresh();
       } catch (err) {
         setError(`Item hasn't been added: ${err}`);
@@ -128,18 +140,18 @@ function ToolboxButtons() {
     if (resourceType === "users") {
       return {
         fields: registrationFormFields,
-        schema: userRegistrationSchema,
+        schema: USER_REGISTRATION_SCHEMA,
         submitHandler: handleUserRegistration,
       };
     }
     return {
       fields: generalFormFields,
-      schema: addItemSchema,
+      schema: ADD_ITEM_SCHEMA,
       submitHandler: handleItemAddition,
     };
   }, [resourceType, handleItemAddition, handleUserRegistration]);
   return (
-    <>
+    <Suspense>
       <Modal>
         <Modal.Open opens="add-resource">
           <Button size="small" variation="primary">
@@ -159,6 +171,7 @@ function ToolboxButtons() {
                 onSubmit={formConfig.submitHandler}
                 formId="item-form"
                 validationSchema={formConfig.schema}
+                isEdit={true}
               />
             </CardWrapper.CardContent>
             {success || error ? (
@@ -185,7 +198,7 @@ function ToolboxButtons() {
           </CardWrapper>
         </Modal.Window>
       </Modal>
-    </>
+    </Suspense>
   );
 }
 

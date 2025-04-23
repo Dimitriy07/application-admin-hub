@@ -6,7 +6,7 @@ async function SideNavigation() {
   const resources = await getResourcesNames();
   const headersList = await headers();
   const header = headersList.get("x-full-url");
-  if (!header) throw new Error("No header found");
+  if (!header) throw new Error("No header URL found");
   const url = new URL(header);
   url.searchParams.delete("resourceType");
   url.searchParams.delete("resourceId");

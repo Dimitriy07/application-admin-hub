@@ -15,10 +15,13 @@ import {
 } from "./tokenDataService";
 import { sendVerificationEmail } from "@/app/_lib/mail";
 import { ItemAdded, UserRegistration } from "@/app/_types/types";
-import { createResourceItem } from "./resourcesDataService";
+import { createResourceItem, updateResourceItem } from "./resourcesDataService";
 import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
-import { createManagementItem } from "./managementDataService";
+import {
+  createManagementItem,
+  updateManagementItem,
+} from "./managementDataService";
 
 /////////LOGIN SERVER ACTION//////////
 
@@ -140,7 +143,27 @@ export async function addItem(
   try {
     if (isResource) await createResourceItem(collectionName, newItemObj);
     else await createManagementItem(collectionName, newItemObj);
+    return { success: true, message: "Item added to database!" };
   } catch (err) {
     return { error: "Item hasn't been added to database: " + err };
+  }
+}
+
+export async function updateItem<T>(
+  formData: T,
+  collectionName: string,
+  itemId: string,
+  isResource = true
+) {
+  if (!collectionName) return { error: "Collection name is not provided" };
+  try {
+    if (isResource) {
+      await updateResourceItem(collectionName, itemId, formData);
+    } else {
+      await updateManagementItem(collectionName, itemId, formData);
+    }
+    return { success: true, message: "Item was updated in database" };
+  } catch (err) {
+    return { error: "Item wasn't updated in database: " + err };
   }
 }

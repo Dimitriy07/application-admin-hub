@@ -13,14 +13,16 @@ export default function ToolboxBar({ children }: PropsWithChildren) {
   const path = usePathname();
   const { data: session, status } = useSession();
   const searchParams = useSearchParams();
-  const search = searchParams.get("resourceType");
+  const searchResourceType = searchParams.get("resourceType");
+  const searchResourceId = searchParams.get("resourceId");
 
   // take user session to check if the user can manipulate with data (add data)
   if (status === "loading") return null;
   if (status === "unauthenticated" || !session?.user) return null;
   const pageAccess = path.split("/").at(-1);
   const role = session.user.role;
-  if (pageAccess === "resources" && !search) return null;
+  if ((pageAccess === "resources" && !searchResourceType) || searchResourceId)
+    return null;
   // as superadmin can manipulate with all levels of data return the component
   if (role === "superadmin" && pageAccess !== DB_COLLECTION_LEVEL1) {
     return (

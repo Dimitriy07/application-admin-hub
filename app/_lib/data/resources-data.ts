@@ -98,3 +98,20 @@ export async function createResourceInDb(
     return data;
   };
 }
+
+export async function updateResourceInDb(
+  dbName: string,
+  collectionName: string
+) {
+  return async function updateResourceDoc<
+    T extends Readonly<Partial<Document>>
+  >(resourceId: string, updateObj: T) {
+    const collection = await dbConnect(dbName, collectionName);
+    const mongoId = new ObjectId(resourceId);
+    const data = await collection.updateOne(
+      { _id: mongoId },
+      { $set: { ...updateObj } }
+    );
+    return data;
+  };
+}

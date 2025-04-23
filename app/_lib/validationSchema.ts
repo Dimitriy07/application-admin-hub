@@ -1,5 +1,12 @@
-import { z } from "zod";
-import { UserRole } from "@/app/_types/types";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { z, ZodSchema } from "zod";
+import { FormConfig, UserRole } from "@/app/_types/types";
+import {
+  ACCOUNT_SETTINGS_SCHEMA,
+  ADD_ITEM_SCHEMA,
+  USER_LOGIN_SCHEMA,
+  USER_REGISTRATION_SCHEMA,
+} from "@/app/_constants/schema-names";
 
 const userRegistrationSchema = z
   .object({
@@ -17,7 +24,6 @@ const userRegistrationSchema = z
       message: "Please select one of the user roles",
     }),
   })
-
   .refine((data) => data.password === data.confirm, {
     message: "Passwords don't match!",
     path: ["confirm"],
@@ -33,4 +39,59 @@ const userLoginSchema = z
 const addItemSchema = z.object({
   name: z.string().min(1),
 });
-export { userLoginSchema, userRegistrationSchema, addItemSchema };
+
+const accountSettings = z.object({
+  maxUsers: z.number().min(1),
+  accountType: z.string().min(1),
+});
+
+const schemas = {
+  [USER_REGISTRATION_SCHEMA]: userRegistrationSchema,
+  [USER_LOGIN_SCHEMA]: userLoginSchema,
+  [ADD_ITEM_SCHEMA]: addItemSchema,
+  [ACCOUNT_SETTINGS_SCHEMA]: accountSettings,
+};
+
+type SchemaName = keyof typeof schemas;
+
+type SchemaMap = {
+  [K in SchemaName]: (typeof schemas)[K];
+};
+
+export function createZodSchema<T extends SchemaName>(
+  zodSchemaName: T
+): SchemaMap[T];
+export function createZodSchema(
+  zodSchemaName: string | undefined,
+  section: FormConfig
+): ZodSchema;
+
+// FOR FORMGENERATOR CONDITIONALLY CHECK WHAT ZOD FORM USED AND IF THERE IS NO FORM IT HAS TO USE DEFAULT DYNAMIC FORM
+export default function createZodSchema(
+  zodSchemaName: string | undefined,
+  section?: FormConfig
+): ZodSchema {
+  switch (zodSchemaName) {
+    case USER_REGISTRATION_SCHEMA:
+      return userRegistrationSchema;
+    case USER_LOGIN_SCHEMA:
+      return userLoginSchema;
+    case ADD_ITEM_SCHEMA:
+      return addItemSchema;
+    case ACCOUNT_SETTINGS_SCHEMA:
+      return accountSettings;
+    default: {
+      if (!section) {
+        throw new Error("Section is required to generate dynamic schema.");
+      }
+
+      const shape: Record<string, z.ZodTypeAny> = {};
+
+      for (const [fieldKey, field] of Object.entries(section)) {
+        shape[fieldKey] = z.string().min(1, `${field.labelName} is required`);
+      }
+
+      return z.object(shape);
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import { Item } from "@/app/_types/types";
 import { ObjectId } from "mongodb";
 import { dbConnect } from "../../_utils/db-connector";
+import { flattenObject } from "@/app/_utils/flatten-objects";
 
 /**
  * Creates a reusable function to fetch data from a MongoDB collection.
@@ -31,7 +32,7 @@ export function fetchManagementDB(
   collectionName: string,
   dataFilterId?: string
 ): (id?: string) => Promise<Item[]> {
-  return async function fetchDataDocs(id?: string): Promise<Item[]> {
+  return async function fetchManagementDocs(id?: string): Promise<Item[]> {
     let objectId;
     // Validate and convert the input ID to a MongoDB ObjectId
     if (id) {
@@ -69,6 +70,22 @@ export function fetchManagementDB(
   };
 }
 
+export function fetchManagementById(dbName: string) {
+  return async function fetchManagementDocById(
+    collectionName: string,
+    managementId: string
+  ) {
+    const id = new ObjectId(managementId);
+    try {
+      const collection = await dbConnect(dbName, collectionName);
+      const data = await collection.findOne({ _id: id });
+      return data;
+    } catch (err) {
+      throw new Error("Management data wasn't fetched." + err);
+    }
+  };
+}
+
 export async function createManagementInDb(
   dbName: string,
   collectionName: string
@@ -76,8 +93,34 @@ export async function createManagementInDb(
   return async function createManagementDoc<T extends Document>(
     managementObj: T
   ) {
-    const collection = await dbConnect(dbName, collectionName);
-    const data = await collection.insertOne(managementObj);
-    return data;
+    try {
+      const collection = await dbConnect(dbName, collectionName);
+      const data = await collection.insertOne(managementObj);
+      return data;
+    } catch (err) {
+      throw new Error("Couldn't create Management Item. " + err);
+    }
+  };
+}
+
+export async function updateManagementDataInDb(
+  dbName: string,
+  collectionName: string
+) {
+  return async function updateManagementDoc<
+    T extends Readonly<Partial<Document>>
+  >(managementId: string, updateObj: T) {
+    try {
+      const collection = await dbConnect(dbName, collectionName);
+      const mongoId = new ObjectId(managementId);
+      const flatUpdate = flattenObject(updateObj);
+      const data = await collection.updateOne(
+        { _id: mongoId },
+        { $set: flatUpdate }
+      );
+      return data;
+    } catch (err) {
+      throw new Error("Update management item error: " + err);
+    }
   };
 }

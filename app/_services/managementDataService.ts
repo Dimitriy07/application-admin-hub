@@ -1,6 +1,8 @@
 import {
   createManagementInDb,
+  fetchManagementById,
   fetchManagementDB,
+  updateManagementDataInDb,
 } from "@/app/_lib/data/management-data";
 import {
   DB_COLLECTION_LEVEL1,
@@ -40,6 +42,21 @@ export async function getAccounts(entityId: string) {
   return await getData(entityId);
 }
 
+export async function getManagementDataByManagementId(
+  collectionName: string,
+  managementId: string
+) {
+  const getManagementData = fetchManagementById(DB_MANAGEMENT_NAME);
+  try {
+    const data = await getManagementData(collectionName, managementId);
+    return data;
+  } catch (err) {
+    return {
+      error: "Management couldn't be retreived from the database." + err,
+    };
+  }
+}
+
 export async function createManagementItem<T>(
   collectionName: string,
   managementObj: T
@@ -50,4 +67,24 @@ export async function createManagementItem<T>(
   );
   const createdResourceItem = await createItem(managementObj as T & Document);
   return createdResourceItem;
+}
+
+export async function updateManagementItem<T>(
+  collectionName: string,
+  managementId: string,
+  updateObj: T
+) {
+  try {
+    const fetchUpdateData = await updateManagementDataInDb(
+      DB_MANAGEMENT_NAME,
+      collectionName
+    );
+    const updatedManagementItem = await fetchUpdateData(
+      managementId,
+      updateObj as T & Document
+    );
+    return updatedManagementItem;
+  } catch (err) {
+    return { error: `Couldn't update Management item: ${err}` };
+  }
 }

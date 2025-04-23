@@ -6,14 +6,19 @@ export default async function ResourcePage({
   searchParams,
   params,
 }: {
-  searchParams: Promise<{ resourceType?: string; resourceId: string }>;
+  searchParams: Promise<{
+    resourceType?: string;
+    resourceId: string;
+    edit: string;
+  }>;
   params: Promise<{ accountId: string; entityId: string; appId: string }>;
 }) {
+  const { accountId, appId } = await params;
   const resolvedSearchParams = await searchParams;
-  const { accountId } = await params;
   const collectionName = resolvedSearchParams.resourceType;
 
   const resourceId = resolvedSearchParams.resourceId;
+  const isEdit = resolvedSearchParams.edit;
 
   let resourcesArr = [];
 
@@ -38,6 +43,8 @@ export default async function ResourcePage({
         items={resourcesArr}
         resourceId={resourceId}
         collectionName={collectionName}
+        appId={appId}
+        isEdit={isEdit}
       />
     </>
   );

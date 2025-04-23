@@ -3,9 +3,10 @@
 // import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { login } from "../_services/actions";
-import { userLoginSchema } from "@/app/_lib/validationSchema";
+import createZodSchema from "@/app/_lib/validationSchema";
 import { ZodError } from "zod";
 import Button from "./Button";
+import { USER_LOGIN_SCHEMA } from "@/app/_constants/schema-names";
 
 function LoginForm() {
   const [error, setError] = useState("");
@@ -15,11 +16,14 @@ function LoginForm() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     try {
-      const data = await userLoginSchema.parseAsync(
+      const schema = createZodSchema(USER_LOGIN_SCHEMA);
+      const data = await schema.parseAsync(
         Object.fromEntries(formData.entries())
       );
       const { email, password } = data;
-      if (!email || !password) return data;
+
+      if (!email || !password) return;
+
       const res = await login(email, password);
       if (res && "error" in res) {
         throw new Error(res.error);
