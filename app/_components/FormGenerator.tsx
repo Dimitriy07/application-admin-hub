@@ -60,9 +60,6 @@ function FormGenerator({
     defaultValues: completedDefaults,
   });
 
-  console.log(isDirty);
-  console.log({ dirtyFields: dirtyFields });
-
   // CLEAR EDIT PARAMS WHEN THE PAGE IS REFRESHED
   useEffect(function () {
     if (isEdit) {
@@ -140,8 +137,6 @@ function FormGenerator({
         console.error("Error in the submitted form. Error: " + err)
       );
   };
-  console.log({ defaultValues: defaultValues });
-  console.log({ formFields: formFields });
   return (
     <form
       id={formId}

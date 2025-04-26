@@ -5,6 +5,7 @@ import FormGenerator from "./FormGenerator";
 import EditButtonsBar from "./EditButtonsBar";
 import { FormElementType } from "@/app/_types/types";
 import { updateItem } from "@/app/_services/actions";
+import DeleteModal from "./DeleteModal";
 
 // GET FRESH INFORMATION WHEN UPDATE ITEM
 export const dynamic = "force-dynamic";
@@ -58,23 +59,33 @@ async function ResourceItem({
     }
   }
   return (
-    <CardWrapper>
-      <CardWrapper.CardLabel>This is Label</CardWrapper.CardLabel>
-      <CardWrapper.CardContent>
-        <FormGenerator
-          key={JSON.stringify(clientResourceItems)}
-          formFields={collectionFields}
-          onSubmit={handleForm}
-          defaultValues={clientResourceItems}
-          isCompactForm={false}
-          isEdit={!!isEdit}
-          formId="resource-edit"
-        />
-      </CardWrapper.CardContent>
-      <CardWrapper.CardButtons>
-        <EditButtonsBar formId="resource-edit" />
-      </CardWrapper.CardButtons>
-    </CardWrapper>
+    <>
+      <CardWrapper>
+        <div>
+          <CardWrapper.CardLabel>
+            {collectionName[0].toUpperCase() + collectionName.slice(1)} info -{" "}
+            {clientResourceItems.name}
+          </CardWrapper.CardLabel>
+          <CardWrapper.CardContent>
+            <FormGenerator
+              key={JSON.stringify(clientResourceItems)}
+              formFields={collectionFields}
+              onSubmit={handleForm}
+              defaultValues={clientResourceItems}
+              isCompactForm={false}
+              isEdit={!!isEdit}
+              formId="resource-edit"
+            />
+          </CardWrapper.CardContent>
+        </div>
+        <CardWrapper.CardButtons>
+          {isEdit && (
+            <DeleteModal id={resourceId} collectionName={collectionName} />
+          )}
+        </CardWrapper.CardButtons>
+      </CardWrapper>
+      <EditButtonsBar formId="resource-edit" />
+    </>
   );
 }
 

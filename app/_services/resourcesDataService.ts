@@ -4,6 +4,7 @@ import {
 } from "@/app/_constants/mongodb-config";
 import {
   createResourceInDb,
+  deleteResourceInDb,
   fetchResourceById,
   fetchResourcesDB,
   fetchResourcesNames,
@@ -65,4 +66,20 @@ export async function updateResourceItem<T>(
     updateObj as T & Document
   );
   return updatedResourceItem;
+}
+
+export async function deleteResourceItem(
+  collectionName: string,
+  resourceId: string
+) {
+  try {
+    const fetchItem = await deleteResourceInDb(
+      DB_RESOURCES_NAME,
+      collectionName
+    );
+    const deleteResourceItem = await fetchItem(resourceId);
+    return deleteResourceItem;
+  } catch (err) {
+    return { error: "Item couldn't be deleted: " + err };
+  }
 }

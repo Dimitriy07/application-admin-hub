@@ -124,3 +124,19 @@ export async function updateManagementDataInDb(
     }
   };
 }
+
+export async function deleteManagementDataInDb(
+  dbName: string,
+  collectionName: string
+) {
+  return async function deleteResourceDoc(managementId: string) {
+    try {
+      const collection = await dbConnect(dbName, collectionName);
+      const mongoId = new ObjectId(managementId);
+      const data = await collection.deleteOne({ _id: mongoId });
+      return data;
+    } catch (err) {
+      throw new Error("Can not delete doc in db: " + err);
+    }
+  };
+}

@@ -15,11 +15,16 @@ import {
 } from "./tokenDataService";
 import { sendVerificationEmail } from "@/app/_lib/mail";
 import { ItemAdded, UserRegistration } from "@/app/_types/types";
-import { createResourceItem, updateResourceItem } from "./resourcesDataService";
+import {
+  createResourceItem,
+  deleteResourceItem,
+  updateResourceItem,
+} from "./resourcesDataService";
 import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
 import {
   createManagementItem,
+  deleteManagementItem,
   updateManagementItem,
 } from "./managementDataService";
 
@@ -155,7 +160,8 @@ export async function updateItem<T>(
   itemId: string,
   isResource = true
 ) {
-  if (!collectionName) return { error: "Collection name is not provided" };
+  if (!collectionName || !itemId)
+    return { error: "Collection od itemId name is not provided" };
   try {
     if (isResource) {
       await updateResourceItem(collectionName, itemId, formData);
@@ -165,5 +171,24 @@ export async function updateItem<T>(
     return { success: true, message: "Item was updated in database" };
   } catch (err) {
     return { error: "Item wasn't updated in database: " + err };
+  }
+}
+
+export async function deleteItem(
+  collectionName: string,
+  itemId: string,
+  isResource = true
+) {
+  if (!collectionName || !itemId)
+    return { error: "Collection od itemId name is not provided" };
+  try {
+    if (isResource) {
+      await deleteResourceItem(collectionName, itemId);
+    } else {
+      await deleteManagementItem(collectionName, itemId);
+    }
+    return { success: true, message: "Item was deleted" };
+  } catch (err) {
+    return { error: "Item wasn't deleted: " + err };
   }
 }

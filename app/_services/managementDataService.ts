@@ -1,5 +1,6 @@
 import {
   createManagementInDb,
+  deleteManagementDataInDb,
   fetchManagementById,
   fetchManagementDB,
   updateManagementDataInDb,
@@ -85,6 +86,22 @@ export async function updateManagementItem<T>(
     );
     return updatedManagementItem;
   } catch (err) {
-    return { error: `Couldn't update Management item: ${err}` };
+    return { error: "Couldn't update Management item: " + err };
+  }
+}
+
+export async function deleteManagementItem(
+  collectionName: string,
+  managementId: string
+) {
+  try {
+    const fetchItem = await deleteManagementDataInDb(
+      DB_MANAGEMENT_NAME,
+      collectionName
+    );
+    const deleteResourceItem = await fetchItem(managementId);
+    return deleteResourceItem;
+  } catch (err) {
+    return { error: "Item couldn't be deleted: " + err };
   }
 }

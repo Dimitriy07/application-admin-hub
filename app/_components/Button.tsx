@@ -41,9 +41,9 @@ export default function Button({
   };
 
   const variations = {
-    primary: "bg-coral-800 text-coral-100",
-    secondary: "bg-coral-0 text-ocean-800",
-    danger: "bg-red-600 text-white",
+    primary: "bg-coral-800 text-coral-100 hover:bg-coral-1000",
+    secondary: "bg-coral-0 text-ocean-800 hover:bg-gray-100",
+    danger: "bg-red-600 text-white hover:bg-red-800",
     disabled: "bg-gray-400 text-white cursor-not-allowed opacity-70",
   };
   const modalContext = useContext(ModalContext);

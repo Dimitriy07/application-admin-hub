@@ -25,7 +25,9 @@ function EditButtonsBar({ formId }: { formId: string }) {
   return (
     <>
       {!isEdit ? (
-        <Button onClick={handleEditCancelClick}>Edit</Button>
+        <div>
+          <Button onClick={handleEditCancelClick}>Edit</Button>
+        </div>
       ) : (
         <div className="flex w-full justify-between">
           {/* <EditButton action="save" /> */}

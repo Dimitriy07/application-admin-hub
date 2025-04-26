@@ -7,6 +7,7 @@ import { ACCOUNT_SETTINGS_SCHEMA } from "@/app/_constants/schema-names";
 import { FormElementType } from "@/app/_types/types";
 import createZodSchema from "@/app/_lib/validationSchema";
 import { updateItem } from "@/app/_services/actions";
+import DeleteModal from "./DeleteModal";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -27,7 +28,7 @@ async function SettingsWindow({
     collectionName,
     managementId
   );
-  if (!resolvedManagementItem) return null;
+  if (!resolvedManagementItem || "error" in resolvedManagementItem) return null;
   // GET ACCESS TO SETTINGS OBJECT FROM DB DOCUMENT
   const settingsObj = resolvedManagementItem?.settings;
 
@@ -56,23 +57,35 @@ async function SettingsWindow({
   return (
     <div className="w-1/2 bg-ocean-0 h-full border border-ocean-800">
       <CardWrapper>
-        <CardWrapper.CardLabel>
-          {collectionName[0].toUpperCase() + collectionName.slice(1)} Settings
-        </CardWrapper.CardLabel>
-        <CardWrapper.CardContent>
-          <FormGenerator
-            key={JSON.stringify(settingsObj)}
-            formFields={managementSettingsFields}
-            onSubmit={handleForm}
-            defaultValues={settingsObj}
-            isCompactForm={false}
-            isEdit={!!isEdit}
-            formId="settings-edit"
-          />
-        </CardWrapper.CardContent>
-        <CardWrapper.CardButtons>
-          <EditButtonsBar formId="settings-edit" />
-        </CardWrapper.CardButtons>
+        <div className="flex flex-col justify-between h-full">
+          <div>
+            <CardWrapper.CardLabel>
+              {collectionName[0].toUpperCase() + collectionName.slice(1)}{" "}
+              Settings - {resolvedManagementItem.name}
+            </CardWrapper.CardLabel>
+            <CardWrapper.CardContent>
+              <FormGenerator
+                key={JSON.stringify(settingsObj)}
+                formFields={managementSettingsFields}
+                onSubmit={handleForm}
+                defaultValues={settingsObj}
+                isCompactForm={false}
+                isEdit={!!isEdit}
+                formId="settings-edit"
+              />
+              {isEdit && (
+                <DeleteModal
+                  id={managementId}
+                  collectionName={collectionName}
+                  isResource={false}
+                />
+              )}
+            </CardWrapper.CardContent>
+          </div>
+          <CardWrapper.CardButtons>
+            <EditButtonsBar formId="settings-edit" />
+          </CardWrapper.CardButtons>
+        </div>
       </CardWrapper>
     </div>
   );
