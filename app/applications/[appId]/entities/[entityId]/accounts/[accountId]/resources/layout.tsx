@@ -1,4 +1,4 @@
-import SideNavigation from "@/app/_components/SideNavigation";
+import SideNavigationContainer from "@/app/_components/SideNavigationContainer";
 
 export default function Layout({
   children,
@@ -6,7 +6,7 @@ export default function Layout({
   return (
     <div className="grid grid-cols-[10rem_1fr] h-full gap-6">
       <aside>
-        <SideNavigation />
+        <SideNavigationContainer />
       </aside>
       <div className="py-1">{children}</div>
     </div>
