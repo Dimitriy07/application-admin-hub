@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn } from "@/auth";
+import { signIn, signOut } from "@/auth";
 import { AuthError } from "next-auth";
 import {
   getUserByEmail,
@@ -27,6 +27,7 @@ import {
   deleteManagementItem,
   updateManagementItem,
 } from "./managementDataService";
+import { redirect } from "next/navigation";
 
 /////////LOGIN SERVER ACTION//////////
 
@@ -68,6 +69,16 @@ export async function login(email: string, password: string) {
       }
     }
     throw error;
+  }
+}
+
+export async function signOutUser() {
+  try {
+    await signOut();
+  } catch (err) {
+    throw new Error("The user isn't signed out. " + err);
+  } finally {
+    redirect("/auth/login");
   }
 }
 

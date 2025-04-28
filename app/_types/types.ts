@@ -72,6 +72,7 @@ export type UserSession = {
   password: string;
   role: UserRole; //  "admin" | "superadmin" | "user";
   emailVerified: string;
+  name?: string;
 };
 
 export type UserRegistration = {

@@ -63,6 +63,7 @@ export async function getUserById(id: string) {
     id: fetchedUser._id.toString(),
     role: fetchedUser.role,
     emailVerified: fetchedUser.emailVerified,
+    name: fetchedUser.name,
   };
 
   return user;

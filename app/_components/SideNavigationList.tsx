@@ -17,7 +17,7 @@ function SideNavigationList({ resources }: { resources: ResourcesList[] }) {
         return (
           <Link href={`${path}?resourceType=${res.name}`} key={res.name}>
             <li
-              className={`"hover:border border-ocean-800 cursor-pointer
+              className={`hover:border border-ocean-800 cursor-pointer
                  ${
                    res.name === searchParams.get("resourceType")
                      ? "border border-ocean-800"
