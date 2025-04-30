@@ -7,6 +7,7 @@ export default async function ResourcePage({
   params,
 }: {
   searchParams: Promise<{
+    query: string;
     resourceType?: string;
     resourceId: string;
     edit: string;
@@ -16,6 +17,7 @@ export default async function ResourcePage({
   const { accountId, appId } = await params;
   const resolvedSearchParams = await searchParams;
   const collectionName = resolvedSearchParams.resourceType;
+  const query = resolvedSearchParams.query;
 
   const resourceId = resolvedSearchParams.resourceId;
   const isEdit = resolvedSearchParams.edit;
@@ -45,6 +47,7 @@ export default async function ResourcePage({
         collectionName={collectionName}
         appId={appId}
         isEdit={isEdit}
+        query={query}
       />
     </>
   );

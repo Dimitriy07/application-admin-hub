@@ -8,14 +8,22 @@ import SettingsWindow from "./SettingsWindow";
 export default async function ItemsContainer({
   items,
   urlPath,
+  appId,
+  managementId,
   resourceId,
   collectionName,
-  appId,
   isEdit,
   isSettings,
-  managementId,
-  currentPage,
+  currentCollection,
+  query,
 }: ItemContainerProps) {
+  let filteredItems;
+  if (!query) filteredItems = items;
+  else {
+    filteredItems = items.filter((item) =>
+      item.name?.toLowerCase().includes(query)
+    );
+  }
   return (
     <div className="flex w-full h-full">
       {!resourceId || !collectionName ? (
@@ -24,7 +32,7 @@ export default async function ItemsContainer({
             isSettings ? "w-1/2" : "w-full"
           }`}
         >
-          {items.map((item) => (
+          {filteredItems.map((item) => (
             <ItemRow
               item={item}
               urlPath={urlPath}
@@ -46,7 +54,7 @@ export default async function ItemsContainer({
       {isSettings && (
         <SettingsWindow
           managementId={managementId}
-          collectionName={currentPage}
+          collectionName={currentCollection}
           appId={appId}
           isEdit={isEdit}
         />

@@ -4,10 +4,19 @@ import { getEntities } from "@/app/_services/managementDataService";
 
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: Promise<{ appId: string }>;
+  searchParams: Promise<{ query: string }>;
 }) {
   const id = await params;
+  const { query } = await searchParams;
   const entities = await getEntities(id.appId);
-  return <ItemsContainer items={entities} urlPath={DB_COLLECTION_LEVEL3} />;
+  return (
+    <ItemsContainer
+      items={entities}
+      urlPath={DB_COLLECTION_LEVEL3}
+      query={query}
+    />
+  );
 }

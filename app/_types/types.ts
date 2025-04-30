@@ -21,7 +21,8 @@ export interface ItemContainerProps {
   isEdit?: string;
   isSettings?: string;
   managementId?: string;
-  currentPage?: string;
+  currentCollection?: string;
+  query: string;
 }
 
 export interface ItemRowProps {
