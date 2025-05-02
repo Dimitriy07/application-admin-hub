@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useForm } from "react-hook-form";
-import { FormElementType, FormConfig } from "@/app/_types/types";
+import { FormElementType, FormConfigWithConditions } from "@/app/_types/types";
 import { z, ZodType } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BaseSyntheticEvent, useEffect } from "react";
+import { BaseSyntheticEvent, useEffect, useMemo } from "react";
 import FormElement from "./FormElement";
 import createZodSchema from "@/app/_lib/validationSchema";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 
 interface FormGeneratorProps {
-  formFields: FormConfig;
+  formFields: FormConfigWithConditions;
   onSubmit: (data: Partial<FormElementType>) => Promise<void>;
   formId: string;
   defaultValues?: any;
@@ -43,20 +43,33 @@ function FormGenerator({
   //CREATE SCHEMA TYPE FOR USEFORM
   type ValidationSchema = z.infer<typeof schema>;
 
-  const completedDefaults = Object.keys(formFields).reduce((acc, key) => {
-    acc[key] = defaultValues?.[key] ?? "";
-    return acc;
-  }, {} as Record<string, any>);
+  const completedDefaults = useMemo<Record<string, any>>(() => {
+    return {};
+  }, []);
+
+  Object.keys(formFields).forEach((key) => {
+    if (key !== "conditionalFields") {
+      completedDefaults[key] = defaultValues?.[key] ?? "";
+    }
+  });
+
+  formFields.conditionalFields?.forEach((condition) => {
+    Object.keys(condition.fields).forEach((key) => {
+      if (!(key in completedDefaults)) {
+        completedDefaults[key] = defaultValues?.[key] ?? "";
+      }
+    });
+  });
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitSuccessful, isDirty, dirtyFields },
     reset,
     getValues,
   } = useForm<ValidationSchema>({
     resolver: zodResolver(schema),
-
     defaultValues: completedDefaults,
   });
 
@@ -90,13 +103,13 @@ function FormGenerator({
     function () {
       //IF FIELDS ARE DIRTY - ADD ISDIRTY PARAMS TO MONITOR FOR SAVE BUTTON
       const params = new URLSearchParams(searchParams.toString());
-      if (isDirty) {
+      if (isDirty && searchParams.get("isDirty") !== "true") {
         params.set("isDirty", "true");
-        router.push(pathname + "?" + params);
+        router.push(`${pathname}?${params.toString()}`);
       }
-      if (!isDirty && searchParams.get("isDirty")) {
+      if (!isDirty && searchParams.get("isDirty") === "true") {
         params.delete("isDirty");
-        router.replace(pathname + "?" + params);
+        router.replace(`${pathname}?${params.toString()}`);
       }
     },
     [isDirty, pathname, router, searchParams]
@@ -106,14 +119,14 @@ function FormGenerator({
   useEffect(
     function () {
       if (isDirty && !isEdit) {
-        reset(defaultValues);
+        reset(completedDefaults);
       }
     },
-    [defaultValues, isDirty, isEdit, reset]
+    [completedDefaults, isDirty, isEdit, reset]
   );
 
   // HANDLE SUBMIT PASSED AS A PROPS
-  const handelOnSubmit = async (e: BaseSyntheticEvent) => {
+  const handleOnSubmit = async (e: BaseSyntheticEvent) => {
     //PREVENT SUBBMITING THE FORM BY 'ENTER' WITHOUT DATA IN THE FIELDS
     if (!isDirty && isEdit) {
       e.preventDefault();
@@ -137,40 +150,101 @@ function FormGenerator({
         console.error("Error in the submitted form. Error: " + err)
       );
   };
+
+  // const onSubmitHand = async (data: ValidationSchema) => {
+  //   // Add proper typing
+  //   try {
+  //     console.log("Form submission data:", data);
+  //     console.log("Stringified version:", JSON.stringify(data, null, 2));
+
+  //     // You can also see the diff between default and current values
+  //     console.log("Changed fields:", dirtyFields);
+
+  //     await onSubmit(data); // Don't forget to call your original onSubmit
+  //   } catch (err) {
+  //     console.error("Submission error:", err);
+  //   }
+  // };
+
+  // const onErr = (err) => {
+  //   console.log(err);
+  // };
+
   return (
     <form
       id={formId}
       className={
         isCompactForm ? "flex flex-col" : "flex flex-col w-full h-full"
       }
-      onSubmit={handelOnSubmit}
+      onSubmit={handleOnSubmit}
     >
-      {Object.entries(formFields).map(([key, field]) => (
-        <div key={key} className="flex gap-4 mb-3">
-          <label className="w-60 font-bold " htmlFor={field.id}>
-            {field.labelName}:
-          </label>
-          <div className="w-full">
-            <FormElement
-              type={field.type}
-              id={field.id}
-              options={"options" in field ? field.options : undefined}
-              placeholder={
-                "placeholder" in field ? field.placeholder : undefined
-              }
-              disabled={!isEdit}
-              {...register(field.name as keyof FormElementType)}
-              className="border h-8 w-full"
-            />
+      {/* RENDER INPUT ELEMENT EXCEPT OF CONDITIONAL ELEMENTS */}
+      {Object.entries(formFields).map(([key, field]) => {
+        // as conditionalFields is array - narrow type to avoid arrays
+        if (Array.isArray(field)) return null;
+        return (
+          <div key={key} className="flex gap-4 mb-3">
+            <label className="w-60 font-bold " htmlFor={field.id}>
+              {field.labelName}:
+            </label>
+            <div className="w-full">
+              <FormElement
+                type={field.type}
+                id={field.id}
+                options={"options" in field ? field.options : undefined}
+                placeholder={
+                  "placeholder" in field ? field.placeholder : undefined
+                }
+                disabled={!isEdit}
+                {...register(field.name as keyof FormElementType)}
+                className="border h-8 w-full"
+              />
 
-            {errors[field.name]?.message && (
-              <p className="text-sm text-red-500">
-                {errors[field.name]?.message as string}
-              </p>
-            )}
+              {errors[field.name]?.message && (
+                <p className="text-sm text-red-500">
+                  {errors[field.name]?.message as string}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
+
+      {/* RENDER CONDITIONAL INPUT ELEMENTS */}
+      {formFields.conditionalFields?.map((condition) => {
+        const fieldValue = watch(condition.when.field);
+
+        if (fieldValue === condition.when.value) {
+          return Object.entries(condition.fields).map(([key, field]) => {
+            return (
+              <div key={key} className="flex gap-4 mb-3">
+                <label className="w-60 font-bold " htmlFor={field.id}>
+                  {field.labelName}:
+                </label>
+                <div className="w-full">
+                  <FormElement
+                    type={field.type}
+                    id={field.id}
+                    options={"options" in field ? field.options : undefined}
+                    placeholder={
+                      "placeholder" in field ? field.placeholder : undefined
+                    }
+                    disabled={!isEdit}
+                    {...register(field.name as keyof FormElementType)}
+                    className="border h-8 w-full"
+                  />
+
+                  {errors[field.name]?.message && (
+                    <p className="text-sm text-red-500">
+                      {errors[field.name]?.message as string}
+                    </p>
+                  )}
+                </div>
+              </div>
+            );
+          });
+        }
+      })}
     </form>
   );
 }

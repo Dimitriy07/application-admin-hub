@@ -87,8 +87,9 @@ export default function createZodSchema(
 
       const shape: Record<string, z.ZodTypeAny> = {};
 
-      for (const [fieldKey, field] of Object.entries(section)) {
-        shape[fieldKey] = z.string().min(1, `${field.labelName} is required`);
+      for (const [key, field] of Object.entries(section)) {
+        if (!Array.isArray(field))
+          shape[key] = z.string().min(1, `${field.labelName} is required`);
       }
 
       return z.object(shape);

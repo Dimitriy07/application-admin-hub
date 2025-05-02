@@ -16,6 +16,36 @@ export const appResourceFields = {
           { value: "user", content: "User" },
         ],
       },
+      conditionalFields: [
+        {
+          when: { field: "role", value: "user" },
+          fields: {
+            dob: {
+              type: "text",
+              id: "dob",
+              name: "dob",
+              labelName: "Date of Birth",
+            },
+            drivingLicence: {
+              type: "text",
+              id: "drivingLicence",
+              name: "drivingLicence",
+              labelName: "Driving Licence",
+            },
+          },
+        },
+        {
+          when: { field: "role", value: "admin" },
+          fields: {
+            dob: {
+              type: "text",
+              id: "dob",
+              name: "dob",
+              labelName: "Date of Birth",
+            },
+          },
+        },
+      ],
     },
     // !! fix right field data when it known
     drivers: {

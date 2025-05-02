@@ -3,7 +3,7 @@ import { appResourceFields } from "@/app/_config/appDataConfigs";
 import CardWrapper from "./CardWrapper";
 import FormGenerator from "./FormGenerator";
 import EditButtonsBar from "./EditButtonsBar";
-import { FormElementType } from "@/app/_types/types";
+import { FormConfigWithConditions, FormElementType } from "@/app/_types/types";
 import { updateItem } from "@/app/_services/actions";
 import DeleteModal from "./DeleteModal";
 
@@ -51,7 +51,7 @@ async function ResourceItem({
   // HANDLE FORM SUBMITION TO UPDATE DATA
   async function handleForm(formData: Partial<FormElementType>) {
     "use server";
-
+    console.log("iamin");
     try {
       await updateItem(formData, collectionName, resourceId);
     } catch (err) {
@@ -69,7 +69,7 @@ async function ResourceItem({
           <CardWrapper.CardContent>
             <FormGenerator
               key={JSON.stringify(clientResourceItems)}
-              formFields={collectionFields}
+              formFields={collectionFields as FormConfigWithConditions}
               onSubmit={handleForm}
               defaultValues={clientResourceItems}
               isCompactForm={false}

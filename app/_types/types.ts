@@ -102,6 +102,11 @@ export interface VerificationToken extends WithId<Document> {
 
 //FORM ELEMENTS
 
+export type ConditionalFieldConfig = {
+  when: { field: string; value: string };
+  fields: Record<string, FormElementType>;
+};
+
 export type FormElementType = {
   type: "text" | "email" | "password" | "select" | "number";
   id: string;
@@ -114,7 +119,10 @@ export type FormElementType = {
 };
 
 export type FormConfig = Record<string, FormElementType>;
-// export type FormConfig = FormElementType[];
+
+export type FormConfigWithConditions = FormConfig & {
+  conditionalFields?: ConditionalFieldConfig[];
+};
 
 // export interface RegisterForm {
 //   name: string;

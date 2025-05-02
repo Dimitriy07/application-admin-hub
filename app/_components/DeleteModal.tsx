@@ -8,11 +8,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 export default function DeleteModal({
   id,
   collectionName,
-  isResource,
+  isResource = true,
 }: {
   id: string;
   collectionName: string;
-  isResource: boolean;
+  isResource?: boolean;
 }) {
   const path = usePathname();
   const router = useRouter();
