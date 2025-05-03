@@ -26,7 +26,9 @@ export default function ToolboxBar({ children }: PropsWithChildren) {
   // as superadmin can manipulate with all levels of data return the component
   if (role === "superadmin" && pageAccess !== DB_COLLECTION_LEVEL1) {
     return (
-      <div className="h-10 flex justify-between items-center">{children}</div>
+      <div className="h-10 flex justify-between items-center border">
+        {children}
+      </div>
     );
   }
   // admin can manipulate with data in entities only
@@ -36,7 +38,9 @@ export default function ToolboxBar({ children }: PropsWithChildren) {
     pageAccess !== DB_COLLECTION_LEVEL2
   ) {
     return (
-      <div className="h-10 flex justify-between items-center">{children}</div>
+      <div className="h-10 flex justify-between items-center border">
+        {children}
+      </div>
     );
   }
   //user can't manipulate with data

@@ -32,7 +32,7 @@ Readonly<{
           activeClass="text-coral-800 pointer-events-none cursor-default"
           containerClass="flex text-ocean-800"
         />
-        <main className="bg-ocean-100 h-screen flex-1">{children}</main>
+        <main className="bg-ocean-0 h-screen flex-1">{children}</main>
         <ToolboxBar>
           <ToolboxButtons />
         </ToolboxBar>

@@ -55,7 +55,7 @@ async function SettingsWindow({
     }
   }
   return (
-    <div className="w-1/2 bg-ocean-0 h-full border border-ocean-800">
+    <div className="w-1/2 bg-ocean-0 h-full border shadow-xl rounded-md">
       <CardWrapper>
         <div className="flex flex-col justify-between h-full">
           <div>

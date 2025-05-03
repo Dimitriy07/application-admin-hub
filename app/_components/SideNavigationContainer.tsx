@@ -5,7 +5,7 @@ async function SideNavigationContainer() {
   const resources = await getResourcesNames();
 
   return (
-    <nav className="border-r border-ocean-300 h-full bg-ocean-0 border-t border-b">
+    <nav className="border rounded-md shadow-md h-full ">
       <SideNavigationList resources={resources} />
     </nav>
   );

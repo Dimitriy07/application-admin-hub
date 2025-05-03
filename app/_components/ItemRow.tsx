@@ -40,7 +40,7 @@ export default function ItemRow({
     href = `${pathname}/?resourceType=${collectionName}&resourceId=${item.id}`;
 
   return (
-    <li className="flex border border-ocean-600 hover:-translate-y-[1px] justify-between items-center">
+    <li className="flex border rounded-md hover:-translate-y-[1px] hover:shadow-md justify-between items-center px-2">
       <Link href={href} className="w-full">
         <div className="flex items-center">
           {item.icon && (
@@ -57,7 +57,7 @@ export default function ItemRow({
       </Link>
       {!collectionName && (
         <button
-          className="m-1 border border-ocean-800 w-6 flex justify-center items-center h-6 hover:bg-coral-500 hover:text-coral-0"
+          className="m-1 border rounded-sm w-6 flex justify-center items-center h-6 hover:bg-coral-500 hover:text-coral-0"
           onClick={() => {
             const toggledValue = !displaySettings;
             if (
