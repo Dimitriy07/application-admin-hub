@@ -31,6 +31,7 @@ export interface ItemRowProps {
   // urlPath - part of url which has to be added to the url
   urlPath?: string;
   collectionName?: string;
+  hasSettings: boolean;
 }
 
 // RESOURCE DATA TYPE

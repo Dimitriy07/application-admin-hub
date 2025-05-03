@@ -4,6 +4,7 @@ import { ItemContainerProps } from "@/app/_types/types";
 import ResourceItem from "./ResourceItem";
 import DataDisplayContainer from "./DataDisplayContainer";
 import SettingsWindow from "./SettingsWindow";
+import { appSettingsFields } from "@/app/_config/appSettingsConfigs";
 
 export default async function ItemsContainer({
   items,
@@ -17,12 +18,24 @@ export default async function ItemsContainer({
   currentCollection,
   query,
 }: ItemContainerProps) {
+  type AppId = keyof typeof appSettingsFields;
+
   let filteredItems;
   if (!query) filteredItems = items;
   else {
     filteredItems = items.filter((item) =>
       item.name?.toLowerCase().includes(query)
     );
+  }
+
+  let hasSettings = false;
+  if (appId && currentCollection) {
+    if (
+      appSettingsFields[appId as AppId] &&
+      currentCollection in appSettingsFields[appId as AppId]
+    ) {
+      hasSettings = true;
+    }
   }
   return (
     <div className="flex w-full h-full">
@@ -38,6 +51,7 @@ export default async function ItemsContainer({
               urlPath={urlPath}
               key={item.id}
               collectionName={collectionName}
+              hasSettings={hasSettings}
             />
           ))}
         </ul>

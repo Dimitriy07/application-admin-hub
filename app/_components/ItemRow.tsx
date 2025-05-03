@@ -12,6 +12,7 @@ export default function ItemRow({
   item,
   urlPath,
   collectionName,
+  hasSettings,
 }: ItemRowProps) {
   const [displaySettings, setDisplaySettings] = useState(false);
   const pathname = usePathname();
@@ -55,7 +56,7 @@ export default function ItemRow({
           <span>{item.name}</span>
         </div>
       </Link>
-      {!collectionName && (
+      {!collectionName && hasSettings && (
         <button
           className="m-1 border rounded-sm w-6 flex justify-center items-center h-6 hover:bg-coral-500 hover:text-coral-0"
           onClick={() => {
