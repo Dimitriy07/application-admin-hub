@@ -5,10 +5,10 @@ import { FormElementType, FormConfigWithConditions } from "@/app/_types/types";
 import { z, ZodType } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BaseSyntheticEvent, useEffect, useMemo } from "react";
-import FormElement from "./FormElement";
 import createZodSchema from "@/app/_lib/validationSchema";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import FormRow from "./FormRow";
 
 interface FormGeneratorProps {
   formFields: FormConfigWithConditions;
@@ -43,23 +43,25 @@ function FormGenerator({
   //CREATE SCHEMA TYPE FOR USEFORM
   type ValidationSchema = z.infer<typeof schema>;
 
-  const completedDefaults = useMemo<Record<string, any>>(() => {
-    return {};
-  }, []);
-
-  Object.keys(formFields).forEach((key) => {
-    if (key !== "conditionalFields") {
-      completedDefaults[key] = defaultValues?.[key] ?? "";
-    }
-  });
-
-  formFields.conditionalFields?.forEach((condition) => {
-    Object.keys(condition.fields).forEach((key) => {
-      if (!(key in completedDefaults)) {
-        completedDefaults[key] = defaultValues?.[key] ?? "";
+  const completedDefaults = useMemo(() => {
+    const defaults: Record<string, any> = {};
+    //FILL IN FIELDS WITH DEFAULT DATA AND EMPTY DATA IF THERE IS NO DATA IN THE FIELD
+    Object.keys(formFields).forEach((key) => {
+      if (key !== "conditionalFields") {
+        defaults[key] = defaultValues?.[key] ?? "";
       }
     });
-  });
+    //FILL IN CONDITIONAL FIELDS WITH DEFAULT DATA AND EMPTY DATA IF THERE IS NO DATA IN THE FIELD
+    formFields.conditionalFields?.forEach((condition) => {
+      Object.keys(condition.fields).forEach((key) => {
+        if (!(key in defaults)) {
+          defaults[key] = defaultValues?.[key] ?? "";
+        }
+      });
+    });
+
+    return defaults;
+  }, [defaultValues, formFields]);
 
   const {
     register,
@@ -73,10 +75,16 @@ function FormGenerator({
     defaultValues: completedDefaults,
   });
 
+  const params = useMemo(
+    function () {
+      return new URLSearchParams(searchParams.toString());
+    },
+    [searchParams]
+  );
   // CLEAR EDIT PARAMS WHEN THE PAGE IS REFRESHED
   useEffect(function () {
-    if (isEdit) {
-      const params = new URLSearchParams(searchParams.toString());
+    if (isEdit && searchParams.get("edit") === "true") {
+      // const params = new URLSearchParams(searchParams.toString());
       params.delete("edit");
       router.replace(`${pathname}?${params.toString()}`);
     }
@@ -88,21 +96,21 @@ function FormGenerator({
     function () {
       if (isSubmitSuccessful) {
         if (isEdit) {
-          const params = new URLSearchParams(searchParams.toString());
+          // const params = new URLSearchParams(searchParams.toString());
           params.delete("edit");
           router.refresh();
           router.replace(`${pathname}?${params.toString()}`);
         } else reset();
       }
     },
-    [isSubmitSuccessful, reset, router, isEdit, pathname, searchParams]
+    [isSubmitSuccessful, reset, router, isEdit, pathname, searchParams, params]
   );
 
   //TO MONITOR IF FORM DATA IS CHANGED SO IT CAN BE SAVED
   useEffect(
     function () {
       //IF FIELDS ARE DIRTY - ADD ISDIRTY PARAMS TO MONITOR FOR SAVE BUTTON
-      const params = new URLSearchParams(searchParams.toString());
+      // const params = new URLSearchParams(searchParams.toString());
       if (isDirty && searchParams.get("isDirty") !== "true") {
         params.set("isDirty", "true");
         router.push(`${pathname}?${params.toString()}`);
@@ -112,7 +120,7 @@ function FormGenerator({
         router.replace(`${pathname}?${params.toString()}`);
       }
     },
-    [isDirty, pathname, router, searchParams]
+    [isDirty, pathname, router, searchParams, params]
   );
 
   //RESET TO DEFAULT VALUE WHEN PRESS CANCEL (FIELDS ARE DIRTY AND NO EDIT)
@@ -151,24 +159,11 @@ function FormGenerator({
       );
   };
 
-  // const onSubmitHand = async (data: ValidationSchema) => {
-  //   // Add proper typing
-  //   try {
-  //     console.log("Form submission data:", data);
-  //     console.log("Stringified version:", JSON.stringify(data, null, 2));
-
-  //     // You can also see the diff between default and current values
-  //     console.log("Changed fields:", dirtyFields);
-
-  //     await onSubmit(data); // Don't forget to call your original onSubmit
-  //   } catch (err) {
-  //     console.error("Submission error:", err);
-  //   }
-  // };
-
-  // const onErr = (err) => {
-  //   console.log(err);
-  // };
+  // // GET CONDITIONAL FIELDS VALUE TO VALIDATE FORM CORRECTLY
+  // formFields?.conditionalFields?.forEach((condition) => {
+  //   const conditionQuery = watch(condition.when.field);
+  //   if (conditionQuery) params.set("conditionValidation", conditionQuery);
+  // });
 
   return (
     <form
@@ -183,30 +178,13 @@ function FormGenerator({
         // as conditionalFields is array - narrow type to avoid arrays
         if (Array.isArray(field)) return null;
         return (
-          <div key={key} className="flex gap-4 mb-3">
-            <label className="w-60 font-bold " htmlFor={field.id}>
-              {field.labelName}:
-            </label>
-            <div className="w-full">
-              <FormElement
-                type={field.type}
-                id={field.id}
-                options={"options" in field ? field.options : undefined}
-                placeholder={
-                  "placeholder" in field ? field.placeholder : undefined
-                }
-                disabled={!isEdit}
-                {...register(field.name as keyof FormElementType)}
-                className="border h-8 w-full"
-              />
-
-              {errors[field.name]?.message && (
-                <p className="text-sm text-red-500">
-                  {errors[field.name]?.message as string}
-                </p>
-              )}
-            </div>
-          </div>
+          <FormRow
+            key={key}
+            field={field}
+            isEdit={isEdit}
+            register={register}
+            errors={errors}
+          />
         );
       })}
 
@@ -217,30 +195,13 @@ function FormGenerator({
         if (fieldValue === condition.when.value) {
           return Object.entries(condition.fields).map(([key, field]) => {
             return (
-              <div key={key} className="flex gap-4 mb-3">
-                <label className="w-60 font-bold " htmlFor={field.id}>
-                  {field.labelName}:
-                </label>
-                <div className="w-full">
-                  <FormElement
-                    type={field.type}
-                    id={field.id}
-                    options={"options" in field ? field.options : undefined}
-                    placeholder={
-                      "placeholder" in field ? field.placeholder : undefined
-                    }
-                    disabled={!isEdit}
-                    {...register(field.name as keyof FormElementType)}
-                    className="border h-8 w-full"
-                  />
-
-                  {errors[field.name]?.message && (
-                    <p className="text-sm text-red-500">
-                      {errors[field.name]?.message as string}
-                    </p>
-                  )}
-                </div>
-              </div>
+              <FormRow
+                key={key}
+                field={field}
+                isEdit={isEdit}
+                register={register}
+                errors={errors}
+              />
             );
           });
         }

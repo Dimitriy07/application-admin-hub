@@ -1,6 +1,15 @@
-import { FormConfig } from "../_types/types";
-
-export const registrationFormFields: FormConfig = {
+export const registrationFormFields = {
+  role: {
+    type: "select",
+    id: "role",
+    name: "role",
+    labelName: "Choose User Role",
+    options: [
+      { value: "", content: "Select Role" },
+      { value: "admin", content: "Admin" },
+      { value: "user", content: "User" },
+    ],
+  },
   name: {
     type: "text",
     id: "name",
@@ -15,60 +24,50 @@ export const registrationFormFields: FormConfig = {
     labelName: "Email",
     placeholder: "Email",
   },
-  password: {
-    type: "password",
-    id: "password",
-    name: "password",
-    labelName: "Password",
-    placeholder: "Password",
-  },
-  confirm: {
-    type: "password",
-    id: "confirm",
-    name: "confirm",
-    labelName: "Confirm Password",
-    placeholder: "Confirm Password",
-  },
-  role: {
-    type: "select",
-    id: "role",
-    name: "role",
-    labelName: "Choose User Role",
-    options: [
-      { value: "", content: "Select Role" },
-      { value: "admin", content: "Admin" },
-      { value: "user", content: "User" },
-    ],
-  },
+
+  conditionalFields: [
+    {
+      when: { field: "role", value: "user" },
+      fields: {
+        dob: {
+          type: "text",
+          id: "dob",
+          name: "dob",
+          labelName: "Date of Birth",
+          placeholder: "Date of Birth",
+        },
+        drivingLicence: {
+          type: "text",
+          id: "drivingLicence",
+          name: "drivingLicence",
+          labelName: "Driving Licence",
+          placeholder: "Driving Licence",
+        },
+      },
+    },
+    {
+      when: { field: "role", value: "admin" },
+      fields: {
+        password: {
+          type: "password",
+          id: "password",
+          name: "password",
+          labelName: "Password",
+          placeholder: "Password",
+        },
+        confirm: {
+          type: "password",
+          id: "confirm",
+          name: "confirm",
+          labelName: "Confirm Password",
+          placeholder: "Confirm Password",
+        },
+      },
+    },
+  ],
 };
 
-// //TO LOGIN USER
-// export const loginFormFields: FormConfig = [
-//   {
-//     type: "label",
-//     content: "Email:",
-//     for: "email",
-//   },
-//   {
-//     type: "email",
-//     placeholder: "Email",
-//     id: "email",
-//     name: "email",
-//   },
-//   {
-//     type: "label",
-//     content: "Password:",
-//     for: "password",
-//   },
-//   {
-//     type: "text",
-//     placeholder: "Password",
-//     id: "password",
-//     name: "password",
-//   },
-// ];
-
-export const generalFormFields: FormConfig = {
+export const generalFormFields = {
   name: {
     type: "text",
     placeholder: "Item Name",

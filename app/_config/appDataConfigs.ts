@@ -3,8 +3,6 @@ import { APP_CONFIG_ID1 } from "@/app/_constants/mongodb-config";
 export const appResourceFields = {
   [APP_CONFIG_ID1]: {
     users: {
-      name: { type: "text", id: "name", name: "name", labelName: "Name" },
-      email: { type: "text", id: "email", name: "email", labelName: "Email" },
       role: {
         type: "select",
         name: "role",
@@ -16,6 +14,9 @@ export const appResourceFields = {
           { value: "user", content: "User" },
         ],
       },
+      name: { type: "text", id: "name", name: "name", labelName: "Name" },
+      email: { type: "text", id: "email", name: "email", labelName: "Email" },
+
       conditionalFields: [
         {
           when: { field: "role", value: "user" },

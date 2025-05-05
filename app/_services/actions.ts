@@ -115,33 +115,50 @@ export async function register(
   if (!("error" in existingUser))
     return { error: "User with this email already exists." };
   const { password } = userFormData;
-  try {
-    const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(password, salt);
-    const newUserObj = {
-      entityId: new ObjectId(userFormData.refToIdCollection2),
-      accountId: new ObjectId(userFormData.refToIdCollection3),
-      name: userFormData.name,
-      email: userFormData.email,
-      password: hashPassword,
-      role: userFormData.role,
-    };
-    await createResourceItem(collectionName, newUserObj);
-    const verificationTokenId = await generateVerificationToken(
-      userFormData.email
-    );
-    const verificationToken = await getVerificationTokenByTokenId(
-      verificationTokenId.insertedId.toString()
-    );
-    await sendVerificationEmail(
-      verificationToken.email,
-      verificationToken.token
-    );
-    return { message: "Verification email was sent" };
-  } catch (err) {
-    return {
-      error: "Something went wrong during Registration Process: " + err,
-    };
+  if (password) {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const hashPassword = await bcrypt.hash(password, salt);
+      const newUserObj = {
+        entityId: new ObjectId(userFormData.refToIdCollection2),
+        accountId: new ObjectId(userFormData.refToIdCollection3),
+        ...userFormData,
+        password: hashPassword,
+        role: userFormData.role,
+      };
+      await createResourceItem(collectionName, newUserObj);
+      const verificationTokenId = await generateVerificationToken(
+        userFormData.email
+      );
+      const verificationToken = await getVerificationTokenByTokenId(
+        verificationTokenId.insertedId.toString()
+      );
+      await sendVerificationEmail(
+        verificationToken.email,
+        verificationToken.token
+      );
+      return { success: true, message: "Verification email was sent" };
+    } catch (err) {
+      return {
+        error: err,
+        message: "Something went wrong during Registration Process",
+      };
+    }
+  } else {
+    try {
+      const newUserObj = {
+        entityId: new ObjectId(userFormData.refToIdCollection2),
+        accountId: new ObjectId(userFormData.refToIdCollection3),
+        ...userFormData,
+      };
+      await createResourceItem(collectionName, newUserObj);
+      return { success: true, message: "User is added" };
+    } catch (err) {
+      return {
+        error: err,
+        message: "Something went wrong during Registration Process",
+      };
+    }
   }
 }
 
@@ -161,7 +178,7 @@ export async function addItem(
     else await createManagementItem(collectionName, newItemObj);
     return { success: true, message: "Item added to database!" };
   } catch (err) {
-    return { error: "Item hasn't been added to database: " + err };
+    throw new Error("Item hasn't been added to database: " + err);
   }
 }
 

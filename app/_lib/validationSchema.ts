@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { z, ZodSchema } from "zod";
-import { FormConfig, UserRole } from "@/app/_types/types";
+import { FormConfigWithConditions, UserRole } from "@/app/_types/types";
 import {
   ACCOUNT_SETTINGS_SCHEMA,
   ADD_ITEM_SCHEMA,
@@ -8,25 +8,52 @@ import {
   USER_REGISTRATION_SCHEMA,
 } from "@/app/_constants/schema-names";
 
+// const userRegistrationSchema = z
+//   .object({
+//     email: z.string().email(),
+//     name: z
+//       .string()
+//       .min(1, { message: "The name must contain minimum 1 character" })
+//       .max(40, { message: "The name must contain maximum 40 characters" }),
+//     password: z
+//       .string()
+//       .min(6, { message: "The password must contain minimum 6 character" })
+//       .max(40, { message: "The password must contain maximum 40 characters" }),
+//     confirm: z.string().min(6).max(40),
+//     role: z.nativeEnum(UserRole, {
+//       message: "Please select one of the user roles",
+//     }),
+//   })
+//   .refine((data) => data.password === data.confirm, {
+//     message: "Passwords don't match!",
+//     path: ["confirm"],
+//   });
+
 const userRegistrationSchema = z
-  .object({
-    email: z.string().email(),
-    name: z
-      .string()
-      .min(1, { message: "The name must contain minimum 1 character" })
-      .max(40, { message: "The name must contain maximum 40 characters" }),
-    password: z
-      .string()
-      .min(6, { message: "The password must contain minimum 6 character" })
-      .max(40, { message: "The password must contain maximum 40 characters" }),
-    confirm: z.string().min(6).max(40),
-    role: z.nativeEnum(UserRole, {
-      message: "Please select one of the user roles",
+  .discriminatedUnion("role", [
+    z.object({
+      role: z.literal("admin"),
+      name: z.string().min(1),
+      email: z.string().email(),
+      password: z.string().min(6),
+      confirm: z.string().min(6),
     }),
-  })
-  .refine((data) => data.password === data.confirm, {
-    message: "Passwords don't match!",
-    path: ["confirm"],
+    z.object({
+      role: z.literal("user"),
+      name: z.string().min(1),
+      email: z.string().email(),
+      dob: z.string().min(1, "Date of Birth is required"),
+      drivingLicence: z.string().min(1, "Driving Licence is required"),
+    }),
+  ])
+  .superRefine((data, ctx) => {
+    if (data.role === "admin" && data.password !== data.confirm) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Passwords don't match",
+        path: ["confirm"],
+      });
+    }
   });
 
 const userLoginSchema = z
@@ -63,13 +90,13 @@ export function createZodSchema<T extends SchemaName>(
 ): SchemaMap[T];
 export function createZodSchema(
   zodSchemaName: string | undefined,
-  section: FormConfig
+  section: FormConfigWithConditions
 ): ZodSchema;
 
 // FOR FORMGENERATOR CONDITIONALLY CHECK WHAT ZOD FORM USED AND IF THERE IS NO FORM IT HAS TO USE DEFAULT DYNAMIC FORM
 export default function createZodSchema(
   zodSchemaName: string | undefined,
-  section?: FormConfig
+  section?: FormConfigWithConditions
 ): ZodSchema {
   switch (zodSchemaName) {
     case USER_REGISTRATION_SCHEMA:
