@@ -23,6 +23,8 @@ export default function ItemRow({
     [searchParams]
   );
 
+  const isUser = searchParams.get("resourceType");
+
   useEffect(
     function () {
       if (params.get("settings") === "false" && params.get("managementId")) {
@@ -43,7 +45,7 @@ export default function ItemRow({
   return (
     <li className="flex border rounded-md hover:-translate-y-[1px] hover:shadow-md justify-between items-center px-2">
       <Link href={href} className="w-full">
-        <div className="flex items-center">
+        <div className={`flex items-center ${isUser && "justify-between"}`}>
           {item.icon && (
             <Image
               src={item.icon}
@@ -53,7 +55,17 @@ export default function ItemRow({
               aria-label={`Icon for ${item.name}`}
             />
           )}
+
           <span>{item.name}</span>
+          {isUser && (
+            <p
+              className={`${
+                item.role === "admin" ? "bg-plum-800" : "bg-rosewood-800"
+              } px-1 mx-2 rounded-lg text-ocean-0 self-center`}
+            >
+              {item.role}
+            </p>
+          )}
         </div>
       </Link>
       {!collectionName && hasSettings && (

@@ -10,6 +10,7 @@ export interface Item {
   name: string;
   password?: string;
   settings?: Settings;
+  role?: string;
 }
 
 export interface ItemContainerProps {
