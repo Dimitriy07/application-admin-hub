@@ -24,13 +24,16 @@ export async function getApplications() {
 }
 
 // Get all entities by applicationId
-export async function getEntities(applicationId: string) {
+export async function getEntities(
+  applicationId: string,
+  entityId: string | null = null
+) {
   const getData = fetchManagementDB(
     DB_MANAGEMENT_NAME,
     DB_COLLECTION_LEVEL2,
     DB_REFERENCE_TO_COL1
   );
-  return await getData(applicationId);
+  return await getData(applicationId, entityId);
 }
 
 // Get all accounts by entityId

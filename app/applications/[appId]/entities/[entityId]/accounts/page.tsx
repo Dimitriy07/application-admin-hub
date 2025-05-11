@@ -1,4 +1,5 @@
 import ItemsContainer from "@/app/_components/ItemsContainer";
+import ProtectedComponent from "@/app/_components/ProtectedComponent";
 import {
   DB_COLLECTION_LEVEL3,
   DB_COLLECTION_LEVEL4,
@@ -21,15 +22,17 @@ export default async function Page({
   const accounts = await getAccounts(entityId);
   const { settings, managementId, edit, query } = await searchParams;
   return (
-    <ItemsContainer
-      items={accounts}
-      urlPath={DB_COLLECTION_LEVEL4}
-      isSettings={settings}
-      managementId={managementId}
-      currentCollection={DB_COLLECTION_LEVEL3}
-      appId={appId}
-      isEdit={edit}
-      query={query}
-    />
+    <ProtectedComponent appId={appId} entityId={entityId}>
+      <ItemsContainer
+        items={accounts}
+        urlPath={DB_COLLECTION_LEVEL4}
+        isSettings={settings}
+        managementId={managementId}
+        currentCollection={DB_COLLECTION_LEVEL3}
+        appId={appId}
+        isEdit={edit}
+        query={query}
+      />
+    </ProtectedComponent>
   );
 }

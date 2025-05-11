@@ -1,4 +1,5 @@
 import ItemsContainer from "@/app/_components/ItemsContainer";
+import ProtectedComponent from "@/app/_components/ProtectedComponent";
 import ResourcesMessage from "@/app/_components/ResourcesMessage";
 import { getResourcesByCollection } from "@/app/_services/resourcesDataService";
 
@@ -14,7 +15,7 @@ export default async function ResourcePage({
   }>;
   params: Promise<{ accountId: string; entityId: string; appId: string }>;
 }) {
-  const { accountId, appId } = await params;
+  const { accountId, appId, entityId } = await params;
   const resolvedSearchParams = await searchParams;
   const collectionName = resolvedSearchParams.resourceType;
   const query = resolvedSearchParams.query;
@@ -41,14 +42,16 @@ export default async function ResourcePage({
 
   return (
     <>
-      <ItemsContainer
-        items={resourcesArr}
-        resourceId={resourceId}
-        collectionName={collectionName}
-        appId={appId}
-        isEdit={isEdit}
-        query={query}
-      />
+      <ProtectedComponent appId={appId} entityId={entityId}>
+        <ItemsContainer
+          items={resourcesArr}
+          resourceId={resourceId}
+          collectionName={collectionName}
+          appId={appId}
+          isEdit={isEdit}
+          query={query}
+        />
+      </ProtectedComponent>
     </>
   );
 }

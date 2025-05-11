@@ -75,6 +75,8 @@ export type UserSession = {
   role: UserRole; //  "admin" | "superadmin" | "user";
   emailVerified: string;
   name?: string;
+  entityId?: string | null;
+  appId?: string;
 };
 
 export type UserRegistration = {

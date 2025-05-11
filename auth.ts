@@ -10,7 +10,8 @@ import type { Adapter } from "next-auth/adapters";
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     signIn: "/auth/login",
-    error: "/error",
+    //check if /auth/error or /error
+    error: "/auth/error",
   },
   adapter: MongoDBAdapter(clientPromise) as Adapter,
   ...authConfig,
@@ -32,6 +33,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token.name && session.user) {
         session.user.name = token.name;
       }
+      if (token.entityId && session.user) {
+        session.user.entityId = token.entityId;
+      }
+      if (token.appId && session.user) {
+        session.user.appId = token.appId;
+      }
       // console.log("IN SESSION TOKEN " + util.inspect(session));
       return session;
     },
@@ -42,6 +49,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (!existingUser) return token;
       token.role = existingUser.role;
       token.name = existingUser.name;
+      token.entityId = existingUser.entityId;
+      token.appId = existingUser.appId;
       return token;
     },
   },

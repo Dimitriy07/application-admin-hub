@@ -26,7 +26,7 @@ export function fetchResourcesDB(
 
       if (!filterDataId) throw new Error("No reference to Account provided");
       const data = await collection
-        .find({ [filterDataId]: objectId })
+        .find({ [filterDataId]: objectId, role: { $ne: "superadmin" } })
         .toArray();
 
       // Map the documents to the `DynamicResourceItem` type

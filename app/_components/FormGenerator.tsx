@@ -159,12 +159,6 @@ function FormGenerator({
       );
   };
 
-  // // GET CONDITIONAL FIELDS VALUE TO VALIDATE FORM CORRECTLY
-  // formFields?.conditionalFields?.forEach((condition) => {
-  //   const conditionQuery = watch(condition.when.field);
-  //   if (conditionQuery) params.set("conditionValidation", conditionQuery);
-  // });
-
   return (
     <form
       id={formId}

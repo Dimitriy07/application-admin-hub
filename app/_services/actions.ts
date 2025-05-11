@@ -28,6 +28,7 @@ import {
   updateManagementItem,
 } from "./managementDataService";
 import { redirect } from "next/navigation";
+import { DEFAULT_LOGIN_REDIRECT } from "@/app/routes";
 
 /////////LOGIN SERVER ACTION//////////
 
@@ -58,7 +59,11 @@ export async function login(email: string, password: string) {
     return { success: "Confirmation email sent!" };
   }
   try {
-    await signIn("credentials", { email, password, redirectTo: "/" });
+    await signIn("credentials", {
+      email,
+      password,
+      redirectTo: DEFAULT_LOGIN_REDIRECT,
+    });
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

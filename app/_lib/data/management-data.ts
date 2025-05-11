@@ -30,27 +30,56 @@ import { flattenObject } from "@/app/_utils/flatten-objects";
 export function fetchManagementDB(
   dbName: string,
   collectionName: string,
-  dataFilterId?: string
-): (id?: string) => Promise<Item[]> {
-  return async function fetchManagementDocs(id?: string): Promise<Item[]> {
-    let objectId;
+  collectionRefName?: string
+): (
+  collectionRefId?: string,
+  filterCurrentCollectionId?: string | null
+) => Promise<Item[]> {
+  return async function fetchManagementDocs(
+    collectionRefId?: string,
+    filterCurrentCollectionId?: string | null
+  ): Promise<Item[]> {
+    let refId;
+    let currentRefId;
     // Validate and convert the input ID to a MongoDB ObjectId
-    if (id) {
-      if (!ObjectId.isValid(id)) {
-        throw new Error(`Invalid ID: ${id}`);
+    if (collectionRefId) {
+      if (!ObjectId.isValid(collectionRefId)) {
+        throw new Error(`Invalid ID: ${collectionRefId}`);
       }
-      objectId = new ObjectId(id);
+      refId = new ObjectId(collectionRefId);
+    }
+    if (filterCurrentCollectionId) {
+      if (!ObjectId.isValid(filterCurrentCollectionId)) {
+        throw new Error(`Invalid filtered ID: ${filterCurrentCollectionId}`);
+      }
+      currentRefId = new ObjectId(filterCurrentCollectionId);
     }
 
     try {
       // Connect to the MongoDB client
       const collection = await dbConnect(dbName, collectionName);
 
-      // Fetch documents based on the presence of `id` and `dataFilterId`
-      const data =
-        id && dataFilterId
-          ? await collection.find({ [dataFilterId]: objectId }).toArray() // Filter by referenced ID
-          : await collection.find({}).toArray(); // Fetch all documents
+      // Fetch documents based on the presence of `id` and `collectionRefId`
+      let data;
+      // Filter by referenced ID
+      if (refId && collectionRefName) {
+        if (currentRefId) {
+          data = await collection
+            .find({
+              [collectionRefName]: refId,
+              _id: currentRefId,
+            })
+            .toArray();
+        } else {
+          data = await collection
+            .find({ [collectionRefName]: refId })
+            .toArray();
+        }
+      }
+      // Fetch all documents
+      else {
+        data = await collection.find({}).toArray();
+      }
 
       // Map the documents to the `Item` type
       const docsArr = data.map((doc) => ({
