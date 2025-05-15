@@ -1,5 +1,6 @@
 import ItemsContainer from "@/app/_components/ItemsContainer";
 import ProtectedComponent from "@/app/_components/ProtectedComponent";
+import ToolboxBar from "@/app/_components/ToolboxBar";
 import {
   DB_COLLECTION_LEVEL2,
   DB_COLLECTION_LEVEL3,
@@ -9,16 +10,21 @@ import { DEFAULT_LOGIN_REDIRECT } from "@/app/routes";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
-export default async function Page({
+export default async function LevelTwoPage({
   params,
   searchParams,
 }: {
   params: Promise<{ appId: string }>;
-  searchParams: Promise<{ query: string }>;
+  searchParams: Promise<{
+    query: string;
+    settings: string;
+    managementId: string;
+    edit: string;
+  }>;
 }) {
   const session = await auth();
   const { appId } = await params;
-  const { query } = await searchParams;
+  const { query, settings, managementId, edit } = await searchParams;
   let entities;
   if (session?.user.role !== "superadmin" && session?.user.appId !== appId) {
     redirect(DEFAULT_LOGIN_REDIRECT);
@@ -34,7 +40,11 @@ export default async function Page({
         query={query}
         appId={appId}
         currentCollection={DB_COLLECTION_LEVEL2}
+        isSettings={settings}
+        managementId={managementId}
+        isEdit={edit}
       />
+      <ToolboxBar />
     </ProtectedComponent>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { newVerification } from "@/app/_services/actions";
 import CardWrapper from "./CardWrapper";
@@ -12,6 +12,7 @@ function NewVerificationForm() {
   const [success, setSuccess] = useState<string | undefined>();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const router = useRouter();
   const onSubmit = useCallback(() => {
     if (success || error) return;
     if (!token) {
@@ -25,19 +26,24 @@ function NewVerificationForm() {
       })
       .catch(() => setError("Something went wrong!"));
   }, [token, success, error]);
+
   useEffect(
     function () {
       onSubmit();
     },
     [onSubmit]
   );
+
+  const onClick = () => {
+    router.replace("/auth/login");
+  };
   return (
     <CardWrapper>
       <CardWrapper.CardLabel>
         Confirming your verification
       </CardWrapper.CardLabel>
       <CardWrapper.CardButtons>
-        <Button href="/auth/login">Back to Login</Button>
+        <Button onClick={onClick}>Back to Login</Button>
       </CardWrapper.CardButtons>
       {!success && !error && <BarLoader />}
       {success && (
@@ -51,11 +57,6 @@ function NewVerificationForm() {
         </CardWrapper.CardPopupMessage>
       )}
     </CardWrapper>
-    // <div>
-    //   <p>{token}</p>
-    //   <p>{success}</p>
-    //   <p>{error}</p>
-    // </div>
   );
 }
 

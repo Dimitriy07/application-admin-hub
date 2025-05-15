@@ -34,8 +34,10 @@ export default function BreadcrumbsNav({
               path === crumbHref || index === MAX_PATH_LENGTH
                 ? `${listClass} ${activeClass}`
                 : listClass;
+            //USE SPLIT("-")[0] FOR RESOURCES-APP LABEL
             const crumbLabel =
-              pathName[0].toUpperCase() + pathName.slice(1, pathName.length);
+              pathName[0].toUpperCase() +
+              pathName.slice(1, pathName.length).split("-")[0];
             return (
               <React.Fragment key={index}>
                 <li className={crumbClass}>

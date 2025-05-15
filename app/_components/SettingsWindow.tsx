@@ -28,7 +28,9 @@ async function SettingsWindow({
     collectionName,
     managementId
   );
+
   if (!resolvedManagementItem || "error" in resolvedManagementItem) return null;
+
   // GET ACCESS TO SETTINGS OBJECT FROM DB DOCUMENT
   const settingsObj = resolvedManagementItem?.settings;
 

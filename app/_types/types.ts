@@ -87,6 +87,7 @@ export type UserRegistration = {
   email: string;
   password: string;
   role: UserRole;
+  confirm: Readonly<string>;
 };
 
 // ITEM TO ADD

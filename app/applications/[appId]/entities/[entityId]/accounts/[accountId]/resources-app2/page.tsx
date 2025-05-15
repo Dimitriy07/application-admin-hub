@@ -3,7 +3,9 @@ import ProtectedComponent from "@/app/_components/ProtectedComponent";
 import ResourcesMessage from "@/app/_components/ResourcesMessage";
 import { getResourcesByCollection } from "@/app/_services/resourcesDataService";
 
-export default async function ResourcePage({
+//TEMPLATE FOR FUTURE PROJECTS
+
+export default async function AppTwoResourcePage({
   searchParams,
   params,
 }: {

@@ -124,10 +124,17 @@ export async function register(
     try {
       const salt = await bcrypt.genSalt(10);
       const hashPassword = await bcrypt.hash(password, salt);
+      const {
+        refToIdCollection2,
+        refToIdCollection3,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        confirm,
+        ...updatedUserObj
+      } = userFormData;
       const newUserObj = {
-        entityId: new ObjectId(userFormData.refToIdCollection2),
-        accountId: new ObjectId(userFormData.refToIdCollection3),
-        ...userFormData,
+        entityId: new ObjectId(refToIdCollection2),
+        accountId: new ObjectId(refToIdCollection3),
+        ...updatedUserObj,
         password: hashPassword,
         role: userFormData.role,
       };

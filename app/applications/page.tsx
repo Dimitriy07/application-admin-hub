@@ -6,7 +6,7 @@ import {
 } from "@/app/_constants/mongodb-config";
 import { getApplications } from "@/app/_services/managementDataService";
 
-export default async function Page({
+export default async function LevelOnePage({
   searchParams,
 }: {
   searchParams: Promise<{ query: string }>;

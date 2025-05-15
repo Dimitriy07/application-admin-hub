@@ -1,18 +1,11 @@
 import {
   APP_CONFIG_ID1,
-  DB_COLLECTION_LEVEL3,
+  DB_COLLECTION_LEVEL2,
 } from "@/app/_constants/mongodb-config";
 
 export const appSettingsFields = {
   [APP_CONFIG_ID1]: {
-    [DB_COLLECTION_LEVEL3]: {
-      maxUsers: {
-        type: "number",
-        id: "maxUsers",
-        name: "maxUsers",
-        labelName: "Maximum Users",
-        min: 1,
-      },
+    [DB_COLLECTION_LEVEL2]: {
       accountType: {
         type: "select",
         name: "accountType",
@@ -23,6 +16,20 @@ export const appSettingsFields = {
           { value: "fleet", content: "Fleet" },
           { value: "personal", content: "Personal account" },
         ],
+      },
+      maxUsers: {
+        type: "number",
+        id: "maxUsers",
+        name: "maxUsers",
+        labelName: "Maximum Users",
+        min: 1,
+      },
+      maxVehicles: {
+        type: "number",
+        id: "maxVehicles",
+        name: "maxVehicles",
+        labelName: "Maximum Vehicles",
+        min: 1,
       },
     },
   },

@@ -31,7 +31,7 @@ import {
   USER_REGISTRATION_SCHEMA,
 } from "@/app/_constants/schema-names";
 
-function ToolboxButtons() {
+function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
   const [success, setSuccess] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
 
@@ -66,7 +66,6 @@ function ToolboxButtons() {
       const result = createZodSchema(USER_REGISTRATION_SCHEMA).safeParse(
         formData
       );
-      console.log(result);
       if (!result.success)
         return setError(`Validation failed: ${result.error}`);
 
@@ -78,7 +77,6 @@ function ToolboxButtons() {
         },
         resourceType!
       );
-      // console.log(regResult.error);
       if (!regResult.success) {
         return setError(regResult.message);
       }
@@ -160,11 +158,13 @@ function ToolboxButtons() {
   return (
     <Suspense>
       <Modal>
-        <Modal.Open opens="add-resource">
-          <Button size="small" variation="primary">
-            {resourceType ? "Add Resource" : "Add Item"}
-          </Button>
-        </Modal.Open>
+        {!disabled && (
+          <Modal.Open opens="add-resource">
+            <Button size="small" variation="primary">
+              {resourceType ? "Add Resource" : "Add Item"}
+            </Button>
+          </Modal.Open>
+        )}
         <Modal.Window name="add-resource">
           <CardWrapper>
             <CardWrapper.CardLabel>

@@ -38,7 +38,7 @@ export default async function ItemsContainer({
     }
   }
   return (
-    <div className="flex w-full h-full">
+    <div className="flex w-full h-[calc(100%-40px)]">
       {!resourceId || !collectionName ? (
         <ul
           className={`flex flex-col transition-all duration-300 ${

@@ -4,11 +4,12 @@ import { useForm } from "react-hook-form";
 import { FormElementType, FormConfigWithConditions } from "@/app/_types/types";
 import { z, ZodType } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BaseSyntheticEvent, useEffect, useMemo } from "react";
+import { BaseSyntheticEvent, useContext, useEffect, useMemo } from "react";
 import createZodSchema from "@/app/_lib/validationSchema";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import FormRow from "./FormRow";
+import { ModalContext } from "./Modal";
 
 interface FormGeneratorProps {
   formFields: FormConfigWithConditions;
@@ -75,6 +76,11 @@ function FormGenerator({
     defaultValues: completedDefaults,
   });
 
+  // USE CONTEXT TO CLOSE FORM AFTER SUBMITTING
+  const context = useContext(ModalContext);
+  let close: () => void;
+  if (context) close = context.close;
+
   const params = useMemo(
     function () {
       return new URLSearchParams(searchParams.toString());
@@ -100,9 +106,11 @@ function FormGenerator({
           params.delete("edit");
           router.refresh();
           router.replace(`${pathname}?${params.toString()}`);
+          if (context) close();
         } else reset();
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isSubmitSuccessful, reset, router, isEdit, pathname, searchParams, params]
   );
 
@@ -143,11 +151,10 @@ function FormGenerator({
     // SUBMITTING THE DIRTY FIELDS ONLY
     else if (isDirty) {
       const changedFields = Object.keys(dirtyFields).reduce((acc, key) => {
-        if (dirtyFields[key]) {
-          acc[key] = getValues(key);
-        }
+        const typedKey = key as keyof ValidationSchema;
+        acc[typedKey as string] = getValues(typedKey as string);
         return acc;
-      }, {} as { [key: string]: any });
+      }, {} as Partial<ValidationSchema>);
       await handleSubmit(() => onSubmit(changedFields))(e).catch((err) =>
         console.error("Error in the submitted form. Error: " + err)
       );
@@ -186,9 +193,8 @@ function FormGenerator({
       {formFields.conditionalFields?.map((condition) => {
         const fieldValue = watch(condition.when.field);
 
-        if (fieldValue === condition.when.value) {
-          return Object.entries(condition.fields).map(([key, field]) => {
-            return (
+        return fieldValue === condition.when.value
+          ? Object.entries(condition.fields).map(([key, field]) => (
               <FormRow
                 key={key}
                 field={field}
@@ -196,9 +202,8 @@ function FormGenerator({
                 register={register}
                 errors={errors}
               />
-            );
-          });
-        }
+            ))
+          : null;
       })}
     </form>
   );
