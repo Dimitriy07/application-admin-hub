@@ -30,33 +30,6 @@ export default auth(async function middleware(
         new URL(DEFAULT_LOGIN_REDIRECT, request.nextUrl)
       );
   }
-
-  const managementUnits = pathname.split("/").filter(Boolean);
-
-  const appName = managementUnits[0];
-  const appId = managementUnits[1];
-  const entityName = managementUnits[2];
-  const entityId = managementUnits[3];
-
-  // const isSuperadmin = session?.user.role === "superadmin";
-  // // console.log(session?.user);
-  // if (appName === "applications" && appId) {
-  //   if (!isSuperadmin && appId !== session?.user.appId) {
-  //     return NextResponse.redirect(
-  //       new URL(DEFAULT_LOGIN_REDIRECT, request.nextUrl)
-  //     );
-  //   }
-  //   return NextResponse.next();
-  // }
-
-  // if (entityName === "applications" && entityId) {
-  //   if (!isSuperadmin && entityId !== session?.user.entityId) {
-  //     return NextResponse.redirect(
-  //       new URL(DEFAULT_LOGIN_REDIRECT, request.nextUrl)
-  //     );
-  //   }
-  //   return NextResponse.next();
-  // }
 });
 
 export const config = {

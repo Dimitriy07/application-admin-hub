@@ -128,11 +128,3 @@ export type FormConfig = Record<string, FormElementType>;
 export type FormConfigWithConditions = FormConfig & {
   conditionalFields?: ConditionalFieldConfig[];
 };
-
-// export interface RegisterForm {
-//   name: string;
-//   email: string;
-//   id: string;
-//   password: string;
-//   userRole: string;
-// }

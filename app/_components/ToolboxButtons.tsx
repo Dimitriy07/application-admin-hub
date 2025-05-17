@@ -17,7 +17,7 @@ import {
   useSearchParams,
 } from "next/navigation";
 import { addItem, register } from "@/app/_services/actions";
-import { isNotId } from "@/app/_utils/pageValidation";
+import { isNotId } from "@/app/_utils/page-validation";
 import { Suspense, useCallback, useMemo, useState } from "react";
 import {
   DB_COLLECTION_LEVEL2,
