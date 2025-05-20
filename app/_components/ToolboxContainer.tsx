@@ -1,7 +1,7 @@
 import ToolboxButtons from "./ToolboxButtons";
 
 function ToolboxContainer({
-  isRestricted = true,
+  isRestricted = false,
   restrictedMessage = "Settings parameters must be configured",
 }: {
   isRestricted?: boolean;

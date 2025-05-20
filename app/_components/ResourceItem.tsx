@@ -3,7 +3,7 @@ import { appResourceFields } from "@/app/_config/appDataConfigs";
 import CardWrapper from "./CardWrapper";
 import FormGenerator from "./FormGenerator";
 import EditButtonsBar from "./EditButtonsBar";
-import { FormConfigWithConditions, FormElementType } from "@/app/_types/types";
+import { FormConfigWithConditions } from "@/app/_types/types";
 import { updateItem } from "@/app/_services/actions";
 import DeleteModal from "./DeleteModal";
 
@@ -49,9 +49,8 @@ async function ResourceItem({
     appFieldsByAppId[collectionName as keyof typeof appFieldsByAppId];
 
   // HANDLE FORM SUBMITION TO UPDATE DATA
-  async function handleForm(formData: Partial<FormElementType>) {
+  async function handleForm(formData: FormConfigWithConditions) {
     "use server";
-    console.log("iamin");
     try {
       await updateItem(formData, collectionName, resourceId);
     } catch (err) {

@@ -194,6 +194,8 @@ export async function addItem(
   }
 }
 
+type WithPassword = { password?: string };
+
 export async function updateItem<T>(
   formData: T,
   collectionName: string,
@@ -204,7 +206,16 @@ export async function updateItem<T>(
     return { error: "Collection od itemId name is not provided" };
   try {
     if (isResource) {
-      await updateResourceItem(collectionName, itemId, formData);
+      let updatedObj = formData;
+      if ((formData as WithPassword).password) {
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(
+          (formData as WithPassword).password!,
+          salt
+        );
+        updatedObj = { ...formData, password: hashPassword };
+      }
+      await updateResourceItem(collectionName, itemId, updatedObj);
     } else {
       await updateManagementItem(collectionName, itemId, formData);
     }

@@ -8,7 +8,7 @@ import {
   generalFormFields,
   registrationFormFields,
 } from "@/app/_config/formConfigs";
-import { FormConfigWithConditions, FormElementType } from "@/app/_types/types";
+import { FormConfigWithConditions } from "@/app/_types/types";
 import createZodSchema from "@/app/_lib/validationSchema";
 import {
   useParams,
@@ -26,10 +26,7 @@ import {
   DB_REFERENCE_TO_COL2,
   DB_REFERENCE_TO_COL3,
 } from "@/app/_constants/mongodb-config";
-import {
-  ADD_ITEM_SCHEMA,
-  USER_REGISTRATION_SCHEMA,
-} from "@/app/_constants/schema-names";
+import { USER_REGISTRATION_SCHEMA } from "@/app/_constants/schema-names";
 
 function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
   const [success, setSuccess] = useState<string | undefined>();
@@ -62,7 +59,7 @@ function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
 
   //HANDLE USER FORM SEPARATELY FROM OTHER DATA MANIPULATION
   const handleUserRegistration = useCallback(
-    async (formData: Partial<FormElementType>) => {
+    async (formData: FormConfigWithConditions) => {
       const result = createZodSchema(USER_REGISTRATION_SCHEMA).safeParse(
         formData
       );
@@ -88,8 +85,8 @@ function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
 
   // HANDLE FORM OTHER FROM USER FORM
   const handleItemAddition = useCallback(
-    async (formData: Partial<FormElementType>) => {
-      const result = createZodSchema(ADD_ITEM_SCHEMA).safeParse(formData);
+    async (formData: FormConfigWithConditions) => {
+      const result = createZodSchema(undefined, formData).safeParse(formData);
       if (!result.success)
         return setError(`Validation failed: ${result.error}`);
 
@@ -150,7 +147,6 @@ function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
     }
     return {
       fields: generalFormFields,
-      schema: ADD_ITEM_SCHEMA,
       submitHandler: handleItemAddition,
     };
   }, [resourceType, handleItemAddition, handleUserRegistration]);

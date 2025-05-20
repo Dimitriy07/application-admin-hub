@@ -5,6 +5,7 @@ import ResourceItem from "./ResourceItem";
 import DataDisplayContainer from "./DataDisplayContainer";
 import SettingsWindow from "./SettingsWindow";
 import { appSettingsFields } from "@/app/_config/appSettingsConfigs";
+import { DB_COLLECTION_LEVEL3 } from "../_constants/mongodb-config";
 
 export default async function ItemsContainer({
   items,
@@ -17,6 +18,7 @@ export default async function ItemsContainer({
   isSettings,
   currentCollection,
   query,
+  userRole,
 }: ItemContainerProps) {
   type AppId = keyof typeof appSettingsFields;
 
@@ -28,9 +30,15 @@ export default async function ItemsContainer({
     );
   }
 
+  // SETTINGS CAN BE SHOWN FOR SUPERADMIN OR IN COLLECTION LEVEL3 FOR ADMIN
+  const isAuthorized =
+    (userRole === "admin" && currentCollection === DB_COLLECTION_LEVEL3) ||
+    userRole === "superadmin";
+
   let hasSettings = false;
   if (appId && currentCollection) {
     if (
+      isAuthorized &&
       appSettingsFields[appId as AppId] &&
       currentCollection in appSettingsFields[appId as AppId]
     ) {
@@ -67,6 +75,7 @@ export default async function ItemsContainer({
       )}
       {isSettings && (
         <SettingsWindow
+          isAuthorized={isAuthorized}
           managementId={managementId}
           collectionName={currentCollection}
           appId={appId}

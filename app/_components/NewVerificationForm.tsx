@@ -1,18 +1,19 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { newVerification } from "@/app/_services/actions";
 import CardWrapper from "./CardWrapper";
 import Button from "./Button";
 import { BarLoader } from "react-spinners";
+import { DEFAULT_LOGIN_REDIRECT } from "@/app/routes";
+import Link from "next/link";
 
 function NewVerificationForm() {
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  const router = useRouter();
   const onSubmit = useCallback(() => {
     if (success || error) return;
     if (!token) {
@@ -34,16 +35,15 @@ function NewVerificationForm() {
     [onSubmit]
   );
 
-  const onClick = () => {
-    router.replace("/auth/login");
-  };
   return (
     <CardWrapper>
       <CardWrapper.CardLabel>
         Confirming your verification
       </CardWrapper.CardLabel>
       <CardWrapper.CardButtons>
-        <Button onClick={onClick}>Back to Login</Button>
+        <Link href={DEFAULT_LOGIN_REDIRECT}>
+          <Button>Back to Login</Button>
+        </Link>
       </CardWrapper.CardButtons>
       {!success && !error && <BarLoader />}
       {success && (

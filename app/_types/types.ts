@@ -24,6 +24,7 @@ export interface ItemContainerProps {
   managementId?: string;
   currentCollection?: string;
   query: string;
+  userRole?: UserRole;
 }
 
 export interface ItemRowProps {
@@ -112,16 +113,25 @@ export type ConditionalFieldConfig = {
   fields: Record<string, FormElementType>;
 };
 
-export type FormElementType = {
-  type: "text" | "email" | "password" | "select" | "number";
+type BaseFormElement = {
   id: string;
   name: string;
   labelName: string;
   placeholder?: string;
-  options?: ReadonlyArray<{ value: string; content: string }>;
+};
+
+type SelectElement = BaseFormElement & {
+  type: "select";
+  options: ReadonlyArray<{ value: string; content: string }>;
+};
+
+type InputElement = BaseFormElement & {
+  type: "text" | "email" | "password" | "number";
   min?: number;
   max?: number;
 };
+
+export type FormElementType = SelectElement | InputElement;
 
 export type FormConfig = Record<string, FormElementType>;
 

@@ -3,8 +3,7 @@ import CardWrapper from "./CardWrapper";
 import EditButtonsBar from "./EditButtonsBar";
 import FormGenerator from "./FormGenerator";
 import { appSettingsFields } from "@/app/_config/appSettingsConfigs";
-import { ACCOUNT_SETTINGS_SCHEMA } from "@/app/_constants/schema-names";
-import { FormElementType } from "@/app/_types/types";
+import { FormConfigWithConditions } from "@/app/_types/types";
 import createZodSchema from "@/app/_lib/validationSchema";
 import { updateItem } from "@/app/_services/actions";
 import DeleteModal from "./DeleteModal";
@@ -17,11 +16,13 @@ async function SettingsWindow({
   collectionName,
   appId,
   isEdit,
+  isAuthorized,
 }: {
   managementId: string | undefined;
   collectionName: string | undefined;
   appId: string | undefined;
   isEdit: string | undefined;
+  isAuthorized: boolean | undefined;
 }) {
   if (!managementId || !collectionName) return null;
   const resolvedManagementItem = await getManagementDataByManagementId(
@@ -45,11 +46,13 @@ async function SettingsWindow({
     ];
 
   // HANDLE FORM SUBMITION TO UPDATE DATA
-  async function handleForm(formData: Partial<FormElementType>) {
+  async function handleForm(formData: FormConfigWithConditions) {
     "use server";
-    createZodSchema(ACCOUNT_SETTINGS_SCHEMA).safeParse(formData);
+    const validatedSettings = createZodSchema(undefined, formData).safeParse(
+      formData
+    );
     try {
-      const settings = { settings: formData };
+      const settings = { settings: validatedSettings.data };
       if (collectionName && managementId)
         await updateItem(settings, collectionName, managementId, false);
     } catch (err) {
@@ -66,15 +69,17 @@ async function SettingsWindow({
               Settings - {resolvedManagementItem.name}
             </CardWrapper.CardLabel>
             <CardWrapper.CardContent>
-              <FormGenerator
-                key={JSON.stringify(settingsObj)}
-                formFields={managementSettingsFields}
-                onSubmit={handleForm}
-                defaultValues={settingsObj}
-                isCompactForm={false}
-                isEdit={!!isEdit}
-                formId="settings-edit"
-              />
+              {isAuthorized && (
+                <FormGenerator
+                  key={JSON.stringify(settingsObj)}
+                  formFields={managementSettingsFields}
+                  onSubmit={handleForm}
+                  defaultValues={settingsObj}
+                  isCompactForm={false}
+                  isEdit={!!isEdit}
+                  formId="settings-edit"
+                />
+              )}
               {isEdit && (
                 <DeleteModal
                   id={managementId}

@@ -38,11 +38,11 @@ export const appResourceFields = {
         {
           when: { field: "role", value: "admin" },
           fields: {
-            dob: {
+            password: {
               type: "text",
-              id: "dob",
-              name: "dob",
-              labelName: "Date of Birth",
+              id: "password",
+              name: "password",
+              labelName: "New Password",
             },
           },
         },

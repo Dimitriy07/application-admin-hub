@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useForm } from "react-hook-form";
-import { FormElementType, FormConfigWithConditions } from "@/app/_types/types";
+import { FormConfigWithConditions } from "@/app/_types/types";
 import { z, ZodType } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BaseSyntheticEvent, useContext, useEffect, useMemo } from "react";
@@ -10,10 +10,11 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import FormRow from "./FormRow";
 import { ModalContext } from "./Modal";
+import { USER_EDIT_SCHEMA } from "@/app/_constants/schema-names";
 
 interface FormGeneratorProps {
   formFields: FormConfigWithConditions;
-  onSubmit: (data: Partial<FormElementType>) => Promise<void>;
+  onSubmit: (data: FormConfigWithConditions) => Promise<void>;
   formId: string;
   defaultValues?: any;
   isCompactForm?: boolean;
@@ -34,13 +35,25 @@ function FormGenerator({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const managementItem = pathname.split("/").at(-1);
   //CONFIGURE ZOD SCHEMA FOR VALIDATION
-  let schema: ZodType<any, any, any>;
-  //IF IT IS SPECIFIC SCHEMA CONFIGURE AS THE SPECIFIC SCHEMA
-  if (validationSchema) schema = createZodSchema(validationSchema);
-  //IF IT IS GENERAL SCHEMA CONFIGURE AS THE GENERAL SCHEMA
-  else schema = createZodSchema(undefined, formFields);
+  // let schema : ZodType<any, any, any>
+  // //IF IT IS SPECIFIC SCHEMA CONFIGURE AS THE SPECIFIC SCHEMA
+  // if (validationSchema) schema = createZodSchema(validationSchema);
+  // //IF IT IS GENERAL SCHEMA CONFIGURE AS THE GENERAL SCHEMA
+  // else schema = createZodSchema(undefined, formFields);
 
+  if (
+    searchParams.get("resourceType") === "users" &&
+    managementItem?.startsWith("resources-app")
+  ) {
+    validationSchema = USER_EDIT_SCHEMA;
+  }
+
+  const schema: ZodType<any, any, any> = createZodSchema(
+    validationSchema,
+    formFields
+  );
   //CREATE SCHEMA TYPE FOR USEFORM
   type ValidationSchema = z.infer<typeof schema>;
 
@@ -55,8 +68,13 @@ function FormGenerator({
     //FILL IN CONDITIONAL FIELDS WITH DEFAULT DATA AND EMPTY DATA IF THERE IS NO DATA IN THE FIELD
     formFields.conditionalFields?.forEach((condition) => {
       Object.keys(condition.fields).forEach((key) => {
-        if (!(key in defaults)) {
+        //CHECK IF FIELD IS IN DEFAULTS OBJECT AND IF FIELD IS NOT PASSWORD
+        if (!(key in defaults) && key !== "password") {
           defaults[key] = defaultValues?.[key] ?? "";
+        }
+        //AVOID SHOWING PASSWORD IN A FIELD
+        if (key === "password") {
+          defaults[key] = "";
         }
       });
     });
@@ -140,7 +158,6 @@ function FormGenerator({
     },
     [completedDefaults, isDirty, isEdit, reset]
   );
-
   // HANDLE SUBMIT PASSED AS A PROPS
   const handleOnSubmit = async (e: BaseSyntheticEvent) => {
     //PREVENT SUBBMITING THE FORM BY 'ENTER' WITHOUT DATA IN THE FIELDS
@@ -155,14 +172,19 @@ function FormGenerator({
         acc[typedKey as string] = getValues(typedKey as string);
         return acc;
       }, {} as Partial<ValidationSchema>);
-      await handleSubmit(() => onSubmit(changedFields))(e).catch((err) =>
+      await handleSubmit(
+        () => onSubmit(changedFields),
+        (err) => {
+          console.error(err);
+        }
+      )(e).catch((err) =>
         console.error("Error in the submitted form. Error: " + err)
       );
     }
     //SUBMITTING ALL FIELDS (FOR ADDING ITEMS)
     else
-      await handleSubmit(onSubmit)(e).catch((err) =>
-        console.error("Error in the submitted form. Error: " + err)
+      await handleSubmit(onSubmit, (err) => console.error(err))(e).catch(
+        (err) => console.error("Error in the submitted form. Error: " + err)
       );
   };
 

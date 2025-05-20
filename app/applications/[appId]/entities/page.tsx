@@ -25,16 +25,24 @@ export default async function LevelTwoPage({
   const session = await auth();
   const { appId } = await params;
   const { query, settings, managementId, edit } = await searchParams;
-  let entities;
-  if (session?.user.role !== "superadmin" && session?.user.appId !== appId) {
+
+  // AUTHENTICATION
+
+  const isSuperAdmin = session?.user.role === "superadmin";
+  const hasAccess = isSuperAdmin || session?.user.appId === appId;
+
+  if (!hasAccess) {
     redirect(DEFAULT_LOGIN_REDIRECT);
-  } else if (session?.user.role === "superadmin") {
-    entities = await getEntities(appId);
-  } else entities = await getEntities(appId, session?.user.entityId);
+  }
+
+  const entities = isSuperAdmin
+    ? await getEntities(appId)
+    : await getEntities(appId, session?.user.entityId);
 
   return (
     <ProtectedComponent appId={appId}>
       <ItemsContainer
+        userRole={session?.user.role}
         items={entities}
         urlPath={DB_COLLECTION_LEVEL3}
         query={query}
