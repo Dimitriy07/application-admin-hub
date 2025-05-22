@@ -99,9 +99,9 @@ export default function createZodSchema(
       for (const [key, field] of Object.entries(section)) {
         if (!Array.isArray(field))
           if (key === "password") {
-            shape[key] = z.string().min(6);
+            shape[key] = z.string().min(1);
           } else {
-            shape[key] = z.string().min(2, `${field.labelName} is required`);
+            shape[key] = z.string().min(1, `${field.labelName} is required`);
           }
       }
 

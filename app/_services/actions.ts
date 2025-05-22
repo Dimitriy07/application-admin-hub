@@ -14,7 +14,7 @@ import {
   getVerificationTokenByTokenId,
 } from "./tokenDataService";
 import { sendVerificationEmail } from "@/app/_lib/mail";
-import { ItemAdded, UserRegistration } from "@/app/_types/types";
+import { UserRegistration } from "@/app/_types/types";
 import {
   createResourceItem,
   deleteResourceItem,
@@ -175,7 +175,7 @@ export async function register(
 }
 
 export async function addItem(
-  formData: ItemAdded,
+  formData: Record<string, string>,
   collectionName: string | undefined | null,
   refToIdCollectionName: string,
   isResource: boolean

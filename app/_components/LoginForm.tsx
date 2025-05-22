@@ -2,25 +2,23 @@
 
 // import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { login } from "../_services/actions";
-import createZodSchema from "@/app/_lib/validationSchema";
+import { login } from "@/app/_services/actions";
 import { ZodError } from "zod";
 import Button from "./Button";
 import { USER_LOGIN_SCHEMA } from "@/app/_constants/schema-names";
+import CardWrapper from "./CardWrapper";
+import FormGenerator from "./FormGenerator";
+import { loginFormField } from "@/app/_config/formConfigs";
+import { FormConfigWithConditions } from "@/app/_types/types";
+import PopupWindow from "./PopupWindow";
 
 function LoginForm() {
   const [error, setError] = useState("");
-  // const router = useRouter();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+  async function onSubmit(formData: Record<string, string>) {
     try {
-      const schema = createZodSchema(USER_LOGIN_SCHEMA);
-      const data = await schema.parseAsync(
-        Object.fromEntries(formData.entries())
-      );
-      const { email, password } = data;
+      const email = formData.email;
+      const password = formData.password;
 
       if (!email || !password) return;
 
@@ -28,47 +26,41 @@ function LoginForm() {
       if (res && "error" in res) {
         throw new Error(res.error);
       }
-    } catch (error) {
-      if (error instanceof ZodError) {
-        setError(error.errors[0].message);
-      } else if (error instanceof Error) {
-        setError(error.message);
+    } catch (err) {
+      if (err instanceof ZodError) {
+        setError(err.errors[0].message);
+      } else if (err instanceof Error) {
+        setError(err.message);
       } else {
         setError("An unexpected error occurred.");
       }
     }
-  };
+  }
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-4 text-ocean-800 border border-ocean-800 rounded-md py-10 px-10 bg-ocean-0 shadow-xl"
-    >
-      <h2 className="font-bold text-center">LOG IN</h2>
-      <div className="flex flex-col gap-1">
-        <label htmlFor="email">Login (e-mail):</label>
-        <input
-          name="email"
-          type="email"
-          id="email"
-          placeholder="e-mail"
-          className="border border-ocean-800 rounded-sm  focus:outline-coral-500 px-2 py-1"
-        />
-      </div>
-      <div className="flex flex-col gap-1">
-        <label htmlFor="password">Password:</label>
-        <input
-          name="password"
-          type="password"
-          id="password"
-          placeholder="Password"
-          className="border border-ocean-800 rounded-sm focus:outline-coral-500 px-2 py-1"
-        />
-      </div>
-      {error && <div className="text-black">{error}</div>}
-      <div>
-        <Button type="submit">Login</Button>
-      </div>
-    </form>
+    <PopupWindow>
+      <CardWrapper>
+        <CardWrapper.CardLabel>Login</CardWrapper.CardLabel>
+        <CardWrapper.CardContent>
+          <FormGenerator
+            formFields={loginFormField as FormConfigWithConditions}
+            onSubmit={onSubmit}
+            formId="login-form"
+            validationSchema={USER_LOGIN_SCHEMA}
+            isEdit={true}
+          />
+        </CardWrapper.CardContent>
+        {error ? (
+          <CardWrapper.CardPopupMessage type={"error"}>
+            {error || ""}
+          </CardWrapper.CardPopupMessage>
+        ) : null}
+
+        <Button type="submit" form="login-form">
+          Login
+        </Button>
+      </CardWrapper>
+    </PopupWindow>
   );
 }
 

@@ -14,7 +14,7 @@ import { USER_EDIT_SCHEMA } from "@/app/_constants/schema-names";
 
 interface FormGeneratorProps {
   formFields: FormConfigWithConditions;
-  onSubmit: (data: FormConfigWithConditions) => Promise<void>;
+  onSubmit: (data: Record<string, string>) => Promise<void>;
   formId: string;
   defaultValues?: any;
   isCompactForm?: boolean;
@@ -187,7 +187,6 @@ function FormGenerator({
         (err) => console.error("Error in the submitted form. Error: " + err)
       );
   };
-
   return (
     <form
       id={formId}

@@ -17,11 +17,7 @@ function EditButtonsBar({ formId }: { formId: string }) {
     }
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
-  // const handleCancelClick = () => {
-  //   const params = new URLSearchParams(searchParams.toString());
-  //   params.delete("edit");
-  //   router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  // };
+
   return (
     <>
       {!isEdit ? (

@@ -16,6 +16,9 @@ export default async function settingsRestriction(
     return null;
   }
 
+  if (!entity.settings)
+    return { message: "Level two system settings have not been set." };
+
   const { accountType, maxUsers, maxVehicles } = entity.settings;
 
   const restrictionConfig: Record<

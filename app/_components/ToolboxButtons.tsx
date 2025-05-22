@@ -59,7 +59,7 @@ function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
 
   //HANDLE USER FORM SEPARATELY FROM OTHER DATA MANIPULATION
   const handleUserRegistration = useCallback(
-    async (formData: FormConfigWithConditions) => {
+    async (formData: Record<string, string>) => {
       const result = createZodSchema(USER_REGISTRATION_SCHEMA).safeParse(
         formData
       );
@@ -85,10 +85,10 @@ function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
 
   // HANDLE FORM OTHER FROM USER FORM
   const handleItemAddition = useCallback(
-    async (formData: FormConfigWithConditions) => {
-      const result = createZodSchema(undefined, formData).safeParse(formData);
-      if (!result.success)
-        return setError(`Validation failed: ${result.error}`);
+    async (formData: Record<string, string>) => {
+      // const result = createZodSchema(undefined, formData).safeParse(formData);
+      // if (!result.success)
+      //   return setError(`Validation failed: ${result.error}`);
 
       try {
         let refToCollectionName, refToIdCollection;
@@ -115,7 +115,7 @@ function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
           return setError("Invalid collection reference");
 
         const item = await addItem(
-          { ...result.data, refToIdCollection },
+          { ...formData, refToIdCollection },
           resourceType ? resourceType : pageName,
           refToCollectionName,
           !!resourceType

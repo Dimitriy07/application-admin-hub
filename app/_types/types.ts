@@ -91,12 +91,12 @@ export type UserRegistration = {
   confirm: Readonly<string>;
 };
 
-// ITEM TO ADD
+// // ITEM TO ADD
 
-export type ItemAdded = {
-  refToIdCollection: string | undefined;
-  name: string;
-};
+// export type ItemAdded = {
+//   refToIdCollection: string | undefined;
+//   name: string;
+// };
 
 // VERIFICATION TOKEN
 
@@ -131,7 +131,7 @@ type InputElement = BaseFormElement & {
   max?: number;
 };
 
-export type FormElementType = SelectElement | InputElement;
+export type FormElementType = InputElement | SelectElement;
 
 export type FormConfig = Record<string, FormElementType>;
 

@@ -3,8 +3,6 @@ import CardWrapper from "./CardWrapper";
 import EditButtonsBar from "./EditButtonsBar";
 import FormGenerator from "./FormGenerator";
 import { appSettingsFields } from "@/app/_config/appSettingsConfigs";
-import { FormConfigWithConditions } from "@/app/_types/types";
-import createZodSchema from "@/app/_lib/validationSchema";
 import { updateItem } from "@/app/_services/actions";
 import DeleteModal from "./DeleteModal";
 
@@ -46,13 +44,14 @@ async function SettingsWindow({
     ];
 
   // HANDLE FORM SUBMITION TO UPDATE DATA
-  async function handleForm(formData: FormConfigWithConditions) {
+  async function handleForm(formData: Record<string, string>) {
     "use server";
-    const validatedSettings = createZodSchema(undefined, formData).safeParse(
-      formData
-    );
+    // const validatedSettings = createZodSchema(undefined, formData).safeParse(
+    //   formData
+    // );
     try {
-      const settings = { settings: validatedSettings.data };
+      // const settings = { settings: validatedSettings.data };
+      const settings = { settings: formData };
       if (collectionName && managementId)
         await updateItem(settings, collectionName, managementId, false);
     } catch (err) {

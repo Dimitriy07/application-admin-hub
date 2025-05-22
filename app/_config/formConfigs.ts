@@ -67,6 +67,21 @@ export const registrationFormFields = {
   ],
 };
 
+export const loginFormField = {
+  email: {
+    type: "email",
+    name: "email",
+    id: "email",
+    labelName: "E-mail",
+  },
+  password: {
+    type: "password",
+    name: "password",
+    id: "password",
+    labelName: "Password",
+  },
+};
+
 export const generalFormFields = {
   name: {
     type: "text",

@@ -49,7 +49,7 @@ async function ResourceItem({
     appFieldsByAppId[collectionName as keyof typeof appFieldsByAppId];
 
   // HANDLE FORM SUBMITION TO UPDATE DATA
-  async function handleForm(formData: FormConfigWithConditions) {
+  async function handleForm(formData: Record<string, string>) {
     "use server";
     try {
       await updateItem(formData, collectionName, resourceId);
