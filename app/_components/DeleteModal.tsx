@@ -24,7 +24,6 @@ export default function DeleteModal({
   const params = useSearchParams();
 
   async function handleDelete() {
-    // try {
     const result = await deleteItem(
       collectionName,
       id,
@@ -45,10 +44,6 @@ export default function DeleteModal({
         `${path}${isResource ? "?resourceType=" + resourceType : ""}`
       );
     }
-    // } catch (err) {
-    //   console.error("The Item wasn't deleted." + err);
-    // }
-    console.log(error, success);
   }
   return (
     <Modal>

@@ -114,7 +114,7 @@ export async function newVerification(token: string) {
 export async function register(
   userFormData: UserRegistration,
   collectionName: string
-) {
+): Promise<{ success: boolean; message: string } | { error: string }> {
   const { email } = userFormData;
   const existingUser = await getUserByEmail(email);
   if (!("error" in existingUser))
@@ -152,7 +152,7 @@ export async function register(
       return { success: true, message: "Verification email was sent" };
     } catch (err) {
       return {
-        error: err,
+        error: err as string,
         message: "Something went wrong during Registration Process",
       };
     }
@@ -167,7 +167,7 @@ export async function register(
       return { success: true, message: "User is added" };
     } catch (err) {
       return {
-        error: err,
+        error: err as string,
         message: "Something went wrong during Registration Process",
       };
     }

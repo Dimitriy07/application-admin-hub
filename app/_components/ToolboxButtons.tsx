@@ -63,8 +63,10 @@ function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
       const result = createZodSchema(USER_REGISTRATION_SCHEMA).safeParse(
         formData
       );
-      if (!result.success)
-        return setError(`Validation failed: ${result.error}`);
+      if (!result.success) {
+        setError(`Validation failed: ${result.error}`);
+        return;
+      }
 
       const regResult = await register(
         {
@@ -74,8 +76,9 @@ function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
         },
         resourceType!
       );
-      if (!regResult.success) {
-        return setError(regResult.message);
+      if ("error" in regResult) {
+        setError(regResult.error);
+        throw new Error("new error");
       }
       setSuccess(regResult.message);
       router.refresh();
@@ -86,10 +89,6 @@ function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
   // HANDLE FORM OTHER FROM USER FORM
   const handleItemAddition = useCallback(
     async (formData: Record<string, string>) => {
-      // const result = createZodSchema(undefined, formData).safeParse(formData);
-      // if (!result.success)
-      //   return setError(`Validation failed: ${result.error}`);
-
       try {
         let refToCollectionName, refToIdCollection;
 
