@@ -50,16 +50,8 @@ export default async function AppOneResourcePage({
     resourcesArr
   );
 
-  if (restrictions && "message" in restrictions) {
+  if (!restrictions || "message" in restrictions) {
     return <ResourcesMessage message={restrictions?.message} />;
-  }
-
-  if (!restrictions) {
-    return (
-      <ResourcesMessage
-        message={"Settings restrictions have not been fetched"}
-      />
-    );
   }
 
   return (

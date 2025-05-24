@@ -25,6 +25,7 @@ export interface ItemContainerProps {
   currentCollection?: string;
   query: string;
   userRole?: UserRole;
+  referenceToCol?: string;
 }
 
 export interface ItemRowProps {

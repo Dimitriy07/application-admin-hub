@@ -228,18 +228,20 @@ export async function updateItem<T>(
 export async function deleteItem(
   collectionName: string,
   itemId: string,
+  referenceToCol: string | undefined,
   isResource = true
 ) {
   if (!collectionName || !itemId)
     return { error: "Collection od itemId name is not provided" };
-  try {
-    if (isResource) {
-      await deleteResourceItem(collectionName, itemId);
-    } else {
-      await deleteManagementItem(collectionName, itemId);
-    }
-    return { success: true, message: "Item was deleted" };
-  } catch (err) {
-    return { error: "Item wasn't deleted: " + err };
+  // try {
+  let result;
+  if (isResource) {
+    result = await deleteResourceItem(collectionName, itemId);
+  } else {
+    result = await deleteManagementItem(collectionName, itemId, referenceToCol);
   }
+  return result;
+  // } catch (err) {
+  //   return { error: "Item wasn't deleted: " + err };
+  // }
 }

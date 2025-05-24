@@ -25,8 +25,8 @@ export default async function settingsRestriction(
     string,
     { personalLimit: number; defaultLimit: number }
   > = {
-    users: { personalLimit: 1, defaultLimit: maxUsers },
-    vehicles: { personalLimit: 1, defaultLimit: maxVehicles },
+    users: { personalLimit: 1, defaultLimit: maxUsers ?? 1 },
+    vehicles: { personalLimit: 1, defaultLimit: maxVehicles ?? 1 },
   };
 
   let isRestricted = false;
@@ -42,7 +42,7 @@ export default async function settingsRestriction(
     restrictedMessage =
       accountType === "personal"
         ? "Personal account can have only one resource item in each collection"
-        : `You have reached the limit of allowed resource items in ${collectionName}`;
+        : `The maximum number of ${collectionName} allowed (${maxAllowed}) has been reached.`;
   }
   return { isRestricted, restrictedMessage };
 }

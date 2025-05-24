@@ -2,6 +2,7 @@ import { Item } from "@/app/_types/types";
 import { ObjectId } from "mongodb";
 import { dbConnect } from "../../_utils/db-connector";
 import { flattenObject } from "@/app/_utils/flatten-objects";
+import { DB_RESOURCES_NAME } from "@/app/_constants/mongodb-config";
 
 /**
  * Creates a reusable function to fetch data from a MongoDB collection.
@@ -156,16 +157,34 @@ export async function updateManagementDataInDb(
 
 export async function deleteManagementDataInDb(
   dbName: string,
-  collectionName: string
+  collectionName: string,
+  referenceToCol?: string
 ) {
   return async function deleteResourceDoc(managementId: string) {
-    try {
-      const collection = await dbConnect(dbName, collectionName);
-      const mongoId = new ObjectId(managementId);
-      const data = await collection.deleteOne({ _id: mongoId });
-      return data;
-    } catch (err) {
-      throw new Error("Can not delete doc in db: " + err);
+    // try {
+    let collection;
+    let hasUser;
+    const mongoId = new ObjectId(managementId);
+    if (referenceToCol) {
+      collection = await dbConnect(DB_RESOURCES_NAME, "users");
+      hasUser = await collection.findOne({
+        [referenceToCol]: mongoId,
+      });
     }
+    if (hasUser) {
+      return {
+        error: "There is at least one user connected to the collection.",
+      };
+    } else {
+      collection = await dbConnect(dbName, collectionName);
+
+      const result = await collection.deleteOne({ _id: mongoId });
+      return result.acknowledged === true && result.deletedCount > 0
+        ? { success: true, message: "The item has been deleted." }
+        : { error: " The item hasn't been deleted" };
+    }
+    // } catch (err) {
+    //   throw new Error("Can not delete doc in db: " + err);
+    // }
   };
 }

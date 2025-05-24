@@ -122,6 +122,7 @@ function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
         );
         if (item.success) setSuccess(item.message);
         router.refresh();
+        setSuccess("");
       } catch (err) {
         setError(`Item hasn't been added: ${err}`);
       }

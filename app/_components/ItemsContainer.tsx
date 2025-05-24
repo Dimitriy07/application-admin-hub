@@ -4,8 +4,8 @@ import { ItemContainerProps } from "@/app/_types/types";
 import ResourceItem from "./ResourceItem";
 import DataDisplayContainer from "./DataDisplayContainer";
 import SettingsWindow from "./SettingsWindow";
-import { appSettingsFields } from "@/app/_config/appSettingsConfigs";
 import { DB_COLLECTION_LEVEL3 } from "../_constants/mongodb-config";
+// import { appSettingsFields } from "@/app/_config/appSettingsConfigs";
 
 export default async function ItemsContainer({
   items,
@@ -19,8 +19,9 @@ export default async function ItemsContainer({
   currentCollection,
   query,
   userRole,
+  referenceToCol,
 }: ItemContainerProps) {
-  type AppId = keyof typeof appSettingsFields;
+  // type AppId = keyof typeof appSettingsFields;
 
   let filteredItems;
   if (!query) filteredItems = items;
@@ -34,13 +35,13 @@ export default async function ItemsContainer({
   const isAuthorized =
     (userRole === "admin" && currentCollection === DB_COLLECTION_LEVEL3) ||
     userRole === "superadmin";
-
   let hasSettings = false;
   if (appId && currentCollection) {
     if (
-      isAuthorized &&
-      appSettingsFields[appId as AppId] &&
-      currentCollection in appSettingsFields[appId as AppId]
+      isAuthorized
+      // &&
+      // appSettingsFields[appId as AppId] &&
+      // currentCollection in appSettingsFields[appId as AppId]
     ) {
       hasSettings = true;
     }
@@ -80,6 +81,7 @@ export default async function ItemsContainer({
           collectionName={currentCollection}
           appId={appId}
           isEdit={isEdit}
+          referenceToCol={referenceToCol}
         />
       )}
     </div>

@@ -4,6 +4,7 @@ import ToolboxBar from "@/app/_components/ToolboxBar";
 import {
   DB_COLLECTION_LEVEL2,
   DB_COLLECTION_LEVEL3,
+  DB_REFERENCE_TO_COL2,
 } from "@/app/_constants/mongodb-config";
 import { getEntities } from "@/app/_services/managementDataService";
 import { DEFAULT_LOGIN_REDIRECT } from "@/app/routes";
@@ -51,6 +52,7 @@ export default async function LevelTwoPage({
         isSettings={settings}
         managementId={managementId}
         isEdit={edit}
+        referenceToCol={DB_REFERENCE_TO_COL2}
       />
       <ToolboxBar />
     </ProtectedComponent>

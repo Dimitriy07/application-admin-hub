@@ -95,16 +95,18 @@ export async function updateManagementItem<T>(
 
 export async function deleteManagementItem(
   collectionName: string,
-  managementId: string
+  managementId: string,
+  referenceToCol?: string
 ) {
-  try {
-    const fetchItem = await deleteManagementDataInDb(
-      DB_MANAGEMENT_NAME,
-      collectionName
-    );
-    const deleteResourceItem = await fetchItem(managementId);
-    return deleteResourceItem;
-  } catch (err) {
-    return { error: "Item couldn't be deleted: " + err };
-  }
+  // try {
+  const fetchItem = await deleteManagementDataInDb(
+    DB_MANAGEMENT_NAME,
+    collectionName,
+    referenceToCol
+  );
+  const deleteResourceItem = await fetchItem(managementId);
+  return deleteResourceItem;
+  // } catch (err) {
+  //   return { error: "Item couldn't be deleted: " + err };
+  // }
 }

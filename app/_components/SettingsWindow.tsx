@@ -5,6 +5,7 @@ import FormGenerator from "./FormGenerator";
 import { appSettingsFields } from "@/app/_config/appSettingsConfigs";
 import { updateItem } from "@/app/_services/actions";
 import DeleteModal from "./DeleteModal";
+import ResourcesMessage from "./ResourcesMessage";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -15,12 +16,14 @@ async function SettingsWindow({
   appId,
   isEdit,
   isAuthorized,
+  referenceToCol,
 }: {
   managementId: string | undefined;
   collectionName: string | undefined;
   appId: string | undefined;
   isEdit: string | undefined;
   isAuthorized: boolean | undefined;
+  referenceToCol?: string;
 }) {
   if (!managementId || !collectionName) return null;
   const resolvedManagementItem = await getManagementDataByManagementId(
@@ -42,7 +45,6 @@ async function SettingsWindow({
     settingsConfigsByAppId[
       collectionName as keyof typeof settingsConfigsByAppId
     ];
-
   // HANDLE FORM SUBMITION TO UPDATE DATA
   async function handleForm(formData: Record<string, string>) {
     "use server";
@@ -68,7 +70,7 @@ async function SettingsWindow({
               Settings - {resolvedManagementItem.name}
             </CardWrapper.CardLabel>
             <CardWrapper.CardContent>
-              {isAuthorized && (
+              {isAuthorized && managementSettingsFields && (
                 <FormGenerator
                   key={JSON.stringify(settingsObj)}
                   formFields={managementSettingsFields}
@@ -79,11 +81,15 @@ async function SettingsWindow({
                   formId="settings-edit"
                 />
               )}
+              {!managementSettingsFields && (
+                <ResourcesMessage message='Click "Edit" button to delete an Item' />
+              )}
               {isEdit && (
                 <DeleteModal
                   id={managementId}
                   collectionName={collectionName}
                   isResource={false}
+                  referenceToCol={referenceToCol}
                 />
               )}
             </CardWrapper.CardContent>

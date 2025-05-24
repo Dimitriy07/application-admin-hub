@@ -4,9 +4,11 @@ import ToolboxBar from "@/app/_components/ToolboxBar";
 import {
   DB_COLLECTION_LEVEL3,
   DB_COLLECTION_LEVEL4,
+  DB_REFERENCE_TO_COL3,
 } from "@/app/_constants/mongodb-config";
 import { getAccounts } from "@/app/_services/managementDataService";
 import urlAppSwitcher from "@/app/_utils/url-app-switcher";
+import { auth } from "@/auth";
 
 export default async function LevelThreePage({
   params,
@@ -20,6 +22,7 @@ export default async function LevelThreePage({
     edit: string;
   }>;
 }) {
+  const session = await auth();
   const { entityId, appId } = await params;
   const accounts = await getAccounts(entityId);
   const { settings, managementId, edit, query } = await searchParams;
@@ -29,6 +32,7 @@ export default async function LevelThreePage({
   return (
     <ProtectedComponent appId={appId} entityId={entityId}>
       <ItemsContainer
+        userRole={session?.user.role}
         items={accounts}
         urlPath={DB_COLLECTION_LEVEL4 + appNumber}
         isSettings={settings}
@@ -37,6 +41,7 @@ export default async function LevelThreePage({
         appId={appId}
         isEdit={edit}
         query={query}
+        referenceToCol={DB_REFERENCE_TO_COL3}
       />
       <ToolboxBar />
     </ProtectedComponent>
