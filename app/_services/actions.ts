@@ -158,11 +158,15 @@ export async function register(
     }
   } else {
     try {
+      const { refToIdCollection2, refToIdCollection3, ...updatedUserObj } =
+        userFormData;
       const newUserObj = {
-        entityId: new ObjectId(userFormData.refToIdCollection2),
-        accountId: new ObjectId(userFormData.refToIdCollection3),
-        ...userFormData,
+        entityId: new ObjectId(refToIdCollection2),
+        accountId: new ObjectId(refToIdCollection3),
+        ...updatedUserObj,
+        role: userFormData.role,
       };
+
       await createResourceItem(collectionName, newUserObj);
       return { success: true, message: "User is added" };
     } catch (err) {

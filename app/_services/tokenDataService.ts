@@ -10,6 +10,8 @@ import {
 
 const VERIFICATION_TOKEN_COLLECTION = "verification-token";
 
+/////////////////// GET VERIFICATION TOKEN BY USER EMAIL//////////////
+
 export async function getVerificationTokenByEmail(email: string) {
   const getVerificationToken = fetchTokenInfoFromDb(
     DB_AUTHENTICATION_NAME,
@@ -22,6 +24,8 @@ export async function getVerificationTokenByEmail(email: string) {
 
   return fetchedToken;
 }
+
+/////////////////// GET VERIFICATION TOKEN BY TOKEN ID//////////////
 
 export async function getVerificationTokenByTokenId(id: string) {
   const getVerificationToken = fetchTokenInfoFromDb(
@@ -36,6 +40,8 @@ export async function getVerificationTokenByTokenId(id: string) {
   return fetchedToken;
 }
 
+/////////////////// GET VERIFICATION TOKEN BY TOKEN //////////////
+
 export async function getVerificationTokenByToken(token: string) {
   const getVerificationToken = fetchTokenInfoFromDb(
     DB_AUTHENTICATION_NAME,
@@ -49,6 +55,8 @@ export async function getVerificationTokenByToken(token: string) {
   return fetchedToken;
 }
 
+/////////////////// DELETE VERIFICATION TOKEN BY TOKEN ID//////////////
+
 export async function deleteVerificationTokenById(id: string) {
   const deleteToken = deleteTokenInfoFromDb(
     DB_AUTHENTICATION_NAME,
@@ -56,6 +64,8 @@ export async function deleteVerificationTokenById(id: string) {
   );
   await deleteToken(id);
 }
+
+/////////////////// GENERATE VERIFICATION TOKEN//////////////
 
 export async function generateVerificationToken(email: string) {
   const EXPIRY_TIME = 3600 * 1000;
