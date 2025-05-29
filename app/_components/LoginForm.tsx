@@ -11,12 +11,21 @@ import FormGenerator from "./FormGenerator";
 import { loginFormField } from "@/app/_config/formConfigs";
 import { FormConfigWithConditions } from "@/app/_types/types";
 import PopupWindow from "./PopupWindow";
+import { rateLimitCheck } from "@/app/_utils/ratelimit";
+import { useRouter } from "next/navigation";
 
-function LoginForm() {
+function LoginForm({ ip }: { ip: string }) {
   const [error, setError] = useState("");
+  const router = useRouter();
 
   async function onSubmit(formData: Record<string, string>) {
     try {
+      const rate = rateLimitCheck(ip, true);
+      console.log(ip);
+      console.log(rate);
+      if (!rate.allowed) {
+        router.replace("/auth/too-many-requests");
+      }
       const email = formData.email;
       const password = formData.password;
 
@@ -36,6 +45,9 @@ function LoginForm() {
       }
     }
   }
+
+  // THERE IS A GLITCH IN AUTHJS NOT TO USE NEXT REDIRECT IN TRY CATCH.
+  if (error === "NEXT_REDIRECT") setError("");
 
   return (
     <PopupWindow>

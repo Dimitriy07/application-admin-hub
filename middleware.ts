@@ -6,7 +6,9 @@ import {
   apiAuthPrefix,
   authRoutes,
   DEFAULT_LOGIN_REDIRECT,
+  requestLimitRoute,
 } from "@/app/routes";
+import { rateLimitCheck } from "./app/_utils/ratelimit";
 
 const { auth } = NextAuth(authConfig);
 export default auth(async function middleware(
@@ -18,18 +20,26 @@ export default auth(async function middleware(
 
   const isAuthRoutes = authRoutes.includes(pathname);
   const isApiAuthRoute = pathname.startsWith(apiAuthPrefix);
+  const isRequestLimitRoute = pathname.startsWith(requestLimitRoute);
 
   // Redirect if unauthenticated and trying to access protected route
-  if (!session && !isAuthRoutes && !isApiAuthRoute)
+  if (!session && !isAuthRoutes && !isApiAuthRoute && !isRequestLimitRoute)
     return NextResponse.redirect(new URL("/auth/login", request.nextUrl));
 
-  // Redirect authenticated users away from login/register pages
+  // Redirect authenticated users away from login/register/too-many-requests pages
   if (isAuthRoutes) {
+    // const ip = request.headers.get("x-forwarded-for") ?? "local";
+    // const rate = rateLimitCheck(ip, false);
+    // console.log(rate);
+    // if (!rate.allowed) {
+    //   return NextResponse.redirect(new URL(requestLimitRoute, request.nextUrl));
+    // }
     if (session)
       return NextResponse.redirect(
         new URL(DEFAULT_LOGIN_REDIRECT, request.nextUrl)
       );
   }
+  return NextResponse.next();
 });
 
 export const config = {
