@@ -11,27 +11,21 @@ import FormGenerator from "./FormGenerator";
 import { loginFormField } from "@/app/_config/formConfigs";
 import { FormConfigWithConditions } from "@/app/_types/types";
 import PopupWindow from "./PopupWindow";
-import { rateLimitCheck } from "@/app/_utils/ratelimit";
-import { useRouter } from "next/navigation";
 
 function LoginForm({ ip }: { ip: string }) {
   const [error, setError] = useState("");
-  const router = useRouter();
 
   async function onSubmit(formData: Record<string, string>) {
     try {
-      const rate = rateLimitCheck(ip, true);
-      console.log(ip);
-      console.log(rate);
-      if (!rate.allowed) {
-        router.replace("/auth/too-many-requests");
-      }
       const email = formData.email;
       const password = formData.password;
 
-      if (!email || !password) return;
+      if (!email || !password) {
+        setError("Email and password are required.");
+        return;
+      }
 
-      const res = await login(email, password);
+      const res = await login(email, password, ip);
       if (res && "error" in res) {
         throw new Error(res.error);
       }

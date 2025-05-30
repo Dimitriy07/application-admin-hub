@@ -8,7 +8,6 @@ import {
   DEFAULT_LOGIN_REDIRECT,
   requestLimitRoute,
 } from "@/app/routes";
-import { rateLimitCheck } from "./app/_utils/ratelimit";
 
 const { auth } = NextAuth(authConfig);
 export default auth(async function middleware(
@@ -28,12 +27,6 @@ export default auth(async function middleware(
 
   // Redirect authenticated users away from login/register/too-many-requests pages
   if (isAuthRoutes) {
-    // const ip = request.headers.get("x-forwarded-for") ?? "local";
-    // const rate = rateLimitCheck(ip, false);
-    // console.log(rate);
-    // if (!rate.allowed) {
-    //   return NextResponse.redirect(new URL(requestLimitRoute, request.nextUrl));
-    // }
     if (session)
       return NextResponse.redirect(
         new URL(DEFAULT_LOGIN_REDIRECT, request.nextUrl)

@@ -10,7 +10,7 @@ function TooManyRequests({ nextAttemptAt }: { nextAttemptAt?: string }) {
     <PopupWindow>
       <CardWrapper>
         <ResourcesMessage
-          message={`Too Many Requests have been made. Try again at ${nextAttemptAt}`}
+          message={`Too Many Requests have been made. Try again after ${nextAttemptAt} only`}
         />
         <CardWrapper.CardButtons>
           <Link href={DEFAULT_LOGIN_REDIRECT}>

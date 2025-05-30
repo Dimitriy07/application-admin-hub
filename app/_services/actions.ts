@@ -29,10 +29,15 @@ import {
 } from "./managementDataService";
 import { redirect } from "next/navigation";
 import { DEFAULT_LOGIN_REDIRECT } from "@/app/routes";
+import { rateLimitCheck } from "../_utils/ratelimit";
 
 /////////LOGIN SERVER ACTION//////////
 
-export async function login(email: string, password: string) {
+export async function login(email: string, password: string, ip: string) {
+  const rate = await rateLimitCheck(ip, true);
+  if (!rate.allowed) {
+    redirect("/auth/too-many-requests");
+  }
   const existingUser = await getUserByEmailAndPassword(email, password);
   if ("error" in existingUser) return { error: existingUser.error };
   if (
@@ -207,7 +212,7 @@ export async function updateItem<T>(
   isResource = true
 ) {
   if (!collectionName || !itemId)
-    return { error: "Collection od itemId name is not provided" };
+    return { error: "Collection or itemId name is not provided" };
   try {
     if (isResource) {
       let updatedObj = formData;
@@ -236,7 +241,7 @@ export async function deleteItem(
   isResource = true
 ) {
   if (!collectionName || !itemId)
-    return { error: "Collection od itemId name is not provided" };
+    return { error: "Collection or itemId name is not provided" };
   // try {
   let result;
   if (isResource) {

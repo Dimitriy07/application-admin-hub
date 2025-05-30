@@ -8,11 +8,8 @@ export default async function TooManyRequestsPage() {
   const ip = (await headers()).get("x-forwarded-for");
   if (!ip) return null;
 
-  const rate = rateLimitCheck(ip);
-  console.log(rate);
-  // console.log(ip);
+  const rate = await rateLimitCheck(ip);
   const { blockedUntil, allowed } = rate;
-  console.log(blockedUntil, allowed);
   if (allowed) {
     return redirect(DEFAULT_LOGIN_REDIRECT);
   }
