@@ -11,12 +11,18 @@ if (!uri) {
 
 let client;
 let clientPromise: Promise<MongoClient>;
+let mongoMemoryServer: MongoMemoryServer | null = null;
+
+if (process.env.NODE_ENV !== "test" && process.env.JEST_WORKER_ID) {
+  throw new Error("Test is using real MongoDB! Aborting.");
+}
 if (process.env.NODE_ENV === "test") {
   clientPromise = MongoMemoryServer.create({
     binary: {
       version: "7.0.14",
     },
   }).then((server) => {
+    mongoMemoryServer = server;
     return new MongoClient(server.getUri(), options).connect();
   });
 } else if (process.env.NODE_ENV === "development") {
@@ -44,4 +50,4 @@ if (process.env.NODE_ENV === "test") {
     });
 }
 
-export default clientPromise;
+export { clientPromise, mongoMemoryServer };

@@ -21,8 +21,6 @@ export default async function ItemsContainer({
   userRole,
   referenceToCol,
 }: ItemContainerProps) {
-  // type AppId = keyof typeof appSettingsFields;
-
   let filteredItems;
   if (!query) filteredItems = items;
   else {
@@ -35,17 +33,15 @@ export default async function ItemsContainer({
   const isAuthorized =
     (userRole === "admin" && currentCollection === DB_COLLECTION_LEVEL3) ||
     userRole === "superadmin";
+
   let hasSettings = false;
+
   if (appId && currentCollection) {
-    if (
-      isAuthorized
-      // &&
-      // appSettingsFields[appId as AppId] &&
-      // currentCollection in appSettingsFields[appId as AppId]
-    ) {
+    if (isAuthorized) {
       hasSettings = true;
     }
   }
+
   return (
     <div className="flex w-full h-[calc(100%-40px)]">
       {!resourceId || !collectionName ? (

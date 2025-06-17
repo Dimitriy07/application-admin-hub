@@ -1,4 +1,4 @@
-import clientPromise from "@/app/_lib/data/db";
+import { clientPromise } from "@/app/_lib/data/db";
 
 export async function dbConnect(dbName: string, collectionName: string) {
   const client = await clientPromise;

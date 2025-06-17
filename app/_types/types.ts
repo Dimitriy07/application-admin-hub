@@ -52,16 +52,6 @@ export type CollectionWithInfo = {
   info?: { uuid?: { toString(): string } };
 };
 
-// BREADCRUMBS NAVIGATION
-
-export interface BreadcrumbsNavProps {
-  separator: string;
-  homeElement: string;
-  activeClass: string;
-  listClass: string;
-  containerClass: string;
-}
-
 // USER ROLE
 export enum UserRole {
   admin = "admin",

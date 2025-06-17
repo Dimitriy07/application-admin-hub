@@ -47,14 +47,12 @@ function NewVerificationForm() {
       </CardWrapper.CardButtons>
       {!success && !error && <BarLoader />}
       {success && (
-        <CardWrapper.CardPopupMessage type="success">
+        <CardWrapper.CardMessage type="success">
           {success}
-        </CardWrapper.CardPopupMessage>
+        </CardWrapper.CardMessage>
       )}
       {error && (
-        <CardWrapper.CardPopupMessage type="error">
-          {error}
-        </CardWrapper.CardPopupMessage>
+        <CardWrapper.CardMessage type="error">{error}</CardWrapper.CardMessage>
       )}
     </CardWrapper>
   );

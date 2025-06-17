@@ -8,4 +8,4 @@ export const DB_COLLECTION_LEVEL4 = "resources-app";
 export const DB_REFERENCE_TO_COL1 = "applicationId";
 export const DB_REFERENCE_TO_COL2 = "entityId";
 export const DB_REFERENCE_TO_COL3 = "accountId";
-export const APP_CONFIG_ID1 = "67b1a8b7618ae70a245d5f5a";
+export const APP_CONFIG_ID1 = "68467195aa14d9defddd0244";

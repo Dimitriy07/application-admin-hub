@@ -1,5 +1,5 @@
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
-import clientPromise from "@/app/_lib/data/db";
+import { clientPromise } from "@/app/_lib/data/db";
 import NextAuth from "next-auth";
 import authConfig from "@/auth.config";
 import { getUserById } from "@/app/_services/userDataService";

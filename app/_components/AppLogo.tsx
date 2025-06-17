@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { DEFAULT_LOGIN_REDIRECT } from "@/app/routes";
 
 function AppLogo() {
   const imageStyle = {
@@ -8,7 +9,7 @@ function AppLogo() {
   };
   return (
     <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
-      <Link href="/">
+      <Link href={DEFAULT_LOGIN_REDIRECT}>
         <Image
           src="/mtl-logo.png"
           alt="application logo"

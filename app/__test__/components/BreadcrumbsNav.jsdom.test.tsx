@@ -11,7 +11,6 @@ jest.mock("next/navigation", () => ({
 
 describe("BreadcrumbsNav", () => {
   it("renders the home element and breadcrumbs correctly", () => {
-    // as jest.Mock - TypeScirpt type assertition
     (usePathname as jest.Mock).mockReturnValue("/");
 
     render(
@@ -40,7 +39,6 @@ describe("BreadcrumbsNav", () => {
     (usePathname as jest.Mock).mockReturnValue(
       "/applications/_id1/entities/_id2/accounts/_id3/users"
     );
-    // const user = userEvent.setup();
     render(
       <BreadcrumbsNav
         separator="&rarr;"
@@ -63,6 +61,5 @@ describe("BreadcrumbsNav", () => {
       "href",
       "/applications/_id1/entities"
     );
-    // await user.click(breadcrumbClick);
   });
 });

@@ -1,16 +1,61 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/**
+ * FormGenerator Component
+ *
+ * A dynamic form builder component that generates forms based on a
+ * configuration object with support for conditional fields, validation,
+ * and edit/add modes.
+ *
+ * This component uses:
+ * - React Hook Form for form state management and validation
+ * - Zod for schema-based validation (integrated via zodResolver)
+ * - Custom hooks for default values and edit form state management
+ * - DynamicFormFields component to render form inputs based on config
+ * - ModalContext to optionally close a modal on successful submission
+ *
+ * Features:
+ * - Supports edit mode with partial submission of only dirty fields
+ * - Supports add mode with submission of all fields
+ * - Dynamically applies a validation schema based on route and params
+ * - Prevents submitting unmodified forms in edit mode
+ *
+ * @component
+ *
+ * @param {object} props
+ * @param {FormConfigWithConditions} props.formFields - Configuration of form fields including conditional fields.
+ * @param {(data: Record<string, string>) => Promise<void>} props.onSubmit - Async function to handle form submission.
+ * @param {string} props.formId - Unique ID for the form element.
+ * @param {any} [props.defaultValues] - Optional default values to populate the form.
+ * @param {boolean} [props.isCompactForm=true] - Whether the form layout is compact (vertical only) or fills container.
+ * @param {boolean} props.isEdit - Flag indicating if the form is in edit mode (true) or add mode (false).
+ * @param {string} [props.validationSchema] - Optional name of the validation schema to apply.
+ *
+ * @example
+ * ```tsx
+ * <FormGenerator
+ *   formFields={myFormConfig}
+ *   onSubmit={handleFormSubmit}
+ *   formId="user-edit-form"
+ *   defaultValues={userData}
+ *   isEdit={true}
+ *   validationSchema="USER_EDIT_SCHEMA"
+ * />
+ * ```
+ */
 "use client";
+
+import { BaseSyntheticEvent, useContext } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import useEditFormState from "../_hooks/useEditFormState";
+import useFormDefaults from "@/app/_hooks/useFormDefaults";
 import { useForm } from "react-hook-form";
-import { FormConfigWithConditions } from "@/app/_types/types";
 import { z, ZodType } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BaseSyntheticEvent, useContext, useEffect, useMemo } from "react";
-import createZodSchema from "@/app/_lib/validationSchema";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
-import FormRow from "./FormRow";
+import DynamicFormFields from "./DynamicFormFields";
 import { ModalContext } from "./Modal";
+import createZodSchema from "@/app/_lib/validationSchema";
 import { USER_EDIT_SCHEMA } from "@/app/_constants/schema-names";
+import { FormConfigWithConditions } from "@/app/_types/types";
 
 interface FormGeneratorProps {
   formFields: FormConfigWithConditions;
@@ -31,57 +76,32 @@ function FormGenerator({
   isCompactForm = true,
   validationSchema,
 }: FormGeneratorProps) {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const managementItem = pathname.split("/").at(-1);
-  //CONFIGURE ZOD SCHEMA FOR VALIDATION
-  // let schema : ZodType<any, any, any>
-  // //IF IT IS SPECIFIC SCHEMA CONFIGURE AS THE SPECIFIC SCHEMA
-  // if (validationSchema) schema = createZodSchema(validationSchema);
-  // //IF IT IS GENERAL SCHEMA CONFIGURE AS THE GENERAL SCHEMA
-  // else schema = createZodSchema(undefined, formFields);
+  // Determine if the form is for user editing within the resources app context
+  const isResourcesApp =
+    pathname.split("/").at(-1)?.startsWith("resources-app") &&
+    searchParams.get("resourceType") === "users";
 
-  if (
-    searchParams.get("resourceType") === "users" &&
-    managementItem?.startsWith("resources-app")
-  ) {
+  // Override validation schema for user editing in resources app
+  if (isResourcesApp) {
     validationSchema = USER_EDIT_SCHEMA;
   }
 
+  // Create Zod validation schema based on schema name and form field config
   const schema: ZodType<any, any, any> = createZodSchema(
     validationSchema,
     formFields
   );
-  //CREATE SCHEMA TYPE FOR USEFORM
+
+  // Type inferred from Zod schema for form values
   type ValidationSchema = z.infer<typeof schema>;
 
-  const completedDefaults = useMemo(() => {
-    const defaults: Record<string, any> = {};
-    //FILL IN FIELDS WITH DEFAULT DATA AND EMPTY DATA IF THERE IS NO DATA IN THE FIELD
-    Object.keys(formFields).forEach((key) => {
-      if (key !== "conditionalFields") {
-        defaults[key] = defaultValues?.[key] ?? "";
-      }
-    });
-    //FILL IN CONDITIONAL FIELDS WITH DEFAULT DATA AND EMPTY DATA IF THERE IS NO DATA IN THE FIELD
-    formFields.conditionalFields?.forEach((condition) => {
-      Object.keys(condition.fields).forEach((key) => {
-        //CHECK IF FIELD IS IN DEFAULTS OBJECT AND IF FIELD IS NOT PASSWORD
-        if (!(key in defaults) && key !== "password") {
-          defaults[key] = defaultValues?.[key] ?? "";
-        }
-        //AVOID SHOWING PASSWORD IN A FIELD
-        if (key === "password") {
-          defaults[key] = "";
-        }
-      });
-    });
+  // Generate completed default values, merging formFields and defaults
+  const completedDefaults = useFormDefaults(formFields, defaultValues);
 
-    return defaults;
-  }, [defaultValues, formFields]);
-
+  // Initialize React Hook Form with validation and defaults
   const {
     register,
     handleSubmit,
@@ -94,78 +114,29 @@ function FormGenerator({
     defaultValues: completedDefaults,
   });
 
-  // USE CONTEXT TO CLOSE FORM AFTER SUBMITTING
+  // Get modal context for closing modal after submit if applicable
   const context = useContext(ModalContext);
-  let close: () => void;
-  if (context) close = context.close;
+  const close = context?.close || (() => {});
 
-  const params = useMemo(
-    function () {
-      return new URLSearchParams(searchParams.toString());
-    },
-    [searchParams]
-  );
-  // CLEAR EDIT PARAMS WHEN THE PAGE IS REFRESHED
-  useEffect(function () {
-    if (isEdit && searchParams.get("edit") === "true") {
-      // const params = new URLSearchParams(searchParams.toString());
-      params.delete("edit");
-      router.replace(`${pathname}?${params.toString()}`);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  //TAKE NEW DEFAULT VALUE AFTER SUBMISSION OR RESET FORM
-  useEffect(
-    function () {
-      if (isSubmitSuccessful) {
-        if (isEdit) {
-          // const params = new URLSearchParams(searchParams.toString());
-          params.delete("edit");
-          router.refresh();
-          router.replace(`${pathname}?${params.toString()}`);
-          if (context) close();
-        } else reset();
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isSubmitSuccessful, reset, router, isEdit, pathname, searchParams, params]
+  // Manage form state for edit mode: reset, close modal, etc.
+  useEditFormState(
+    isEdit,
+    isDirty,
+    isSubmitSuccessful,
+    reset,
+    completedDefaults,
+    context,
+    close
   );
 
-  //TO MONITOR IF FORM DATA IS CHANGED SO IT CAN BE SAVED
-  useEffect(
-    function () {
-      //IF FIELDS ARE DIRTY - ADD ISDIRTY PARAMS TO MONITOR FOR SAVE BUTTON
-      // const params = new URLSearchParams(searchParams.toString());
-      if (isDirty && searchParams.get("isDirty") !== "true") {
-        params.set("isDirty", "true");
-        router.push(`${pathname}?${params.toString()}`);
-      }
-      if (!isDirty && searchParams.get("isDirty") === "true") {
-        params.delete("isDirty");
-        router.replace(`${pathname}?${params.toString()}`);
-      }
-    },
-    [isDirty, pathname, router, searchParams, params]
-  );
-
-  //RESET TO DEFAULT VALUE WHEN PRESS CANCEL (FIELDS ARE DIRTY AND NO EDIT)
-  useEffect(
-    function () {
-      if (isDirty && !isEdit) {
-        reset(completedDefaults);
-      }
-    },
-    [completedDefaults, isDirty, isEdit, reset]
-  );
-  // HANDLE SUBMIT PASSED AS A PROPS
+  // Handle form submission event with custom logic for edit/add modes
   const handleOnSubmit = async (e: BaseSyntheticEvent) => {
-    //PREVENT SUBBMITING THE FORM BY 'ENTER' WITHOUT DATA IN THE FIELDS
+    // Prevent submitting when no changes made in edit mode
     if (!isDirty && isEdit) {
       e.preventDefault();
       return false;
     }
-    // SUBMITTING THE DIRTY FIELDS ONLY
+    // Submit only changed fields in edit mode
     else if (isDirty) {
       const changedFields = Object.keys(dirtyFields).reduce((acc, key) => {
         const typedKey = key as keyof ValidationSchema;
@@ -181,51 +152,29 @@ function FormGenerator({
         console.error("Error in the submitted form. Error: " + err)
       );
     }
-    //SUBMITTING ALL FIELDS (FOR ADDING ITEMS)
+    // Submit all fields in add mode
     else
       await handleSubmit(onSubmit, (err) => console.error(err))(e).catch(
         (err) => console.error("Error in the submitted form. Error: " + err)
       );
   };
+
   return (
     <form
+      aria-label="main-form"
       id={formId}
       className={
         isCompactForm ? "flex flex-col" : "flex flex-col w-full h-full"
       }
       onSubmit={handleOnSubmit}
     >
-      {/* RENDER INPUT ELEMENT EXCEPT OF CONDITIONAL ELEMENTS */}
-      {Object.entries(formFields).map(([key, field]) => {
-        // as conditionalFields is array - narrow type to avoid arrays
-        if (Array.isArray(field)) return null;
-        return (
-          <FormRow
-            key={key}
-            field={field}
-            isEdit={isEdit}
-            register={register}
-            errors={errors}
-          />
-        );
-      })}
-
-      {/* RENDER CONDITIONAL INPUT ELEMENTS */}
-      {formFields.conditionalFields?.map((condition) => {
-        const fieldValue = watch(condition.when.field);
-
-        return fieldValue === condition.when.value
-          ? Object.entries(condition.fields).map(([key, field]) => (
-              <FormRow
-                key={key}
-                field={field}
-                isEdit={isEdit}
-                register={register}
-                errors={errors}
-              />
-            ))
-          : null;
-      })}
+      <DynamicFormFields
+        formFields={formFields}
+        isEdit={isEdit}
+        register={register}
+        errors={errors}
+        watch={watch}
+      />
     </form>
   );
 }

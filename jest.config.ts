@@ -6,41 +6,65 @@ const createJestConfig = nextJest({
   dir: "./",
 });
 
-// Add any custom config to be passed to Jest
-const config: Config = {
-  // projects: [
-  //   {
-  displayName: "react",
-  preset: "ts-jest",
-  testEnvironment: "node",
-  // testEnvironment: "jsdom",
+const sharedConfig = {
+  moduleFileExtensions: [
+    "ts",
+    "tsx",
+    "js",
+    "json",
+    "node",
+    "mjs",
+    "cjs",
+    "jsx",
+  ],
+
   moduleNameMapper: {
     "^@/app/(.*)$": "<rootDir>/app/$1",
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
-  transform: {
-    "^.+.tsx?$": ["ts-jest", {}],
-  },
-  // coverageProvider: "v8"
-  // testMatch: ["<rootDir>/app/__test__/**/*.jsdom.test.ts?(x)"],
-  testMatch: ["<rootDir>/app/__test__/**/*.node.test.ts?(x)"],
-  //   },
-  //   {
-  //     displayName: "database",
-  //     preset: "ts-jest",
-  //     testEnvironment: "node",
-  //     // testEnvironment: "jsdom",
-  //     moduleNameMapper: {
-  //       "^@/app/(.*)$": "<rootDir>/app/$1",
-  //     },
-  //     setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
-  //     transform: {
-  //       "^.+.tsx?$": ["ts-jest", {}],
-  //     },
-  //     testMatch: ["<rootDir>/app/__test__/**/*.node.test.ts?(x)"],
-  //     // coverageProvider: "v8"
-  //   },
-  // ],
+  extensionsToTreatAsEsm: [".ts"], //other files that should run with native ESM
+
+  preset: "ts-jest",
+};
+
+// Add any custom config to be passed to Jest
+const config: Config = {
+  coverageProvider: "v8",
+  // collectCoverage: false,
+  projects: [
+    {
+      ...sharedConfig,
+      displayName: { name: "CLIENT", color: "blue" },
+      testEnvironment: "jsdom",
+      transform: {
+        "^.+\\.(js|jsx|ts|tsx)$": [
+          "babel-jest",
+          {
+            presets: [
+              [
+                "next/babel",
+                {
+                  "preset-react": {
+                    runtime: "automatic", // Enable modern JSX transform
+                  },
+                },
+              ],
+            ],
+          },
+        ],
+      },
+      testMatch: ["<rootDir>/app/__test__/**/*.jsdom.test.ts?(x)"],
+    },
+    {
+      ...sharedConfig,
+      displayName: { name: "SERVER", color: "magenta" },
+      testEnvironment: "node",
+      transform: {
+        "^.+.tsx?$": ["ts-jest", {}],
+      },
+      testMatch: ["<rootDir>/app/__test__/**/*.node.test.ts?(x)"],
+    },
+  ],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

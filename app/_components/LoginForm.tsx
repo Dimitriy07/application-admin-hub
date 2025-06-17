@@ -57,9 +57,9 @@ function LoginForm({ ip }: { ip: string }) {
           />
         </CardWrapper.CardContent>
         {error ? (
-          <CardWrapper.CardPopupMessage type={"error"}>
+          <CardWrapper.CardMessage type={"error"}>
             {error || ""}
-          </CardWrapper.CardPopupMessage>
+          </CardWrapper.CardMessage>
         ) : null}
 
         <Button type="submit" form="login-form">

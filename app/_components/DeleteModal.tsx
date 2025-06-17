@@ -1,29 +1,46 @@
 "use client";
-import Modal from "./Modal";
+import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Button from "./Button";
 import CardWrapper from "./CardWrapper";
+import Modal from "./Modal";
 import { deleteItem } from "@/app/_services/actions";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+
+type DeleteModalProps = {
+  id: string;
+  collectionName: string;
+  isResource?: boolean;
+  referenceToCol?: string;
+};
 
 export default function DeleteModal({
   id,
   collectionName,
   isResource = true,
   referenceToCol,
-}: {
-  id: string;
-  collectionName: string;
-  isResource?: boolean;
-  referenceToCol?: string;
-}) {
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
+}: DeleteModalProps) {
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+  const [loading, setLoading] = useState(false);
+
   const path = usePathname();
   const router = useRouter();
-  const params = useSearchParams();
+  const searchParams = useSearchParams();
+
+  const refreshPage = () => {
+    const resourceType = searchParams.get("resourceType");
+    const newUrl =
+      isResource && resourceType
+        ? `${path}?resourceType=${resourceType}`
+        : path;
+    router.replace(newUrl);
+  };
 
   async function handleDelete() {
+    setLoading(true);
+    setMessage(null);
     const result = await deleteItem(
       collectionName,
       id,
@@ -31,18 +48,13 @@ export default function DeleteModal({
       isResource
     );
     if ("error" in result) {
-      setError(result.error || "");
-    } else if ("message" in result) {
-      setSuccess(result.message);
-      const resourceType = params.get("resourceType");
-      router.replace(
-        `${path}${isResource ? "?resourceType=" + resourceType : ""}`
-      );
+      setMessage({ type: "error", text: result.error || "An error occurred." });
     } else {
-      const resourceType = params.get("resourceType");
-      router.replace(
-        `${path}${isResource ? "?resourceType=" + resourceType : ""}`
-      );
+      setMessage({
+        type: "success",
+        text: "Item deleted successfully.",
+      });
+      setTimeout(refreshPage, 1000);
     }
   }
   return (
@@ -57,14 +69,18 @@ export default function DeleteModal({
           <CardWrapper.CardContent>
             <p>Do you really want to delete this Item?</p>
           </CardWrapper.CardContent>
-          {error || success ? (
-            <CardWrapper.CardPopupMessage type={error ? "error" : "success"}>
-              {error ? error : success}
-            </CardWrapper.CardPopupMessage>
+          {message ? (
+            <CardWrapper.CardMessage type={message.type}>
+              {message.text}
+            </CardWrapper.CardMessage>
           ) : null}
           <CardWrapper.CardButtons>
-            <Button onClick={handleDelete} variation="danger">
-              Delete
+            <Button
+              onClick={handleDelete}
+              variation="danger"
+              disabled={loading}
+            >
+              {loading ? "Deleting..." : "Delete"}
             </Button>
             <Button isModalClose={true} variation="secondary">
               No

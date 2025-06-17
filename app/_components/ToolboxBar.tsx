@@ -1,13 +1,12 @@
 "use client";
-// import { auth } from "@/auth";
-// import { headers } from "next/headers";
+
+import { usePathname, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import ToolboxContainer from "./ToolboxContainer";
 import {
   DB_COLLECTION_LEVEL1,
   DB_COLLECTION_LEVEL2,
 } from "@/app/_constants/mongodb-config";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useSession } from "next-auth/react";
-import ToolboxContainer from "./ToolboxContainer";
 
 export default function ToolboxBar({
   isRestricted,

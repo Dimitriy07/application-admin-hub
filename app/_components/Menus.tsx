@@ -118,7 +118,6 @@ function Button({
   );
 }
 
-// Menus.Menu = Menu;
 Menus.Toggle = Toggle;
 Menus.List = List;
 Menus.Button = Button;

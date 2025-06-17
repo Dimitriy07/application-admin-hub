@@ -1,4 +1,4 @@
-import clientPromise from "@/app/_lib/data/db";
+import { clientPromise } from "@/app/_lib/data/db";
 import { CollectionWithInfo, DynamicResourceItem } from "@/app/_types/types";
 import { ObjectId } from "mongodb";
 import { dbConnect } from "../../_utils/db-connector";

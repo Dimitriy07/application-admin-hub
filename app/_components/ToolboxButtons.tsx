@@ -178,11 +178,9 @@ function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
               />
             </CardWrapper.CardContent>
             {success || error ? (
-              <CardWrapper.CardPopupMessage
-                type={success ? "success" : "error"}
-              >
+              <CardWrapper.CardMessage type={success ? "success" : "error"}>
                 {success || error || ""}
-              </CardWrapper.CardPopupMessage>
+              </CardWrapper.CardMessage>
             ) : null}
             <CardWrapper.CardButtons>
               <Button type="submit" form="item-form" disabled={!isDirty}>
