@@ -8,52 +8,48 @@ import {
   DB_COLLECTION_LEVEL2,
 } from "@/app/_constants/mongodb-config";
 
+type ToolboxBarProps = {
+  isRestricted?: boolean;
+  restrictedMessage?: string;
+};
+
 export default function ToolboxBar({
   isRestricted,
   restrictedMessage,
-}: {
-  isRestricted?: boolean;
-  restrictedMessage?: string;
-}) {
-  const path = usePathname();
-  const { data: session, status } = useSession();
+}: ToolboxBarProps) {
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const searchResourceType = searchParams.get("resourceType");
-  const searchResourceId = searchParams.get("resourceId");
+  const { data: session, status } = useSession();
+  const pageAccess = pathname.split("/").at(-1);
+
+  const resourceType = searchParams.get("resourceType");
+  const resourceId = searchParams.get("resourceId");
 
   // take user session to check if the user can manipulate with data (add data)
-  if (status === "loading") return null;
-  if (status === "unauthenticated" || !session?.user) return null;
-  const pageAccess = path.split("/").at(-1);
+  if (status !== "authenticated" || !session?.user) return null;
+
   const role = session.user.role;
+
   if (
-    (pageAccess?.startsWith("resources-app") && !searchResourceType) ||
-    searchResourceId
+    (pageAccess?.startsWith("resources-app") && !resourceType) ||
+    resourceId ||
+    !pageAccess
   )
     return null;
 
-  // as superadmin can manipulate with all levels of data return the component
-  if (role === "superadmin" && pageAccess !== DB_COLLECTION_LEVEL1) {
-    return (
-      <ToolboxContainer
-        isRestricted={isRestricted}
-        restrictedMessage={restrictedMessage}
-      />
-    );
-  }
-  // admin can manipulate with data in accounts only
-  else if (
+  const isSuperAdmin =
+    role === "superadmin" && pageAccess !== DB_COLLECTION_LEVEL1;
+  const isAdmin =
     role === "admin" &&
     pageAccess !== DB_COLLECTION_LEVEL1 &&
-    pageAccess !== DB_COLLECTION_LEVEL2
-  ) {
-    return (
-      <ToolboxContainer
-        isRestricted={isRestricted}
-        restrictedMessage={restrictedMessage}
-      />
-    );
-  }
-  //user can't manipulate with data
-  else return null;
+    pageAccess !== DB_COLLECTION_LEVEL2;
+
+  if (!isSuperAdmin && !isAdmin) return null;
+
+  return (
+    <ToolboxContainer
+      isRestricted={isRestricted}
+      restrictedMessage={restrictedMessage}
+    />
+  );
 }
