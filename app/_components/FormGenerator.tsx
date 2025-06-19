@@ -56,6 +56,7 @@ import { ModalContext } from "./Modal";
 import createZodSchema from "@/app/_lib/validationSchema";
 import { USER_EDIT_SCHEMA } from "@/app/_constants/schema-names";
 import { FormConfigWithConditions } from "@/app/_types/types";
+import { USERS_COLLECTION } from "@/app/_constants/form-names";
 
 interface FormGeneratorProps {
   formFields: FormConfigWithConditions;
@@ -82,7 +83,7 @@ function FormGenerator({
   // Determine if the form is for user editing within the resources app context
   const isResourcesApp =
     pathname.split("/").at(-1)?.startsWith("resources-app") &&
-    searchParams.get("resourceType") === "users";
+    searchParams.get("resourceType") === USERS_COLLECTION;
 
   // Override validation schema for user editing in resources app
   if (isResourcesApp) {

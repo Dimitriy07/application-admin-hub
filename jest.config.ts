@@ -19,7 +19,8 @@ const sharedConfig = {
   ],
 
   moduleNameMapper: {
-    "^@/app/(.*)$": "<rootDir>/app/$1",
+    "^@auth/mongodb-adapter$": "<rootDir>/__mocks__/mongodb-adapter.ts",
+    "^@/(.*)$": "<rootDir>/$1",
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   extensionsToTreatAsEsm: [".ts"], //other files that should run with native ESM

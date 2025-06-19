@@ -16,7 +16,7 @@ export function fetchUserInfoFromDb(dbName: string, collectionName: string) {
       return data;
     }
     data = await collection.findOne({
-      [label]: filterItem,
+      [label]: filterItem.toLowerCase().trim(),
     });
 
     return data;

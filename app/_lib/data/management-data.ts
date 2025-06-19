@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import { dbConnect } from "../../_utils/db-connector";
 import { flattenObject } from "@/app/_utils/flatten-objects";
 import { DB_RESOURCES_NAME } from "@/app/_constants/mongodb-config";
+import { USERS_COLLECTION } from "@/app/_constants/form-names";
 
 /**
  * Creates a reusable function to fetch data from a MongoDB collection.
@@ -166,7 +167,7 @@ export async function deleteManagementDataInDb(
     let hasUser;
     const mongoId = new ObjectId(managementId);
     if (referenceToCol) {
-      collection = await dbConnect(DB_RESOURCES_NAME, "users");
+      collection = await dbConnect(DB_RESOURCES_NAME, USERS_COLLECTION);
       hasUser = await collection.findOne({
         [referenceToCol]: mongoId,
       });

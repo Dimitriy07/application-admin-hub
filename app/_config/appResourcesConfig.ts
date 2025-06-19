@@ -1,8 +1,12 @@
 import { APP_CONFIG_ID1 } from "@/app/_constants/mongodb-config";
+import {
+  USERS_COLLECTION,
+  VEHICLES_COLLECTION,
+} from "@/app/_constants/form-names";
 
 export const appResourceFields = {
   [APP_CONFIG_ID1]: {
-    users: {
+    [USERS_COLLECTION]: {
       role: {
         type: "select",
         name: "role",
@@ -48,14 +52,9 @@ export const appResourceFields = {
         },
       ],
     },
+
     // !! fix right field data when it known
-    drivers: {
-      name: { type: "text", id: "name", name: "name", labelName: "Name" },
-      make: { type: "text", id: "make", name: "make", labelName: "Make" },
-      model: { type: "text", id: "model", name: "model", labelName: "Model" },
-      owner: { type: "text", id: "owner", name: "owner", labelName: "Owner" },
-    },
-    vehicles: {
+    [VEHICLES_COLLECTION]: {
       name: { type: "text", id: "name", name: "name", labelName: "Name" },
       make: { type: "text", id: "make", name: "make", labelName: "Make" },
       model: { type: "text", id: "model", name: "model", labelName: "Model" },

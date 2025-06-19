@@ -1,5 +1,5 @@
 import { getResourceByResourceId } from "@/app/_services/resourcesDataService";
-import { appResourceFields } from "@/app/_config/appDataConfigs";
+import { appResourceFields } from "@/app/_config/appResourcesConfig";
 import CardWrapper from "./CardWrapper";
 import FormGenerator from "./FormGenerator";
 import EditButtonsBar from "./EditButtonsBar";

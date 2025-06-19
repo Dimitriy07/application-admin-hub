@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn, signOut } from "@/auth";
+import { signIn, signOut } from "../../auth"; // keep ../../ - for jest
 import { AuthError } from "next-auth";
 import {
   getUserByEmail,
@@ -29,7 +29,7 @@ import {
 } from "./managementDataService";
 import { redirect } from "next/navigation";
 import { DEFAULT_LOGIN_REDIRECT } from "@/app/routes";
-import { rateLimitCheck } from "../_utils/ratelimit";
+import { rateLimitCheck } from "@/app/_utils/ratelimit";
 
 /////////LOGIN SERVER ACTION//////////
 

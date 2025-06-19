@@ -1,4 +1,4 @@
-import { APP_CONFIG_ID1 } from "../_constants/mongodb-config";
+import { APP_CONFIG_ID1 } from "@/app/_constants/mongodb-config";
 
 const appRoutingMap: Record<string, string> = {
   [APP_CONFIG_ID1]: "1",

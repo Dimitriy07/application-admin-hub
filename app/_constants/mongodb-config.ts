@@ -1,11 +1,20 @@
+//// DB'S NAME
 export const DB_MANAGEMENT_NAME = "mtl-admin-app";
 export const DB_RESOURCES_NAME = "mtl-admin-resources";
 export const DB_AUTHENTICATION_NAME = "mtl-admin-authentication";
+
+//// COLLECTIONS NAME
 export const DB_COLLECTION_LEVEL1 = "applications";
 export const DB_COLLECTION_LEVEL2 = "entities";
 export const DB_COLLECTION_LEVEL3 = "accounts";
-export const DB_COLLECTION_LEVEL4 = "resources-app";
+
+//// ID REFFERENCE TO COLLECTION
 export const DB_REFERENCE_TO_COL1 = "applicationId";
 export const DB_REFERENCE_TO_COL2 = "entityId";
 export const DB_REFERENCE_TO_COL3 = "accountId";
+
+//// LEVEL 4 NAME OF URL SLUG (USE TO NAVIGATE TO RESOURCE WINDOW AND FOR DIFFERENT APPS CAN BE DIFFERENT RESOURCE WINDOWS BY ADDING FOLDER TO application ->[appId]->entities->[entityId]->accounts->[accountId]... resources-app1, resources-app2 etc.)
+export const DB_COLLECTION_LEVEL4 = "resources-app";
+
+//// APPLICATIONS ID
 export const APP_CONFIG_ID1 = "68467195aa14d9defddd0244";
