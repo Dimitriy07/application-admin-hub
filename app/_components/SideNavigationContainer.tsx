@@ -1,4 +1,4 @@
-import { getResourcesNames } from "../_services/resourcesDataService";
+import { getResourcesNames } from "@/app/_services/resourcesDataService";
 import SideNavigationList from "./SideNavigationList";
 
 async function SideNavigationContainer() {

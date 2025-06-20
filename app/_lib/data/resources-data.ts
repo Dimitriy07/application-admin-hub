@@ -92,6 +92,9 @@ export async function createResourceInDb(
   dbName: string,
   collectionName: string
 ) {
+  const collectionList = await fetchResourcesNames(dbName);
+  const collectionsName = collectionList.map(col => col.name)
+  if(!collectionsName.includes(collectionName))throw new Error(`Resource Item can't be created.${collectionName} collection doesn't exist in database`)
   return async function createResourceDoc<T extends Document>(resourceObj: T) {
     const collection = await dbConnect(dbName, collectionName);
     const data = await collection.insertOne(resourceObj);

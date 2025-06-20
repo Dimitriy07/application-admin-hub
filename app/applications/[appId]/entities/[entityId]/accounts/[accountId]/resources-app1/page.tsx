@@ -4,6 +4,8 @@ import ResourcesMessage from "@/app/_components/ResourcesMessage";
 import ToolboxBar from "@/app/_components/ToolboxBar";
 import { getResourcesByCollection } from "@/app/_services/resourcesDataService";
 import settingsRestriction from "@/app/_utils/application1/settings-restriction";
+import { getResourcesNames } from "@/app/_services/resourcesDataService";
+import { appResourceFields } from "@/app/_config/appResourcesConfig";
 
 export default async function AppOneResourcePage({
   searchParams,
@@ -24,23 +26,35 @@ export default async function AppOneResourcePage({
 
   const resourceId = resolvedSearchParams.resourceId;
   const isEdit = resolvedSearchParams.edit;
+  if (typeof appId !== "string" || !(appId in appResourceFields)) return null;
+
+  const validFilterKeySet = new Set(
+    Object.keys(appResourceFields[appId as keyof typeof appResourceFields])
+  );
+  const resourcesNameResult = await getResourcesNames();
+  const collectionList = resourcesNameResult.map((col) => col.name);
+
+  if (!collectionName) {
+    return <ResourcesMessage />;
+  }
+  const hasAccess = validFilterKeySet.has(collectionName) && collectionList.includes(collectionName);
 
   let resourcesArr = [];
 
   if (collectionName) {
-    try {
-      const resources = await getResourcesByCollection(
-        collectionName,
-        accountId
-      );
-      resourcesArr = resources.map((res) => JSON.parse(JSON.stringify(res)));
-    } catch (err) {
-      console.error("Failed to fetch resources", err);
-    }
+    if(hasAccess){
+      try {
+        const resources = await getResourcesByCollection(
+          collectionName,
+          accountId
+        );
+        resourcesArr = resources.map((res) => JSON.parse(JSON.stringify(res)));
+      } catch (err) {
+        console.error("Failed to fetch resources", err);
+      }
+    } else{return <ResourcesMessage />;}
   }
-  if (!collectionName) {
-    return <ResourcesMessage />;
-  }
+ 
 
   //SETTINGS RESTRICTIONS (APPLICATION 1)
 
