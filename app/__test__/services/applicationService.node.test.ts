@@ -1,5 +1,5 @@
 import { clientPromise, mongoMemoryServer } from "@/app/_lib/data/db";
-import { getApplications } from "@/app/_services/managementDataService";
+import { getApplications } from "@/app/_services/data-service/managementDataService";
 import { MongoClient } from "mongodb";
 
 describe("Management DB Service", () => {

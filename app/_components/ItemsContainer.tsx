@@ -5,7 +5,6 @@ import ResourceItem from "./ResourceItem";
 import DataDisplayContainer from "./DataDisplayContainer";
 import SettingsWindow from "./SettingsWindow";
 import { DB_COLLECTION_LEVEL3 } from "../_constants/mongodb-config";
-// import { appSettingsFields } from "@/app/_config/appSettingsConfigs";
 
 export default async function ItemsContainer({
   items,

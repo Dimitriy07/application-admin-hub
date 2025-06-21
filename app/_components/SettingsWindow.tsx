@@ -1,11 +1,11 @@
-import { getManagementDataByManagementId } from "@/app/_services/managementDataService";
+import { getManagementDataByManagementId } from "@/app/_services/data-service/managementDataService";
 import CardWrapper from "./CardWrapper";
 import EditButtonsBar from "./EditButtonsBar";
 import FormGenerator from "./FormGenerator";
-import { appSettingsFields } from "@/app/_config/appSettingsConfigs";
 import { updateItem } from "@/app/_services/actions";
 import DeleteModal from "./DeleteModal";
 import ResourcesMessage from "./ResourcesMessage";
+import urlAndConfigAppSwitcher from "@/app/_services/urlConfigAppSwitcher";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -31,20 +31,23 @@ async function SettingsWindow({
     managementId
   );
 
-  if (!resolvedManagementItem || "error" in resolvedManagementItem) return null;
+  if (!resolvedManagementItem || "error" in resolvedManagementItem || !appId)
+    return null;
 
   // GET ACCESS TO SETTINGS OBJECT FROM DB DOCUMENT
   const settingsObj = resolvedManagementItem?.settings;
 
-  //GET LIST OF COLLECTION OF MANAGEMENT DATA FROM PRE SET CONFIGURATIONS FOR CURRENT APP TO HAVE ACCESS TO THEIR FIELDS
-  const settingsConfigsByAppId =
-    appSettingsFields[appId as keyof typeof appSettingsFields];
+  const config = urlAndConfigAppSwitcher(appId);
+
+  // GET SETTINGS SCHEMA
+  const appSettingsFields = config?.settings;
+
+  if (!appSettingsFields) return null;
 
   //GET OBJECT OF FIELDS OF MANAGEMENT DATA TO DISPLAY NECESSARY FIELDS IN THE FORM
   const managementSettingsFields =
-    settingsConfigsByAppId[
-      collectionName as keyof typeof settingsConfigsByAppId
-    ];
+    appSettingsFields[collectionName as keyof typeof appSettingsFields];
+
   // HANDLE FORM SUBMITION TO UPDATE DATA
   async function handleForm(formData: Record<string, string>) {
     "use server";

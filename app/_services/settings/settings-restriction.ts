@@ -1,7 +1,7 @@
 import { DB_COLLECTION_LEVEL2 } from "@/app/_constants/mongodb-config";
-import { getManagementDataByManagementId } from "@/app/_services/managementDataService";
+import { getManagementDataByManagementId } from "@/app/_services/data-service/managementDataService";
 
-export default async function settingsRestriction(
+export default async function usersVehiclesRestriction(
   entityId: string,
   collectionName: string,
   resourcesArr: string[]

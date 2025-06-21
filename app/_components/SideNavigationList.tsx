@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
-import { appResourceFields } from "@/app/_config/appResourcesConfig";
+import urlAndConfigAppSwitcher from "@/app/_services/urlConfigAppSwitcher";
 
 type ResourcesList = {
   name: string;
@@ -12,15 +12,17 @@ type ResourcesList = {
 function SideNavigationList({ resources }: { resources: ResourcesList[] }) {
   const path = usePathname();
   const searchParams = useSearchParams();
-  const params = useParams()
+  const params = useParams();
   const resourceType = searchParams.get("resourceType");
   const appId = params.appId as string;
-  if (typeof appId !== "string" || !(appId in appResourceFields)) return null;
 
-  const validFilterKeySet = new Set(
-    Object.keys(appResourceFields[appId as keyof typeof appResourceFields])
-  );
-  
+  const config = urlAndConfigAppSwitcher(appId);
+
+  const resourceConfig = config?.resourceConfig;
+
+  if (typeof appId !== "string" || !resourceConfig) return null;
+
+  const validFilterKeySet = new Set(Object.keys(resourceConfig));
 
   return (
     <ul>

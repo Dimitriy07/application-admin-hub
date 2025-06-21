@@ -2,7 +2,7 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import { clientPromise } from "@/app/_lib/data/db";
 import NextAuth from "next-auth";
 import authConfig from "@/auth.config";
-import { getUserById } from "@/app/_services/userDataService";
+import { getUserById } from "@/app/_services/data-service/userDataService";
 import type { Adapter } from "next-auth/adapters";
 // import util from "util";
 // export const runtime = "nodejs"; // Ensures NextAuth runs in Node.js environment

@@ -6,7 +6,7 @@ import {
   DB_COLLECTION_LEVEL3,
   DB_REFERENCE_TO_COL2,
 } from "@/app/_constants/mongodb-config";
-import { getEntities } from "@/app/_services/managementDataService";
+import { getEntities } from "@/app/_services/data-service/managementDataService";
 import { DEFAULT_LOGIN_REDIRECT } from "@/app/routes";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";

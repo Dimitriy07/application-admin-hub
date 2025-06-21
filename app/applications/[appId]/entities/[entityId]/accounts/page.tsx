@@ -6,8 +6,8 @@ import {
   DB_COLLECTION_LEVEL4,
   DB_REFERENCE_TO_COL3,
 } from "@/app/_constants/mongodb-config";
-import { getAccounts } from "@/app/_services/managementDataService";
-import urlAppSwitcher from "@/app/_utils/url-app-switcher";
+import { getAccounts } from "@/app/_services/data-service/managementDataService";
+import urlAndConfigAppSwitcher from "@/app/_services/urlConfigAppSwitcher";
 import { auth } from "@/auth";
 
 export default async function LevelThreePage({
@@ -27,14 +27,15 @@ export default async function LevelThreePage({
   const accounts = await getAccounts(entityId);
   const { settings, managementId, edit, query } = await searchParams;
   // GET APP NUMBER TO NAVIGATE TO RESOURCES OF DIFFERENT APPS
-  const appNumber = urlAppSwitcher(appId);
+  const config = urlAndConfigAppSwitcher(appId);
+  const urlSlug = config?.urlSlug;
 
   return (
     <ProtectedComponent appId={appId} entityId={entityId}>
       <ItemsContainer
         userRole={session?.user.role}
         items={accounts}
-        urlPath={DB_COLLECTION_LEVEL4 + appNumber}
+        urlPath={DB_COLLECTION_LEVEL4 + urlSlug}
         isSettings={settings}
         managementId={managementId}
         currentCollection={DB_COLLECTION_LEVEL3}

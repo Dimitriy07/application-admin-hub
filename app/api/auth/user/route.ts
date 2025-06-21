@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
-import { getUserByEmailAndPassword } from "@/app/_services/userDataService";
+import { getUserByEmailAndPassword } from "@/app/_services/data-service/userDataService";
 
 // export const runtime = "nodejs"; // Force Node.js runtime
 

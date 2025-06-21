@@ -1,54 +1,76 @@
-import { getResourceByResourceId } from "@/app/_services/resourcesDataService";
-import { appResourceFields } from "@/app/_config/appResourcesConfig";
 import CardWrapper from "./CardWrapper";
-import FormGenerator from "./FormGenerator";
-import EditButtonsBar from "./EditButtonsBar";
-import { FormConfigWithConditions } from "@/app/_types/types";
-import { updateItem } from "@/app/_services/actions";
 import DeleteModal from "./DeleteModal";
+import EditButtonsBar from "./EditButtonsBar";
+import FormGenerator from "./FormGenerator";
 
-// GET FRESH INFORMATION WHEN UPDATE ITEM
+import { updateItem } from "@/app/_services/actions";
+import { getResourceByResourceId } from "@/app/_services/data-service/resourcesDataService";
+import urlAndConfigAppSwitcher from "@/app/_services/urlConfigAppSwitcher";
+
+import { FormConfigWithConditions } from "@/app/_types/types";
+
+// Instructs Next.js to always render this component on the server (no caching)
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 interface ResourceItemProps {
+  /** Name of the resource collection in the database (e.g., "users", "vehicles") */
   collectionName: string;
+  /** ID of the resource to be fetched and displayed */
   resourceId: string;
+  /** App identifier used to determine configuration schema */
   appId: string | undefined;
+  /** Whether the form is in edit mode (typically derived from query param) */
   isEdit: string | undefined;
 }
 
-//COMPONENT WORKS WITH DIFFERENT ITEMS AND EACH ITEM CAN HAVE THEIR OWN FIELDS CONFIGURATIONS
+/**
+ * ResourceItem Component
+ *
+ * Dynamically renders a form and detail view for a single resource item.
+ * Uses a configuration schema based on the `appId` to determine which fields to show.
+ * Handles both read-only and edit modes, as well as deletion if allowed.
+ *
+ * @param {ResourceItemProps} props - Props to identify and configure the resource view
+ * @returns {Promise<JSX.Element | null>} Form with item data or null if data/config is invalid
+ */
 async function ResourceItem({
   collectionName,
   resourceId,
   appId,
   isEdit,
 }: ResourceItemProps) {
-  if (!appId || !(appId in appResourceFields)) return null;
+  // Skip rendering if `appId` is not available
+  if (!appId) return null;
 
-  // GET ITEM RESOURCE FROM DB TO DISPLAY
+  // Get form configuration schema based on the app context
+  const config = urlAndConfigAppSwitcher(appId);
+  const resourceConfig = config?.resourceConfig;
+
+  // Fetch the resource item from the database
   const resolvedResourceItems = await getResourceByResourceId(
     collectionName,
     resourceId
   );
 
-  if (!resolvedResourceItems) return null;
+  // Validate that both resource and config are available
+  if (!resolvedResourceItems || !resourceConfig) return null;
 
-  // CONVERT MONGODB RESOLVEDRESOURCEITEMS TO PLAIN OBJECT
+  // Serialize the MongoDB document into a plain object for the client
   const clientResourceItems = JSON.parse(JSON.stringify(resolvedResourceItems));
 
-  //GET LIST OF COLLECTION OF RESOURCES FROM PRE SET CONFIGURATIONS FOR CURRENT APP TO HAVE ACCESS TO THEIR FIELDS
-  const appFieldsByAppId =
-    appResourceFields[appId as keyof typeof appResourceFields];
+  // Skip rendering if the collection does not exist in the config
+  if (!(collectionName in resourceConfig)) return null;
 
-  if (!(collectionName in appFieldsByAppId)) return null;
-
-  //GET OBJECT OF FIELDS OF RESOURCE TO DISPLAY NECESSARY FIELDS IN THE FORM
+  // Extract the form field definitions for the given collection
   const collectionFields =
-    appFieldsByAppId[collectionName as keyof typeof appFieldsByAppId];
+    resourceConfig[collectionName as keyof typeof resourceConfig];
 
-  // HANDLE FORM SUBMITION TO UPDATE DATA
+  /**
+   * Form submit handler for updating the resource
+   *
+   * @param {Record<string, string>} formData - Modified form data to be saved
+   */
   async function handleForm(formData: Record<string, string>) {
     "use server";
     try {
@@ -57,6 +79,7 @@ async function ResourceItem({
       console.error("The Item was not updated." + err);
     }
   }
+
   return (
     <>
       <CardWrapper>
@@ -65,9 +88,10 @@ async function ResourceItem({
             {collectionName[0].toUpperCase() + collectionName.slice(1)} info -{" "}
             {clientResourceItems.name}
           </CardWrapper.CardLabel>
+
           <CardWrapper.CardContent>
             <FormGenerator
-              key={JSON.stringify(clientResourceItems)}
+              key={JSON.stringify(clientResourceItems)} // Ensures re-render on value change
               formFields={collectionFields as FormConfigWithConditions}
               onSubmit={handleForm}
               defaultValues={clientResourceItems}
@@ -77,12 +101,16 @@ async function ResourceItem({
             />
           </CardWrapper.CardContent>
         </div>
+
         <CardWrapper.CardButtons>
+          {/* Show delete button only in edit mode */}
           {isEdit && (
             <DeleteModal id={resourceId} collectionName={collectionName} />
           )}
         </CardWrapper.CardButtons>
       </CardWrapper>
+
+      {/* Sticky footer with Save/Cancel buttons */}
       <EditButtonsBar formId="resource-edit" />
     </>
   );

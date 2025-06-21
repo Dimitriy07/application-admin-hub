@@ -6,27 +6,27 @@ import {
   getUserByEmail,
   getUserByEmailAndPassword,
   updateUserById,
-} from "@/app/_services/userDataService";
+} from "@/app/_services/data-service/userDataService";
 import {
   deleteVerificationTokenById,
   generateVerificationToken,
   getVerificationTokenByToken,
   getVerificationTokenByTokenId,
-} from "./tokenDataService";
+} from "./data-service/tokenDataService";
 import { sendVerificationEmail } from "@/app/_lib/mail";
 import { UserRegistration } from "@/app/_types/types";
 import {
   createResourceItem,
   deleteResourceItem,
   updateResourceItem,
-} from "./resourcesDataService";
+} from "./data-service/resourcesDataService";
 import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
 import {
   createManagementItem,
   deleteManagementItem,
   updateManagementItem,
-} from "./managementDataService";
+} from "./data-service/managementDataService";
 import { redirect } from "next/navigation";
 import { DEFAULT_LOGIN_REDIRECT } from "@/app/routes";
 import { rateLimitCheck } from "@/app/_utils/ratelimit";

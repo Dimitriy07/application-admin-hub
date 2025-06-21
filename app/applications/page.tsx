@@ -4,7 +4,7 @@ import {
   DB_COLLECTION_LEVEL1,
   DB_COLLECTION_LEVEL2,
 } from "@/app/_constants/mongodb-config";
-import { getApplications } from "@/app/_services/managementDataService";
+import { getApplications } from "@/app/_services/data-service/managementDataService";
 
 export default async function LevelOnePage({
   searchParams,
