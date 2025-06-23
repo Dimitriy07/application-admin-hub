@@ -1,15 +1,44 @@
-import { getManagementDataByManagementId } from "@/app/_services/data-service/managementDataService";
 import CardWrapper from "./CardWrapper";
+import DeleteModal from "./DeleteModal";
 import EditButtonsBar from "./EditButtonsBar";
 import FormGenerator from "./FormGenerator";
-import { updateItem } from "@/app/_services/actions";
-import DeleteModal from "./DeleteModal";
 import ResourcesMessage from "./ResourcesMessage";
+
+import { updateItem } from "@/app/_services/actions";
+import { getManagementDataByManagementId } from "@/app/_services/data-service/managementDataService";
 import urlAndConfigAppSwitcher from "@/app/_services/urlConfigAppSwitcher";
 
+// Ensure the page is server-rendered and never statically cached
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+interface SettingsWindowProps {
+  /** ID of the management-level item to retrieve */
+  managementId: string | undefined;
+  /** Name of the collection (e.g., teams, drivers) */
+  collectionName: string | undefined;
+  /** App identifier used to resolve form schema */
+  appId: string | undefined;
+  /** If truthy, shows form in editable mode */
+  isEdit: string | undefined;
+  /** If true, allows user access to settings */
+  isAuthorized: boolean | undefined;
+  /** Optional: parent collection name for reference when deleting */
+  referenceToCol?: string;
+}
+
+/**
+ * SettingsWindow Component
+ *
+ * Displays a dynamic form for editing a management-level item's settings.
+ * - Form structure and fields are derived from a per-app configuration.
+ * - Access is gated by the `isAuthorized` flag.
+ * - Supports update and delete operations.
+ *
+ * @component
+ * @param {SettingsWindowProps} props
+ * @returns {Promise<JSX.Element | null>} Rendered settings form or null if input is invalid
+ */
 async function SettingsWindow({
   managementId,
   collectionName,
@@ -17,52 +46,51 @@ async function SettingsWindow({
   isEdit,
   isAuthorized,
   referenceToCol,
-}: {
-  managementId: string | undefined;
-  collectionName: string | undefined;
-  appId: string | undefined;
-  isEdit: string | undefined;
-  isAuthorized: boolean | undefined;
-  referenceToCol?: string;
-}) {
+}: SettingsWindowProps) {
+  // Abort if required data is missing
   if (!managementId || !collectionName) return null;
+
+  // Fetch item from DB
   const resolvedManagementItem = await getManagementDataByManagementId(
     collectionName,
     managementId
   );
 
+  // Validate item and appId
   if (!resolvedManagementItem || "error" in resolvedManagementItem || !appId)
     return null;
 
-  // GET ACCESS TO SETTINGS OBJECT FROM DB DOCUMENT
+  // Extract `settings` field from document
   const settingsObj = resolvedManagementItem?.settings;
 
+  // Retrieve per-app configuration
   const config = urlAndConfigAppSwitcher(appId);
 
-  // GET SETTINGS SCHEMA
+  // Get global settings schema from config
   const appSettingsFields = config?.settings;
-
   if (!appSettingsFields) return null;
 
-  //GET OBJECT OF FIELDS OF MANAGEMENT DATA TO DISPLAY NECESSARY FIELDS IN THE FORM
+  // Get schema specific to this collection
   const managementSettingsFields =
     appSettingsFields[collectionName as keyof typeof appSettingsFields];
 
-  // HANDLE FORM SUBMITION TO UPDATE DATA
+  /**
+   * Handles form submission by updating the settings object in the DB.
+   *
+   * @param {Record<string, string>} formData - Form values submitted
+   */
   async function handleForm(formData: Record<string, string>) {
     "use server";
-    // const validatedSettings = createZodSchema(undefined, formData).safeParse(
-    //   formData
-    // );
     try {
-      // const settings = { settings: validatedSettings.data };
       const settings = { settings: formData };
-      if (collectionName && managementId)
+      if (collectionName && managementId) {
         await updateItem(settings, collectionName, managementId, false);
+      }
     } catch (err) {
       console.error("The settings were not updated. " + err);
     }
   }
+
   return (
     <div className="w-1/2 bg-ocean-0 h-full border shadow-xl rounded-md">
       <CardWrapper>
@@ -72,7 +100,9 @@ async function SettingsWindow({
               {collectionName[0].toUpperCase() + collectionName.slice(1)}{" "}
               Settings - {resolvedManagementItem.name}
             </CardWrapper.CardLabel>
+
             <CardWrapper.CardContent>
+              {/* Render settings form only if user is authorized and fields exist */}
               {isAuthorized && managementSettingsFields && (
                 <FormGenerator
                   key={JSON.stringify(settingsObj)}
@@ -84,9 +114,13 @@ async function SettingsWindow({
                   formId="settings-edit"
                 />
               )}
+
+              {/* Show fallback message if no field config available */}
               {!managementSettingsFields && (
                 <ResourcesMessage message='Click "Edit" button to delete an Item' />
               )}
+
+              {/* Show delete button in edit mode */}
               {isEdit && (
                 <DeleteModal
                   id={managementId}
@@ -97,6 +131,8 @@ async function SettingsWindow({
               )}
             </CardWrapper.CardContent>
           </div>
+
+          {/* Action buttons (Save, Cancel) */}
           <CardWrapper.CardButtons>
             <EditButtonsBar formId="settings-edit" />
           </CardWrapper.CardButtons>

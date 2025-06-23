@@ -54,7 +54,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import DynamicFormFields from "./DynamicFormFields";
 import { ModalContext } from "./Modal";
 import createZodSchema from "@/app/_lib/validationSchema";
-import { USER_EDIT_SCHEMA } from "@/app/_constants/schema-names";
+import { USER_EDIT_SCHEMA } from "@/app/_constants/validations-schema-names";
 import { FormConfigWithConditions } from "@/app/_types/types";
 import { USERS_COLLECTION } from "@/app/_constants/form-names";
 

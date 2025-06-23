@@ -5,7 +5,7 @@ import {
   USER_EDIT_SCHEMA,
   USER_LOGIN_SCHEMA,
   USER_REGISTRATION_SCHEMA,
-} from "@/app/_constants/schema-names";
+} from "@/app/_constants/validations-schema-names";
 
 const userRegistrationSchema = z
   .discriminatedUnion("role", [

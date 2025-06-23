@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { login } from "@/app/_services/actions";
 import { ZodError } from "zod";
 import Button from "./Button";
-import { USER_LOGIN_SCHEMA } from "@/app/_constants/schema-names";
+import { USER_LOGIN_SCHEMA } from "@/app/_constants/validations-schema-names";
 import CardWrapper from "./CardWrapper";
 import FormGenerator from "./FormGenerator";
 import { loginFormField } from "@/app/_config/formConfigs";

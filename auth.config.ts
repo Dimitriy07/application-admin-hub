@@ -2,7 +2,7 @@ import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { UserSession } from "./app/_types/types";
 import createZodSchema from "./app/_lib/validationSchema";
-import { USER_LOGIN_SCHEMA } from "./app/_constants/schema-names";
+import { USER_LOGIN_SCHEMA } from "./app/_constants/validations-schema-names";
 // import util from "util";
 
 export default {

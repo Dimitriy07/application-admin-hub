@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import createZodSchema from "@/app/_lib/validationSchema";
-import { USER_REGISTRATION_SCHEMA } from "@/app/_constants/schema-names";
+import { USER_REGISTRATION_SCHEMA } from "@/app/_constants/validations-schema-names";
 import { addItem, register } from "@/app/_services/actions";
 import {
   DB_COLLECTION_LEVEL2,
@@ -11,6 +11,35 @@ import {
   DB_REFERENCE_TO_COL3,
 } from "@/app/_constants/mongodb-config";
 
+interface UseButtonFormHandlersArgs {
+  /** Current page name from the route (used for identifying collection) */
+  pageName: string;
+  /** Type of resource, if applicable (e.g., "users") */
+  resourceType: string | null;
+  /** Reference ID to parent collection level 1 (e.g., app ID) */
+  refToIdCollection1: string;
+  /** Reference ID to parent collection level 2 (e.g., entity ID) */
+  refToIdCollection2: string;
+  /** Reference ID to parent collection level 3 (e.g., account ID) */
+  refToIdCollection3: string;
+  /** Determines if the `pageName` is valid (not an ObjectId) */
+  isPageNameValid: boolean;
+  /** Function to set error messages */
+  setError: (err: string) => void;
+  /** Function to set success messages */
+  setSuccess: (msg: string) => void;
+}
+
+/**
+ * Custom hook to return two submission handlers:
+ * 1. `handleUserRegistration` – used for registering new users with validation.
+ * 2. `handleItemAddition` – used for adding generic items with parent references.
+ *
+ * Both methods report success/error to `setSuccess` and `setError`, and refresh the router.
+ *
+ * @param {UseButtonFormHandlersArgs} args - Hook input arguments
+ * @returns {Object} - Handlers: `handleUserRegistration`, `handleItemAddition`
+ */
 export function useButtonFormHandlers({
   pageName,
   resourceType,
@@ -20,24 +49,21 @@ export function useButtonFormHandlers({
   isPageNameValid,
   setError,
   setSuccess,
-}: {
-  pageName: string;
-  resourceType: string | null;
-  refToIdCollection1: string;
-  refToIdCollection2: string;
-  refToIdCollection3: string;
-  isPageNameValid: boolean;
-  setError: (err: string) => void;
-  setSuccess: (msg: string) => void;
-}) {
+}: UseButtonFormHandlersArgs) {
   const router = useRouter();
 
-  //HANDLE USER FORM SEPARATELY FROM OTHER DATA MANIPULATION
+  /**
+   * Handles user registration.
+   * - Validates form data using a Zod schema.
+   * - Adds collection references (entity/account IDs).
+   * - Submits using `register()` service function.
+   */
   const handleUserRegistration = useCallback(
     async (formData: Record<string, string>) => {
       const result = createZodSchema(USER_REGISTRATION_SCHEMA).safeParse(
         formData
       );
+
       if (!result.success) {
         setError(`Validation failed: ${result.error}`);
         return;
@@ -51,10 +77,12 @@ export function useButtonFormHandlers({
         },
         resourceType!
       );
+
       if ("error" in regResult) {
         setError(regResult.error);
-        throw new Error("new error");
+        throw new Error("User registration failed");
       }
+
       setSuccess(regResult.message);
       router.refresh();
     },
@@ -68,11 +96,17 @@ export function useButtonFormHandlers({
     ]
   );
 
-  // HANDLE FORM OTHER FROM USER FORM
+  /**
+   * Handles addition of general (non-user) items.
+   * - Determines proper parent reference field and value based on collection level.
+   * - Submits using `addItem()` service function.
+   * - Automatically detects whether this is a resource item or management item.
+   */
   const handleItemAddition = useCallback(
     async (formData: Record<string, string>) => {
       try {
-        let refToCollectionName, refToIdCollection;
+        let refToCollectionName: string | undefined;
+        let refToIdCollection: string | undefined;
 
         if (resourceType) {
           refToCollectionName = DB_REFERENCE_TO_COL3;
@@ -92,8 +126,9 @@ export function useButtonFormHandlers({
           }
         }
 
-        if (!isPageNameValid || !refToCollectionName)
+        if (!isPageNameValid || !refToCollectionName) {
           return setError("Invalid collection reference");
+        }
 
         const item = await addItem(
           { ...formData, refToIdCollection },
@@ -101,7 +136,9 @@ export function useButtonFormHandlers({
           refToCollectionName,
           !!resourceType
         );
+
         if (item.success) setSuccess(item.message);
+
         router.refresh();
         setSuccess("");
       } catch (err) {
@@ -120,5 +157,6 @@ export function useButtonFormHandlers({
       setSuccess,
     ]
   );
+
   return { handleUserRegistration, handleItemAddition };
 }

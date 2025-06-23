@@ -12,7 +12,7 @@ import { FormConfigWithConditions } from "@/app/_types/types";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { isNotId } from "@/app/_utils/page-validation";
 import { Suspense, useMemo, useState } from "react";
-import { USER_REGISTRATION_SCHEMA } from "@/app/_constants/schema-names";
+import { USER_REGISTRATION_SCHEMA } from "@/app/_constants/validations-schema-names";
 import { useButtonFormHandlers } from "@/app/_hooks/useButtonFormHandlers";
 import { USERS_COLLECTION } from "@/app/_constants/form-names";
 
