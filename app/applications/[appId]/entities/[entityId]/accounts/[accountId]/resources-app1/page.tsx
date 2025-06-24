@@ -73,7 +73,7 @@ export default async function AppOneResourcePage({
   if (!restrictions || "message" in restrictions) {
     return <ResourcesMessage message={restrictions?.message} />;
   }
-
+  ///////////////////////////
   return (
     <>
       <ProtectedComponent appId={appId} entityId={entityId}>

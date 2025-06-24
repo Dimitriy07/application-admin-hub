@@ -1,5 +1,5 @@
-import { dbConnect } from "@/app/_utils/db-connector";
 import { ObjectId } from "mongodb";
+import { dbConnect } from "@/app/_utils/db-connector";
 
 export function fetchTokenInfoFromDb(dbName: string, collectionName: string) {
   return async function fetchUserDoc(filterItem: string, label: string) {

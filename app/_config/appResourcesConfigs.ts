@@ -17,7 +17,7 @@ export const appResourceFields = {
       ],
     },
     name: { type: "text", id: "name", name: "name", labelName: "Name" },
-    email: { type: "text", id: "email", name: "email", labelName: "Email" },
+    email: { type: "email", id: "email", name: "email", labelName: "Email" },
 
     conditionalFields: [
       {

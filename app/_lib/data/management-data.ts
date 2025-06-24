@@ -1,9 +1,9 @@
-import { Item } from "@/app/_types/types";
 import { ObjectId } from "mongodb";
-import { dbConnect } from "../../_utils/db-connector";
+import { dbConnect } from "@/app/_utils/db-connector";
 import { flattenObject } from "@/app/_utils/flatten-objects";
 import { DB_RESOURCES_NAME } from "@/app/_constants/mongodb-config";
 import { USERS_COLLECTION } from "@/app/_constants/form-names";
+import { Item } from "@/app/_types/types";
 
 /**
  * Creates a reusable function to fetch data from a MongoDB collection.

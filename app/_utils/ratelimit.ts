@@ -1,4 +1,4 @@
-import redis from "../_lib/redis";
+import redis from "@/app/_lib/redis";
 
 const MAX_ATTEMPTS = 3;
 const WINDOW_MS = 1 * 60 * 1000; // 1 minute
