@@ -3,7 +3,7 @@ import ProtectedComponent from "@/app/_components/ProtectedComponent";
 import ToolboxBar from "@/app/_components/ToolboxBar";
 import {
   DB_COLLECTION_LEVEL3,
-  DB_COLLECTION_LEVEL4,
+  DB_COLLECTION_RESOURCE,
   DB_REFERENCE_TO_COL3,
 } from "@/app/_constants/mongodb-config";
 import { getAccounts } from "@/app/_services/data-service/managementDataService";
@@ -35,7 +35,7 @@ export default async function LevelThreePage({
       <ItemsContainer
         userRole={session?.user.role}
         items={accounts}
-        urlPath={DB_COLLECTION_LEVEL4 + urlSlug}
+        urlPath={DB_COLLECTION_RESOURCE + urlSlug}
         isSettings={settings}
         managementId={managementId}
         currentCollection={DB_COLLECTION_LEVEL3}

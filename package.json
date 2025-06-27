@@ -2,12 +2,14 @@
   "name": "out",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "cross-env NODE_ENV=test jest"
+    "test": "cross-env NODE_ENV=test jest",
+    "setup-data": "tsx scripts/setup-initial-data.ts"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.9.1",
@@ -55,6 +57,7 @@
     "tailwindcss": "^3.4.1",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "typescript": "^5"
   }
 }

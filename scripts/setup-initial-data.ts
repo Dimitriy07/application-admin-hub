@@ -32,7 +32,9 @@ const setup = async () => {
     const existingApp = await applications.findOne({ name: APP_NAME });
     if (!existingApp) {
       await applications.insertOne({ name: APP_NAME });
-      console.log(`✅ Inserted ${APP_NAME} into admin-management.applications`);
+      console.log(
+        `✅ Inserted ${APP_NAME} into ${DB_MANAGEMENT_NAME}.${DB_COLLECTION_LEVEL1}`
+      );
     } else {
       console.log(`⚠️ ${APP_NAME} already exists`);
     }

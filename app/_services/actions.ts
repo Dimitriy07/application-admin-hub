@@ -30,6 +30,10 @@ import {
 import { redirect } from "next/navigation";
 import { DEFAULT_LOGIN_REDIRECT } from "@/app/routes";
 import { rateLimitCheck } from "@/app/_utils/ratelimit";
+import {
+  DB_REFERENCE_TO_COL2,
+  DB_REFERENCE_TO_COL3,
+} from "@/app/_constants/mongodb-config";
 
 /////////LOGIN SERVER ACTION//////////
 
@@ -137,8 +141,8 @@ export async function register(
         ...updatedUserObj
       } = userFormData;
       const newUserObj = {
-        entityId: new ObjectId(refToIdCollection2),
-        accountId: new ObjectId(refToIdCollection3),
+        [DB_REFERENCE_TO_COL2]: new ObjectId(refToIdCollection2),
+        [DB_REFERENCE_TO_COL3]: new ObjectId(refToIdCollection3),
         ...updatedUserObj,
         password: hashPassword,
         role: userFormData.role,
@@ -166,8 +170,8 @@ export async function register(
       const { refToIdCollection2, refToIdCollection3, ...updatedUserObj } =
         userFormData;
       const newUserObj = {
-        entityId: new ObjectId(refToIdCollection2),
-        accountId: new ObjectId(refToIdCollection3),
+        [DB_REFERENCE_TO_COL2]: new ObjectId(refToIdCollection2),
+        [DB_REFERENCE_TO_COL3]: new ObjectId(refToIdCollection3),
         ...updatedUserObj,
         role: userFormData.role,
       };

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { HiOutlineCog6Tooth } from "react-icons/hi2";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ItemRowProps } from "@/app/_types/types";
+import { DB_COLLECTION_LEVEL1 } from "@/app/_constants/mongodb-config";
 
 /**
  * ItemRow Component
@@ -65,7 +66,7 @@ export default function ItemRow({
    */
   let href: string;
   if (!collectionName)
-    href = `${urlPath !== "applications" ? pathname + "/" : ""}${
+    href = `${urlPath !== DB_COLLECTION_LEVEL1 ? pathname + "/" : ""}${
       item.id
     }/${urlPath}`;
   else
