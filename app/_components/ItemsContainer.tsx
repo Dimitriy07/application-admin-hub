@@ -4,12 +4,12 @@ import { ItemContainerProps } from "@/app/_types/types";
 import ResourceItem from "./ResourceItem";
 import DataDisplayContainer from "./DataDisplayContainer";
 import SettingsWindow from "./SettingsWindow";
-import { DB_COLLECTION_LEVEL3 } from "../_constants/mongodb-config";
+import { DB_COLLECTION_LEVEL3 } from "@/app/_constants/mongodb-config";
 
 export default async function ItemsContainer({
   items,
   urlPath,
-  appId,
+  refIdToCollectionLevel1,
   managementId,
   resourceId,
   collectionName,
@@ -18,7 +18,7 @@ export default async function ItemsContainer({
   currentCollection,
   query,
   userRole,
-  referenceToCol,
+  refNameToCollection,
 }: ItemContainerProps) {
   let filteredItems;
   if (!query) filteredItems = items;
@@ -35,7 +35,7 @@ export default async function ItemsContainer({
 
   let hasSettings = false;
 
-  if (appId && currentCollection) {
+  if (refIdToCollectionLevel1 && currentCollection) {
     if (isAuthorized) {
       hasSettings = true;
     }
@@ -64,7 +64,7 @@ export default async function ItemsContainer({
           <ResourceItem
             resourceId={resourceId}
             collectionName={collectionName}
-            appId={appId}
+            refIdToCollectionLevel1={refIdToCollectionLevel1}
             isEdit={isEdit}
           />
         </DataDisplayContainer>
@@ -74,9 +74,9 @@ export default async function ItemsContainer({
           isAuthorized={isAuthorized}
           managementId={managementId}
           collectionName={currentCollection}
-          appId={appId}
+          refIdToCollectionLevel1={refIdToCollectionLevel1}
           isEdit={isEdit}
-          referenceToCol={referenceToCol}
+          refNameToCollection={refNameToCollection}
         />
       )}
     </div>

@@ -6,6 +6,11 @@ import { getResourcesByCollection } from "@/app/_services/data-service/resources
 import usersVehiclesRestriction from "@/app/_services/settings/settings-restriction";
 import { getResourcesNames } from "@/app/_services/data-service/resourcesDataService";
 import urlAndConfigAppSwitcher from "@/app/_services/urlConfigAppSwitcher";
+import {
+  DB_REFERENCE_TO_COL1,
+  DB_REFERENCE_TO_COL2,
+  DB_REFERENCE_TO_COL3,
+} from "@/app/_constants/mongodb-config";
 
 export default async function AppOneResourcePage({
   searchParams,
@@ -17,9 +22,17 @@ export default async function AppOneResourcePage({
     resourceId: string;
     edit: string;
   }>;
-  params: Promise<{ accountId: string; entityId: string; appId: string }>;
+  params: Promise<{
+    [DB_REFERENCE_TO_COL1]: string;
+    [DB_REFERENCE_TO_COL2]: string;
+    [DB_REFERENCE_TO_COL3]: string;
+  }>;
 }) {
-  const { accountId, appId, entityId } = await params;
+  const {
+    [DB_REFERENCE_TO_COL1]: refIdToCollectionLevel1,
+    [DB_REFERENCE_TO_COL2]: refIdToCollectionLevel2,
+    [DB_REFERENCE_TO_COL3]: refIdToCollectionLevel3,
+  } = await params;
   const resolvedSearchParams = await searchParams;
   const collectionName = resolvedSearchParams.resourceType;
   const query = resolvedSearchParams.query;
@@ -27,11 +40,12 @@ export default async function AppOneResourcePage({
   const resourceId = resolvedSearchParams.resourceId;
   const isEdit = resolvedSearchParams.edit;
 
-  const config = urlAndConfigAppSwitcher(appId);
+  const config = urlAndConfigAppSwitcher(refIdToCollectionLevel1);
 
   const resourceConfig = config?.resourceConfig;
 
-  if (typeof appId !== "string" || !resourceConfig) return null;
+  if (typeof refIdToCollectionLevel1 !== "string" || !resourceConfig)
+    return null;
 
   const validFilterKeySet = new Set(Object.keys(resourceConfig));
   const resourcesNameResult = await getResourcesNames();
@@ -51,7 +65,7 @@ export default async function AppOneResourcePage({
       try {
         const resources = await getResourcesByCollection(
           collectionName,
-          accountId
+          refIdToCollectionLevel3
         );
         resourcesArr = resources.map((res) => JSON.parse(JSON.stringify(res)));
       } catch (err) {
@@ -65,7 +79,7 @@ export default async function AppOneResourcePage({
   //SETTINGS RESTRICTIONS (APPLICATION 1)
 
   const restrictions = await usersVehiclesRestriction(
-    entityId,
+    refIdToCollectionLevel2,
     collectionName,
     resourcesArr
   );
@@ -76,12 +90,15 @@ export default async function AppOneResourcePage({
   ///////////////////////////
   return (
     <>
-      <ProtectedComponent appId={appId} entityId={entityId}>
+      <ProtectedComponent
+        refIdToCollectionLevel1={refIdToCollectionLevel1}
+        refIdToCollectionLevel2={refIdToCollectionLevel2}
+      >
         <ItemsContainer
           items={resourcesArr}
           resourceId={resourceId}
           collectionName={collectionName}
-          appId={appId}
+          refIdToCollectionLevel1={refIdToCollectionLevel1}
           isEdit={isEdit}
           query={query}
         />

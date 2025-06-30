@@ -15,14 +15,14 @@ import {
 
 export async function getResourcesByCollection(
   collectionName: string,
-  accountId: string
+  refIdToCollectionLevel3: string
 ) {
   const getResources = fetchResourcesDB(
     DB_RESOURCES_NAME,
     collectionName,
     DB_REFERENCE_TO_COL3
   );
-  const resources = await getResources(accountId);
+  const resources = await getResources(refIdToCollectionLevel3);
   return resources;
 }
 

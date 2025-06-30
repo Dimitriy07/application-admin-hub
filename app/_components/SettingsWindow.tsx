@@ -18,13 +18,13 @@ interface SettingsWindowProps {
   /** Name of the collection (e.g., teams, drivers) */
   collectionName: string | undefined;
   /** App identifier used to resolve form schema */
-  appId: string | undefined;
+  refIdToCollectionLevel1: string | undefined;
   /** If truthy, shows form in editable mode */
   isEdit: string | undefined;
   /** If true, allows user access to settings */
   isAuthorized: boolean | undefined;
   /** Optional: parent collection name for reference when deleting */
-  referenceToCol?: string;
+  refNameToCollection?: string;
 }
 
 /**
@@ -42,10 +42,10 @@ interface SettingsWindowProps {
 async function SettingsWindow({
   managementId,
   collectionName,
-  appId,
+  refIdToCollectionLevel1,
   isEdit,
   isAuthorized,
-  referenceToCol,
+  refNameToCollection,
 }: SettingsWindowProps) {
   // Abort if required data is missing
   if (!managementId || !collectionName) return null;
@@ -56,15 +56,19 @@ async function SettingsWindow({
     managementId
   );
 
-  // Validate item and appId
-  if (!resolvedManagementItem || "error" in resolvedManagementItem || !appId)
+  // Validate item and refIdToCollectionLevel1
+  if (
+    !resolvedManagementItem ||
+    "error" in resolvedManagementItem ||
+    !refIdToCollectionLevel1
+  )
     return null;
 
   // Extract `settings` field from document
   const settingsObj = resolvedManagementItem?.settings;
 
   // Retrieve per-app configuration
-  const config = urlAndConfigAppSwitcher(appId);
+  const config = urlAndConfigAppSwitcher(refIdToCollectionLevel1);
 
   // Get global settings schema from config
   const appSettingsFields = config?.settings;
@@ -126,7 +130,7 @@ async function SettingsWindow({
                   id={managementId}
                   collectionName={collectionName}
                   isResource={false}
-                  referenceToCol={referenceToCol}
+                  refNameToCollection={refNameToCollection}
                 />
               )}
             </CardWrapper.CardContent>

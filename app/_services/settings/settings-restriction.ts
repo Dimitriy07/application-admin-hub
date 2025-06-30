@@ -2,13 +2,13 @@ import { DB_COLLECTION_LEVEL2 } from "@/app/_constants/mongodb-config";
 import { getManagementDataByManagementId } from "@/app/_services/data-service/managementDataService";
 
 export default async function usersVehiclesRestriction(
-  entityId: string,
+  refIdToCollectionLevel2: string,
   collectionName: string,
   resourcesArr: string[]
 ) {
   const entity = await getManagementDataByManagementId(
     DB_COLLECTION_LEVEL2,
-    entityId
+    refIdToCollectionLevel2
   );
 
   if (!entity || "error" in entity) {

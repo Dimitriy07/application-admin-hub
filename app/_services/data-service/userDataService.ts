@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DB_RESOURCES_NAME } from "@/app/_constants/mongodb-config";
+import {
+  DB_REFERENCE_TO_COL1,
+  DB_REFERENCE_TO_COL2,
+  DB_RESOURCES_NAME,
+} from "@/app/_constants/mongodb-config";
 import {
   fetchUserInfoFromDb,
   updateUserInfoInDb,
@@ -64,8 +68,8 @@ export async function getUserById(id: string) {
     role: fetchedUser.role,
     emailVerified: fetchedUser.emailVerified,
     name: fetchedUser.name,
-    entityId: fetchedUser.entityId,
-    appId: fetchedUser.appId,
+    [DB_REFERENCE_TO_COL2]: fetchedUser[DB_REFERENCE_TO_COL2],
+    [DB_REFERENCE_TO_COL1]: fetchedUser[DB_REFERENCE_TO_COL1],
   };
 
   return user;

@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Document, WithId } from "mongodb";
+import {
+  DB_REFERENCE_TO_COL1,
+  DB_REFERENCE_TO_COL2,
+} from "@/app/_constants/mongodb-config";
 
 // MANAGEMENT DATA TYPE
 type Settings = Record<string, any>;
@@ -18,14 +22,14 @@ export interface ItemContainerProps {
   urlPath?: string;
   resourceId?: string;
   collectionName?: string;
-  appId?: string;
+  refIdToCollectionLevel1?: string;
   isEdit?: string;
   isSettings?: string;
   managementId?: string;
   currentCollection?: string;
   query: string;
   userRole?: UserRole;
-  referenceToCol?: string;
+  refNameToCollection?: string;
 }
 
 export interface ItemRowProps {
@@ -68,26 +72,19 @@ export type UserSession = {
   role: UserRole; //  "admin" | "superadmin" | "user";
   emailVerified: string;
   name?: string;
-  entityId?: string | null;
-  appId?: string;
+  [DB_REFERENCE_TO_COL2]?: string | null;
+  [DB_REFERENCE_TO_COL1]?: string;
 };
 
 export type UserRegistration = {
-  refToIdCollection2: string; // reference to Id of collection 2 Level (ex. entityId)
-  refToIdCollection3: string; // reference to Id of collection 3 Level (ex. accountId)
+  refIdToCollectionLevel2: string; // reference to Id of collection 2 Level (ex. entityId)
+  refIdToCollectionLevel3: string; // reference to Id of collection 3 Level (ex. accountId)
   name: string;
   email: string;
   password: string;
   role: UserRole;
   confirm: Readonly<string>;
 };
-
-// // ITEM TO ADD
-
-// export type ItemAdded = {
-//   refToIdCollection: string | undefined;
-//   name: string;
-// };
 
 // VERIFICATION TOKEN
 

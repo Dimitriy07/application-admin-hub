@@ -134,15 +134,15 @@ export async function register(
       const salt = await bcrypt.genSalt(10);
       const hashPassword = await bcrypt.hash(password, salt);
       const {
-        refToIdCollection2,
-        refToIdCollection3,
+        refIdToCollectionLevel2,
+        refIdToCollectionLevel3,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         confirm,
         ...updatedUserObj
       } = userFormData;
       const newUserObj = {
-        [DB_REFERENCE_TO_COL2]: new ObjectId(refToIdCollection2),
-        [DB_REFERENCE_TO_COL3]: new ObjectId(refToIdCollection3),
+        [DB_REFERENCE_TO_COL2]: new ObjectId(refIdToCollectionLevel2),
+        [DB_REFERENCE_TO_COL3]: new ObjectId(refIdToCollectionLevel3),
         ...updatedUserObj,
         password: hashPassword,
         role: userFormData.role,
@@ -167,11 +167,14 @@ export async function register(
     }
   } else {
     try {
-      const { refToIdCollection2, refToIdCollection3, ...updatedUserObj } =
-        userFormData;
+      const {
+        refIdToCollectionLevel2,
+        refIdToCollectionLevel3,
+        ...updatedUserObj
+      } = userFormData;
       const newUserObj = {
-        [DB_REFERENCE_TO_COL2]: new ObjectId(refToIdCollection2),
-        [DB_REFERENCE_TO_COL3]: new ObjectId(refToIdCollection3),
+        [DB_REFERENCE_TO_COL2]: new ObjectId(refIdToCollectionLevel2),
+        [DB_REFERENCE_TO_COL3]: new ObjectId(refIdToCollectionLevel3),
         ...updatedUserObj,
         role: userFormData.role,
       };
@@ -190,13 +193,13 @@ export async function register(
 export async function addItem(
   formData: Record<string, string>,
   collectionName: string | undefined | null,
-  refToIdCollectionName: string,
+  refNameToCollection: string,
   isResource: boolean
 ) {
   if (!collectionName) return { error: "Collection name is not provided" };
   const newItemObj = {
     name: formData.name,
-    [refToIdCollectionName]: new ObjectId(formData.refToIdCollection),
+    [refNameToCollection]: new ObjectId(formData.refIdToCollection),
   };
   try {
     if (isResource) await createResourceItem(collectionName, newItemObj);

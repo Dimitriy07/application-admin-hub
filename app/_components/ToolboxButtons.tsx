@@ -15,6 +15,11 @@ import { Suspense, useMemo, useState } from "react";
 import { USER_REGISTRATION_SCHEMA } from "@/app/_constants/validations-schema-names";
 import { useButtonFormHandlers } from "@/app/_hooks/useButtonFormHandlers";
 import { USERS_COLLECTION } from "@/app/_constants/form-names";
+import {
+  DB_REFERENCE_TO_COL1,
+  DB_REFERENCE_TO_COL2,
+  DB_REFERENCE_TO_COL3,
+} from "@/app/_constants/mongodb-config";
 
 /**
  * ToolboxButtons Component
@@ -39,13 +44,13 @@ function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
    * Route parameters for contextual references (e.g., app, entity, or account ID)
    */
   const {
-    appId: refToIdCollection1,
-    entityId: refToIdCollection2,
-    accountId: refToIdCollection3,
+    [DB_REFERENCE_TO_COL1]: refIdToCollectionLevel1,
+    [DB_REFERENCE_TO_COL2]: refIdToCollectionLevel2,
+    [DB_REFERENCE_TO_COL3]: refIdToCollectionLevel3,
   } = useParams<{
-    appId: string;
-    entityId: string;
-    accountId: string;
+    [DB_REFERENCE_TO_COL1]: string;
+    [DB_REFERENCE_TO_COL2]: string;
+    [DB_REFERENCE_TO_COL3]: string;
   }>();
 
   const path = usePathname();
@@ -73,9 +78,9 @@ function ToolboxButtons({ disabled }: { disabled?: boolean | null }) {
   const { handleUserRegistration, handleItemAddition } = useButtonFormHandlers({
     pageName,
     resourceType,
-    refToIdCollection1,
-    refToIdCollection2,
-    refToIdCollection3,
+    refIdToCollectionLevel1,
+    refIdToCollectionLevel2,
+    refIdToCollectionLevel3,
     isPageNameValid,
     setError,
     setSuccess,

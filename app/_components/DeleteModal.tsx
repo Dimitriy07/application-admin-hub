@@ -10,14 +10,14 @@ type DeleteModalProps = {
   id: string;
   collectionName: string;
   isResource?: boolean;
-  referenceToCol?: string;
+  refNameToCollection?: string;
 };
 
 export default function DeleteModal({
   id,
   collectionName,
   isResource = true,
-  referenceToCol,
+  refNameToCollection,
 }: DeleteModalProps) {
   const [message, setMessage] = useState<{
     type: "success" | "error";
@@ -44,7 +44,7 @@ export default function DeleteModal({
     const result = await deleteItem(
       collectionName,
       id,
-      referenceToCol,
+      refNameToCollection,
       isResource
     );
     if ("error" in result) {

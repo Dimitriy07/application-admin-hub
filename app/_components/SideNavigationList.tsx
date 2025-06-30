@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import urlAndConfigAppSwitcher from "@/app/_services/urlConfigAppSwitcher";
+import { DB_REFERENCE_TO_COL1 } from "@/app/_constants/mongodb-config";
 
 type ResourcesList = {
   name: string;
@@ -14,13 +15,14 @@ function SideNavigationList({ resources }: { resources: ResourcesList[] }) {
   const searchParams = useSearchParams();
   const params = useParams();
   const resourceType = searchParams.get("resourceType");
-  const appId = params.appId as string;
+  const refIdToCollectionLevel1 = params[DB_REFERENCE_TO_COL1] as string;
 
-  const config = urlAndConfigAppSwitcher(appId);
+  const config = urlAndConfigAppSwitcher(refIdToCollectionLevel1);
 
   const resourceConfig = config?.resourceConfig;
 
-  if (typeof appId !== "string" || !resourceConfig) return null;
+  if (typeof refIdToCollectionLevel1 !== "string" || !resourceConfig)
+    return null;
 
   const validFilterKeySet = new Set(Object.keys(resourceConfig));
 

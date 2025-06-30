@@ -23,27 +23,27 @@ export async function getApplications() {
   return await getData();
 }
 
-// Get all entities by applicationId
+// Get all entities by reference to collection id level 1
 export async function getEntities(
-  applicationId: string,
-  entityId: string | null = null
+  refIdToCollectionLevel1: string,
+  refIdToCollectionLevel2: string | null = null
 ) {
   const getData = fetchManagementDB(
     DB_MANAGEMENT_NAME,
     DB_COLLECTION_LEVEL2,
     DB_REFERENCE_TO_COL1
   );
-  return await getData(applicationId, entityId);
+  return await getData(refIdToCollectionLevel1, refIdToCollectionLevel2);
 }
 
-// Get all accounts by entityId
-export async function getAccounts(entityId: string) {
+// Get all accounts by reference to collection id level 2
+export async function getAccounts(refIdToCollectionLevel2: string) {
   const getData = fetchManagementDB(
     DB_MANAGEMENT_NAME,
     DB_COLLECTION_LEVEL3,
     DB_REFERENCE_TO_COL2
   );
-  return await getData(entityId);
+  return await getData(refIdToCollectionLevel2);
 }
 
 export async function getManagementDataByManagementId(

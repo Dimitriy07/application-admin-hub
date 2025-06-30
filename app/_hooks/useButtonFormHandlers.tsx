@@ -17,11 +17,11 @@ interface UseButtonFormHandlersArgs {
   /** Type of resource, if applicable (e.g., "users") */
   resourceType: string | null;
   /** Reference ID to parent collection level 1 (e.g., app ID) */
-  refToIdCollection1: string;
+  refIdToCollectionLevel1: string;
   /** Reference ID to parent collection level 2 (e.g., entity ID) */
-  refToIdCollection2: string;
+  refIdToCollectionLevel2: string;
   /** Reference ID to parent collection level 3 (e.g., account ID) */
-  refToIdCollection3: string;
+  refIdToCollectionLevel3: string;
   /** Determines if the `pageName` is valid (not an ObjectId) */
   isPageNameValid: boolean;
   /** Function to set error messages */
@@ -43,9 +43,9 @@ interface UseButtonFormHandlersArgs {
 export function useButtonFormHandlers({
   pageName,
   resourceType,
-  refToIdCollection1,
-  refToIdCollection2,
-  refToIdCollection3,
+  refIdToCollectionLevel1,
+  refIdToCollectionLevel2,
+  refIdToCollectionLevel3,
   isPageNameValid,
   setError,
   setSuccess,
@@ -72,8 +72,8 @@ export function useButtonFormHandlers({
       const regResult = await register(
         {
           ...result.data,
-          refToIdCollection2,
-          refToIdCollection3,
+          refIdToCollectionLevel2,
+          refIdToCollectionLevel3,
         },
         resourceType!
       );
@@ -88,8 +88,8 @@ export function useButtonFormHandlers({
     },
     [
       resourceType,
-      refToIdCollection2,
-      refToIdCollection3,
+      refIdToCollectionLevel2,
+      refIdToCollectionLevel3,
       router,
       setError,
       setSuccess,
@@ -105,35 +105,35 @@ export function useButtonFormHandlers({
   const handleItemAddition = useCallback(
     async (formData: Record<string, string>) => {
       try {
-        let refToCollectionName: string | undefined;
-        let refToIdCollection: string | undefined;
+        let refNameToCollection: string | undefined;
+        let refIdToCollection: string | undefined;
 
         if (resourceType) {
-          refToCollectionName = DB_REFERENCE_TO_COL3;
-          refToIdCollection = refToIdCollection3;
+          refNameToCollection = DB_REFERENCE_TO_COL3;
+          refIdToCollection = refIdToCollectionLevel3;
         } else {
           switch (pageName) {
             case DB_COLLECTION_LEVEL2:
-              refToCollectionName = DB_REFERENCE_TO_COL1;
-              refToIdCollection = refToIdCollection1;
+              refNameToCollection = DB_REFERENCE_TO_COL1;
+              refIdToCollection = refIdToCollectionLevel1;
               break;
             case DB_COLLECTION_LEVEL3:
-              refToCollectionName = DB_REFERENCE_TO_COL2;
-              refToIdCollection = refToIdCollection2;
+              refNameToCollection = DB_REFERENCE_TO_COL2;
+              refIdToCollection = refIdToCollectionLevel2;
               break;
             default:
               return setError("Invalid collection reference");
           }
         }
 
-        if (!isPageNameValid || !refToCollectionName) {
+        if (!isPageNameValid || !refNameToCollection) {
           return setError("Invalid collection reference");
         }
 
         const item = await addItem(
-          { ...formData, refToIdCollection },
+          { ...formData, refIdToCollection },
           resourceType ? resourceType : pageName,
-          refToCollectionName,
+          refNameToCollection,
           !!resourceType
         );
 
@@ -148,9 +148,9 @@ export function useButtonFormHandlers({
     [
       pageName,
       resourceType,
-      refToIdCollection1,
-      refToIdCollection2,
-      refToIdCollection3,
+      refIdToCollectionLevel1,
+      refIdToCollectionLevel2,
+      refIdToCollectionLevel3,
       isPageNameValid,
       router,
       setError,

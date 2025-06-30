@@ -19,7 +19,7 @@ interface ResourceItemProps {
   /** ID of the resource to be fetched and displayed */
   resourceId: string;
   /** App identifier used to determine configuration schema */
-  appId: string | undefined;
+  refIdToCollectionLevel1: string | undefined;
   /** Whether the form is in edit mode (typically derived from query param) */
   isEdit: string | undefined;
 }
@@ -28,7 +28,7 @@ interface ResourceItemProps {
  * ResourceItem Component
  *
  * Dynamically renders a form and detail view for a single resource item.
- * Uses a configuration schema based on the `appId` to determine which fields to show.
+ * Uses a configuration schema based on the `refIdToCollectionLevel1` to determine which fields to show.
  * Handles both read-only and edit modes, as well as deletion if allowed.
  *
  * @param {ResourceItemProps} props - Props to identify and configure the resource view
@@ -37,14 +37,14 @@ interface ResourceItemProps {
 async function ResourceItem({
   collectionName,
   resourceId,
-  appId,
+  refIdToCollectionLevel1,
   isEdit,
 }: ResourceItemProps) {
-  // Skip rendering if `appId` is not available
-  if (!appId) return null;
+  // Skip rendering if `refIdToCollectionLevel1` is not available
+  if (!refIdToCollectionLevel1) return null;
 
   // Get form configuration schema based on the app context
-  const config = urlAndConfigAppSwitcher(appId);
+  const config = urlAndConfigAppSwitcher(refIdToCollectionLevel1);
   const resourceConfig = config?.resourceConfig;
 
   // Fetch the resource item from the database
