@@ -6,7 +6,7 @@ import ResourcesMessage from "./ResourcesMessage";
 
 import { updateItem } from "@/app/_services/actions";
 import { getManagementDataByManagementId } from "@/app/_services/data-service/managementDataService";
-import urlAndConfigAppSwitcher from "@/app/_services/urlConfigAppSwitcher";
+import { getAppConfig } from "@/app/_config/getAppConfig";
 
 // Ensure the page is server-rendered and never statically cached
 export const dynamic = "force-dynamic";
@@ -68,7 +68,7 @@ async function SettingsWindow({
   const settingsObj = resolvedManagementItem?.settings;
 
   // Retrieve per-app configuration
-  const config = urlAndConfigAppSwitcher(refIdToCollectionLevel1);
+  const config = await getAppConfig(refIdToCollectionLevel1);
 
   // Get global settings schema from config
   const appSettingsFields = config?.settings;

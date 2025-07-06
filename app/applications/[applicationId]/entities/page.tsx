@@ -58,7 +58,7 @@ export default async function LevelTwoPage({
         isSettings={settings}
         managementId={managementId}
         isEdit={edit}
-        refNameToCollectionLevel2={DB_REFERENCE_TO_COL2}
+        refNameToCollection={DB_REFERENCE_TO_COL2}
       />
       <ToolboxBar />
     </ProtectedComponent>

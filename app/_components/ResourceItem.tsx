@@ -5,7 +5,7 @@ import FormGenerator from "./FormGenerator";
 
 import { updateItem } from "@/app/_services/actions";
 import { getResourceByResourceId } from "@/app/_services/data-service/resourcesDataService";
-import urlAndConfigAppSwitcher from "@/app/_services/urlConfigAppSwitcher";
+import { getAppConfig } from "@/app/_config/getAppConfig";
 
 import { FormConfigWithConditions } from "@/app/_types/types";
 
@@ -44,7 +44,7 @@ async function ResourceItem({
   if (!refIdToCollectionLevel1) return null;
 
   // Get form configuration schema based on the app context
-  const config = urlAndConfigAppSwitcher(refIdToCollectionLevel1);
+  const config = await getAppConfig(refIdToCollectionLevel1);
   const resourceConfig = config?.resourceConfig;
 
   // Fetch the resource item from the database

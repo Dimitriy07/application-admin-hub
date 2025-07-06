@@ -3,16 +3,24 @@ import ProtectedComponent from "@/app/_components/ProtectedComponent";
 import ResourcesMessage from "@/app/_components/ResourcesMessage";
 import ToolboxBar from "@/app/_components/ToolboxBar";
 import { getResourcesByCollection } from "@/app/_services/data-service/resourcesDataService";
-import usersVehiclesRestriction from "@/app/_services/settings/settings-restriction";
+// import usersVehiclesRestriction from "@/app/_app-configs/accident-form/restrictions";
 import { getResourcesNames } from "@/app/_services/data-service/resourcesDataService";
-import urlAndConfigAppSwitcher from "@/app/_services/urlConfigAppSwitcher";
+import { getAppConfig } from "@/app/_config/getAppConfig";
 import {
+  DB_COLLECTION_LEVEL2,
+  DB_COLLECTION_LEVEL3,
   DB_REFERENCE_TO_COL1,
   DB_REFERENCE_TO_COL2,
   DB_REFERENCE_TO_COL3,
 } from "@/app/_constants/mongodb-config";
+import { getManagementDataByManagementId } from "@/app/_services/data-service/managementDataService";
 
-export default async function AppOneResourcePage({
+type SettingsObject = {
+  [DB_COLLECTION_LEVEL2]?: Record<string, string> | null;
+  [DB_COLLECTION_LEVEL3]?: Record<string, string> | null;
+};
+
+export default async function AccidentFormApp({
   searchParams,
   params,
 }: {
@@ -34,13 +42,54 @@ export default async function AppOneResourcePage({
     [DB_REFERENCE_TO_COL3]: refIdToCollectionLevel3,
   } = await params;
   const resolvedSearchParams = await searchParams;
+
   const collectionName = resolvedSearchParams.resourceType;
+  if (!collectionName) {
+    return <ResourcesMessage />;
+  }
+
   const query = resolvedSearchParams.query;
 
   const resourceId = resolvedSearchParams.resourceId;
   const isEdit = resolvedSearchParams.edit;
 
-  const config = urlAndConfigAppSwitcher(refIdToCollectionLevel1);
+  const config = await getAppConfig(refIdToCollectionLevel1);
+
+  if (!config) return null;
+
+  const settingSchema = config?.settings;
+  const settingsLevels = Object.keys(settingSchema);
+
+  const settings: SettingsObject = {};
+  for (const curLevel of settingsLevels) {
+    if (curLevel === DB_COLLECTION_LEVEL2) {
+      const managementData = await getManagementDataByManagementId(
+        DB_COLLECTION_LEVEL2,
+        refIdToCollectionLevel2
+      );
+      if (!managementData || "error" in managementData) {
+        console.error("Error fetching management data or result is null.");
+        settings[DB_COLLECTION_LEVEL2] = null;
+      } else {
+        settings[DB_COLLECTION_LEVEL2] = managementData.settings ?? null;
+      }
+    } else if (curLevel === DB_COLLECTION_LEVEL3) {
+      const managementData = await getManagementDataByManagementId(
+        DB_COLLECTION_LEVEL3,
+        refIdToCollectionLevel3
+      );
+      if (!managementData || "error" in managementData) {
+        console.error("Error fetching management data or result is null.");
+        settings[DB_COLLECTION_LEVEL3] = null;
+      } else {
+        settings[DB_COLLECTION_LEVEL3] = managementData.settings ?? null;
+      }
+    } else {
+      throw new Error(
+        `Invalid settings level: ${curLevel}. Match the settings example in documents`
+      );
+    }
+  }
 
   const resourceConfig = config?.resourceConfig;
 
@@ -51,9 +100,6 @@ export default async function AppOneResourcePage({
   const resourcesNameResult = await getResourcesNames();
   const collectionList = resourcesNameResult.map((col) => col.name);
 
-  if (!collectionName) {
-    return <ResourcesMessage />;
-  }
   const hasAccess =
     validFilterKeySet.has(collectionName) &&
     collectionList.includes(collectionName);
@@ -76,16 +122,23 @@ export default async function AppOneResourcePage({
     }
   }
 
-  //SETTINGS RESTRICTIONS (APPLICATION 1)
+  if (!config.restrictionLogic) return null;
 
-  const restrictions = await usersVehiclesRestriction(
-    refIdToCollectionLevel2,
+  //SETTINGS RESTRICTIONS FOR APPLICATION
+  const restrictions = config?.restrictionLogic({
     collectionName,
-    resourcesArr
-  );
+    settings,
+    resourcesArr,
+  });
 
   if (!restrictions || "message" in restrictions) {
-    return <ResourcesMessage message={restrictions?.message} />;
+    return (
+      <ResourcesMessage
+        message={
+          restrictions?.message || "There is an issue with restriction settings"
+        }
+      />
+    );
   }
   ///////////////////////////
   return (

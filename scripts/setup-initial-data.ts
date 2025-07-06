@@ -7,20 +7,37 @@ import {
   DB_MANAGEMENT_NAME,
   DB_RESOURCES_NAME,
 } from "@/app/_constants/mongodb-config";
+import dotenv from "dotenv";
+import path from "path";
 
+dotenv.config({
+  path: path.resolve(process.cwd(), ".env.local"),
+});
 //////*****  Initial configurations for the application  ****/////
 
-/// App Configurations
-const APP_NAME = "Test app";
+// Get config from environment
+const {
+  MONGODB_URI,
+  INITIAL_APP_NAME,
+  INITIAL_USER_EMAIL,
+  INITIAL_USER_NAME,
+  INITIAL_USER_PASSWORD,
+  INITIAL_APP_ICON,
+} = process.env;
 
-//// Superadmin User Configurations
-
-const USER_EMAIL = "joedow@mtl.com";
-const USER_NAME = "Joe Dow";
-const PASSWORD_PLAIN = "password";
+// Basic validation
+if (
+  !MONGODB_URI ||
+  !INITIAL_APP_NAME ||
+  !INITIAL_USER_EMAIL ||
+  !INITIAL_USER_NAME ||
+  !INITIAL_USER_PASSWORD
+) {
+  throw new Error("❌ Missing required environment variables in .env.local");
+}
 
 const setup = async () => {
-  const client = new MongoClient(process.env.MONGO_URI!);
+  const client = new MongoClient(MONGODB_URI);
 
   try {
     await client.connect();
@@ -29,26 +46,29 @@ const setup = async () => {
     const managementDb = client.db(DB_MANAGEMENT_NAME);
     const applications = managementDb.collection(DB_COLLECTION_LEVEL1);
 
-    const existingApp = await applications.findOne({ name: APP_NAME });
+    const existingApp = await applications.findOne({
+      name: INITIAL_APP_NAME,
+      icon: INITIAL_APP_ICON,
+    });
     if (!existingApp) {
-      await applications.insertOne({ name: APP_NAME });
+      await applications.insertOne({ name: INITIAL_APP_NAME });
       console.log(
-        `✅ Inserted ${APP_NAME} into ${DB_MANAGEMENT_NAME}.${DB_COLLECTION_LEVEL1}`
+        `✅ Inserted ${INITIAL_APP_NAME} into ${DB_MANAGEMENT_NAME}.${DB_COLLECTION_LEVEL1}`
       );
     } else {
-      console.log(`⚠️ ${APP_NAME} already exists`);
+      console.log(`⚠️ ${INITIAL_APP_NAME} already exists`);
     }
 
     // 2. admin-resource > users
     const resourceDb = client.db(DB_RESOURCES_NAME);
     const users = resourceDb.collection(USERS_COLLECTION);
 
-    const existingUser = await users.findOne({ email: USER_EMAIL });
+    const existingUser = await users.findOne({ email: INITIAL_USER_EMAIL });
     if (!existingUser) {
-      const hashedPassword = await bcrypt.hash(PASSWORD_PLAIN, 10);
+      const hashedPassword = await bcrypt.hash(INITIAL_USER_PASSWORD, 10);
       await users.insertOne({
-        name: USER_NAME,
-        email: USER_EMAIL,
+        name: INITIAL_USER_NAME,
+        email: INITIAL_USER_EMAIL,
         password: hashedPassword,
         role: "superadmin",
         emailVerified: { date: new Date() },
@@ -59,7 +79,7 @@ const setup = async () => {
         `✅ Created SuperAdmin user in ${DB_RESOURCES_NAME}.${USERS_COLLECTION}`
       );
     } else {
-      console.log(`⚠️ User with ${USER_EMAIL} email already exists`);
+      console.log(`⚠️ User with ${INITIAL_USER_EMAIL} email already exists`);
     }
 
     // 3. admin-authentication > verification-token
@@ -68,8 +88,8 @@ const setup = async () => {
 
     const count = await tokens.estimatedDocumentCount();
     if (count === 0) {
-      await tokens.insertOne({ email: USER_EMAIL });
-      await tokens.deleteMany({ email: USER_EMAIL });
+      await tokens.insertOne({ email: INITIAL_USER_EMAIL });
+      await tokens.deleteMany({ email: INITIAL_USER_EMAIL });
       console.log(
         "✅ Created empty collection admin-authentication.verification-token"
       );

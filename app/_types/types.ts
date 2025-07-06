@@ -126,3 +126,20 @@ export type FormConfig = Record<string, FormElementType>;
 export type FormConfigWithConditions = FormConfig & {
   conditionalFields?: ConditionalFieldConfig[];
 };
+
+// APP CONFIGURATIONS
+
+export type RestrictionResult = {
+  isRestricted: boolean;
+  restrictedMessage?: string;
+};
+
+export type RestrictionLogicArgs = {
+  collectionName: string;
+  settings: Record<string, any>;
+  resourcesArr: any[];
+};
+
+export type RestrictionLogicFn = (
+  args: RestrictionLogicArgs
+) => RestrictionResult;

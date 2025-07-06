@@ -9,7 +9,7 @@ import {
   DB_REFERENCE_TO_COL3,
 } from "@/app/_constants/mongodb-config";
 import { getAccounts } from "@/app/_services/data-service/managementDataService";
-import urlAndConfigAppSwitcher from "@/app/_services/urlConfigAppSwitcher";
+import { getAppConfig } from "@/app/_config/getAppConfig";
 import { auth } from "@/auth";
 
 export default async function LevelThreePage({
@@ -35,7 +35,7 @@ export default async function LevelThreePage({
   const accounts = await getAccounts(refIdToCollectionLevel2);
   const { settings, managementId, edit, query } = await searchParams;
   // GET APP NUMBER TO NAVIGATE TO RESOURCES OF DIFFERENT APPS
-  const config = urlAndConfigAppSwitcher(refIdToCollectionLevel1);
+  const config = await getAppConfig(refIdToCollectionLevel1);
   const urlSlug = config?.urlSlug;
 
   return (

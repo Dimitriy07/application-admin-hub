@@ -2,24 +2,27 @@
 
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
-import urlAndConfigAppSwitcher from "@/app/_services/urlConfigAppSwitcher";
 import { DB_REFERENCE_TO_COL1 } from "@/app/_constants/mongodb-config";
 
 type ResourcesList = {
   name: string;
   id: string | undefined;
 };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ResourceConfig = Record<string, any>;
 
-function SideNavigationList({ resources }: { resources: ResourcesList[] }) {
+function SideNavigationList({
+  resources,
+  resourceConfig,
+}: {
+  resources: ResourcesList[];
+  resourceConfig: ResourceConfig;
+}) {
   const path = usePathname();
   const searchParams = useSearchParams();
   const params = useParams();
   const resourceType = searchParams.get("resourceType");
   const refIdToCollectionLevel1 = params[DB_REFERENCE_TO_COL1] as string;
-
-  const config = urlAndConfigAppSwitcher(refIdToCollectionLevel1);
-
-  const resourceConfig = config?.resourceConfig;
 
   if (typeof refIdToCollectionLevel1 !== "string" || !resourceConfig)
     return null;
