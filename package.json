@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "next lint",
     "test": "cross-env NODE_ENV=test jest",
-    "setup-data": "tsx scripts/setup-initial-data.ts"
+    "setup-data": "tsx scripts/setup-initial-data.ts",
+    "create-level-one-unit": "tsx scripts/create-level-one-unit.ts",
+    "create-collection": "tsx scripts/create-collection.ts"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.9.1",

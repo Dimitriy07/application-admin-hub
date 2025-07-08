@@ -39,7 +39,6 @@ async function ProtectedComponent({
   const currentUserRefIdToCollectionLevel2 =
     session?.user?.[DB_REFERENCE_TO_COL2];
   const role = session?.user.role;
-
   // Only admins with valid app/entity IDs are allowed limited access
   const isValidUser = Boolean(
     currentUserRefIdToCollectionLevel1 &&

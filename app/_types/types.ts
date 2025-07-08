@@ -143,3 +143,15 @@ export type RestrictionLogicArgs = {
 export type RestrictionLogicFn = (
   args: RestrictionLogicArgs
 ) => RestrictionResult;
+
+export type AppSettingsFields = Record<string, any>;
+export type AppResourceFields = Record<string, any>;
+
+export type AppConfig = {
+  id: string;
+  // name: string;
+  urlSlug: string;
+  settings: AppSettingsFields;
+  resourceConfig: AppResourceFields;
+  restrictionLogic?: (...args: any[]) => any;
+};

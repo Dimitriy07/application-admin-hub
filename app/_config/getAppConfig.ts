@@ -1,15 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export type AppSettingsFields = Record<string, any>;
-export type AppResourceFields = Record<string, any>;
-
-export type AppConfig = {
-  id: string;
-  // name: string;
-  urlSlug: string;
-  settings: AppSettingsFields;
-  resourceConfig: AppResourceFields;
-  restrictionLogic?: (...args: any[]) => any;
-};
+import { AppConfig } from "@/app/_types/types";
 
 /**
  * Dynamically loads an app config based on its ID or slug.
@@ -22,20 +11,17 @@ export async function getAppConfig(
     // Import all app configs and match the requested one
     const appModules = [
       "accident-form",
-      // "fleet-optimizer",
+      "route-optimisation",
       // "delivery-hub",
     ];
 
     for (const moduleName of appModules) {
       const [meta, settings, resources, restrictions] = await Promise.all([
-        import(`@/app/_app-configs/${moduleName}/appMeta`),
-        import(`@/app/_app-configs/${moduleName}/settingsConfig`),
-        import(`@/app/_app-configs/${moduleName}/resourceConfig`),
-        import(`@/app/_app-configs/${moduleName}/restrictions`).catch(
-          () => null
-        ),
+        import(`../_app-configs/${moduleName}/appMeta`),
+        import(`../_app-configs/${moduleName}/settingsConfig`),
+        import(`../_app-configs/${moduleName}/resourceConfig`),
+        import(`../_app-configs/${moduleName}/restrictions`).catch(() => null),
       ]);
-
       const metaId = meta.appMeta.id;
 
       if (refIdToCollectionLevel1 === metaId) {

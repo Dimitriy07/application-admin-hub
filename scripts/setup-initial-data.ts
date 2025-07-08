@@ -44,14 +44,14 @@ const setup = async () => {
 
     // 1. admin-management > applications
     const managementDb = client.db(DB_MANAGEMENT_NAME);
-    const applications = managementDb.collection(DB_COLLECTION_LEVEL1);
+    const levelOneDoc = managementDb.collection(DB_COLLECTION_LEVEL1);
 
-    const existingApp = await applications.findOne({
+    const existingApp = await levelOneDoc.findOne({
       name: INITIAL_APP_NAME,
       icon: INITIAL_APP_ICON,
     });
     if (!existingApp) {
-      await applications.insertOne({ name: INITIAL_APP_NAME });
+      await levelOneDoc.insertOne({ name: INITIAL_APP_NAME });
       console.log(
         `✅ Inserted ${INITIAL_APP_NAME} into ${DB_MANAGEMENT_NAME}.${DB_COLLECTION_LEVEL1}`
       );

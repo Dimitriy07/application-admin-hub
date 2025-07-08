@@ -11,7 +11,7 @@ jest.mock("next/navigation", () => ({
 
 describe("BreadcrumbsNav", () => {
   it("renders the home element and breadcrumbs correctly", () => {
-    (usePathname as jest.Mock).mockReturnValue("/");
+    (usePathname as jest.Mock).mockReturnValue("/applications");
 
     render(
       <BreadcrumbsNav

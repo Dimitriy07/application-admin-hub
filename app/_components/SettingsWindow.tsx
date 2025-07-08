@@ -70,9 +70,8 @@ async function SettingsWindow({
   // Retrieve per-app configuration
   const config = await getAppConfig(refIdToCollectionLevel1);
 
-  // Get global settings schema from config
-  const appSettingsFields = config?.settings;
-  if (!appSettingsFields) return null;
+  // Get global settings schema from config or empty object if no special settings
+  const appSettingsFields = config?.settings || {};
 
   // Get schema specific to this collection
   const managementSettingsFields =
