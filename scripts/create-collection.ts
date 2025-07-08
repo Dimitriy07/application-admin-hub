@@ -33,12 +33,12 @@ const createCollection = async () => {
 
     if (exists) {
       console.log(
-        `⚠️ Collection "${collectionName}" already exists in admin-resource`
+        `⚠️ Collection "${collectionName}" already exists in ${DB_RESOURCES_NAME}`
       );
     } else {
       await db.createCollection(collectionName);
       console.log(
-        `✅ Created collection "${collectionName}" in admin-resource`
+        `✅ Created collection "${collectionName}" in ${DB_RESOURCES_NAME}`
       );
     }
   } catch (err) {
