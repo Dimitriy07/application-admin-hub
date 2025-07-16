@@ -9,13 +9,14 @@ import {
 } from "@/app/_constants/mongodb-config";
 import dotenv from "dotenv";
 import path from "path";
+import fs from "fs";
+import { appendToAppModules } from "@/app/_utils/append-to-app-modules";
 
 dotenv.config({
   path: path.resolve(process.cwd(), ".env.local"),
 });
-//////*****  Initial configurations for the application  ****/////
 
-// Get config from environment
+// Initial configurations
 const {
   MONGODB_URI,
   INITIAL_APP_NAME,
@@ -25,7 +26,6 @@ const {
   INITIAL_APP_ICON,
 } = process.env;
 
-// Basic validation
 if (
   !MONGODB_URI ||
   !INITIAL_APP_NAME ||
@@ -36,30 +36,45 @@ if (
   throw new Error("❌ Missing required environment variables in .env.local");
 }
 
+const slugify = (name: string) =>
+  name
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]/g, "");
+
 const setup = async () => {
   const client = new MongoClient(MONGODB_URI);
 
   try {
     await client.connect();
 
-    // 1. admin-management > applications
+    // 1. Insert application in admin-management
     const managementDb = client.db(DB_MANAGEMENT_NAME);
     const levelOneDoc = managementDb.collection(DB_COLLECTION_LEVEL1);
 
+    let insertedAppId;
     const existingApp = await levelOneDoc.findOne({
       name: INITIAL_APP_NAME,
-      icon: INITIAL_APP_ICON,
     });
+
     if (!existingApp) {
-      await levelOneDoc.insertOne({ name: INITIAL_APP_NAME });
+      const result = await levelOneDoc.insertOne({
+        name: INITIAL_APP_NAME,
+        icon: INITIAL_APP_ICON || null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      insertedAppId = result.insertedId.toString();
       console.log(
         `✅ Inserted ${INITIAL_APP_NAME} into ${DB_MANAGEMENT_NAME}.${DB_COLLECTION_LEVEL1}`
       );
     } else {
+      insertedAppId = existingApp._id.toString();
       console.log(`⚠️ ${INITIAL_APP_NAME} already exists`);
     }
 
-    // 2. admin-resource > users
+    // 2. Create SuperAdmin in admin-resource
     const resourceDb = client.db(DB_RESOURCES_NAME);
     const users = resourceDb.collection(USERS_COLLECTION);
 
@@ -79,10 +94,10 @@ const setup = async () => {
         `✅ Created SuperAdmin user in ${DB_RESOURCES_NAME}.${USERS_COLLECTION}`
       );
     } else {
-      console.log(`⚠️ User with ${INITIAL_USER_EMAIL} email already exists`);
+      console.log(`⚠️ User with ${INITIAL_USER_EMAIL} already exists`);
     }
 
-    // 3. admin-authentication > verification-token
+    // 3. Ensure verification-token collection exists
     const authDb = client.db(DB_AUTHENTICATION_NAME);
     const tokens = authDb.collection("verification-token");
 
@@ -98,6 +113,109 @@ const setup = async () => {
         "⚠️ Collection verification-token already exists with documents"
       );
     }
+
+    // 4. Create app config folder and files
+    const slug = slugify(INITIAL_APP_NAME);
+    const configFolder = path.join(process.cwd(), "app/_app-configs", slug);
+    fs.mkdirSync(configFolder, { recursive: true });
+
+    // appMeta.ts
+    const appMetaContent = `export const appMeta = {
+  id: "${insertedAppId}", // your level one management unit Id has to be added
+  urlSlug: "-${slug}", // same as app name with dash in the beginning
+};
+`;
+    fs.writeFileSync(path.join(configFolder, "appMeta.ts"), appMetaContent);
+
+    // resourceConfig.ts
+    const resourceConfigContent = `export const appResourceFields = {
+  // This object configures resource fields for each collection used in the app
+
+  // [USERS_COLLECTION]: {
+  //   name: { type: "text", id: "name", name: "name", labelName: "Name" },
+  //   email: { type: "email", id: "email", name: "email", labelName: "Email" },
+  // },
+
+  // [VEHICLES_COLLECTION]: {
+  //   name: { type: "text", id: "name", name: "name", labelName: "Name" },
+  //   owner: { type: "text", id: "owner", name: "owner", labelName: "Owner" },
+  // },
+} as const;
+`;
+    fs.writeFileSync(
+      path.join(configFolder, "resourceConfig.ts"),
+      resourceConfigContent
+    );
+
+    // restrictions.ts
+    const restrictionsContent = `/* eslint-disable @typescript-eslint/no-unused-vars */
+import type { RestrictionLogicFn } from "@/app/_types/types";
+
+// This function can take:
+// - collectionName: the resource collection name under restriction
+// - settings: the settings object for the current level
+// - resourcesArr: the array of resources in the collection
+// Returns: { isRestricted: boolean, restrictedMessage?: string }
+
+export const restrictionLogic: RestrictionLogicFn = ({
+  collectionName,
+  settings,
+  resourcesArr,
+}) => {
+  ////////Restriction logic
+   ////
+  const isRestricted = false;
+  return {
+    isRestricted,
+    // restrictedMessage: "Restriction applies due to some rule",
+  };
+};
+`;
+    fs.writeFileSync(
+      path.join(configFolder, "restrictions.ts"),
+      restrictionsContent
+    );
+
+    // settingsConfig.ts
+    const settingsConfigContent = `export const appSettingsFields = {
+  // This is the schema of settings and what level they apply to
+  // Example for DB_COLLECTION_LEVEL2 (e.g. Account level)
+
+  // [DB_COLLECTION_LEVEL2]: {
+  //   accountType: {
+  //     type: "select",
+  //     name: "accountType",
+  //     id: "accountType",
+  //     labelName: "Account Type",
+  //     options: [
+  //       { value: "", content: "Select account type" },
+  //       { value: "fleet", content: "Fleet" },
+  //       { value: "personal", content: "Personal account" },
+  //     ],
+  //   },
+  //   maxUsers: {
+  //     type: "number",
+  //     id: "maxUsers",
+  //     name: "maxUsers",
+  //     labelName: "Maximum Users",
+  //     min: 1,
+  //   },
+  //   maxVehicles: {
+  //     type: "number",
+  //     id: "maxVehicles",
+  //     name: "maxVehicles",
+  //     labelName: "Maximum Vehicles",
+  //     min: 1,
+  //   },
+  // },
+} as const;
+`;
+    fs.writeFileSync(
+      path.join(configFolder, "settingsConfig.ts"),
+      settingsConfigContent
+    );
+    appendToAppModules(slug);
+    console.log(`✅ App config files created in: app/_app-configs/${slug}`);
   } catch (err) {
     console.error("❌ Error during setup:", err);
   } finally {

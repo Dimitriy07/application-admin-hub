@@ -41,7 +41,7 @@ export const appResourceFields = {
         when: { field: "role", value: "admin" },
         fields: {
           password: {
-            type: "text",
+            type: "password",
             id: "password",
             name: "password",
             labelName: "New Password",
@@ -51,7 +51,6 @@ export const appResourceFields = {
     ],
   },
 
-  // !! fix right field data when it known
   [VEHICLES_COLLECTION]: {
     name: { type: "text", id: "name", name: "name", labelName: "Name" },
     make: { type: "text", id: "make", name: "make", labelName: "Make" },

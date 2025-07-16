@@ -6,6 +6,7 @@ import {
   DB_COLLECTION_LEVEL1,
   DB_MANAGEMENT_NAME,
 } from "@/app/_constants/mongodb-config";
+import { appendToAppModules } from "@/app/_utils/append-to-app-modules";
 
 // Load environment
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
@@ -102,9 +103,9 @@ export const restrictionLogic: RestrictionLogicFn = ({
   settings,
   resourcesArr,
 }) => {
- /***** Restriction logic
-  * 
-  * ////
+ ////// Restriction logic
+ 
+   ////
   const isRestricted = false;
   return {
     isRestricted,
@@ -156,6 +157,7 @@ export const restrictionLogic: RestrictionLogicFn = ({
       settingsConfigContent
     );
 
+    appendToAppModules(slug);
     console.log(
       `✅ Config folder and files created at: app/_app-configs/${slug}`
     );

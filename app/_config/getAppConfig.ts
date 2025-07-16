@@ -1,4 +1,5 @@
 import { AppConfig } from "@/app/_types/types";
+import { appModules } from "./appModules";
 
 /**
  * Dynamically loads an app config based on its ID or slug.
@@ -8,13 +9,6 @@ export async function getAppConfig(
   refIdToCollectionLevel1: string
 ): Promise<AppConfig | undefined> {
   try {
-    // Import all app configs and match the requested one
-    const appModules = [
-      "accident-form",
-      "route-optimisation",
-      // "delivery-hub",
-    ];
-
     for (const moduleName of appModules) {
       const [meta, settings, resources, restrictions] = await Promise.all([
         import(`../_app-configs/${moduleName}/appMeta`),

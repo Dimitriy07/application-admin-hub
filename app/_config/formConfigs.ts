@@ -27,25 +27,6 @@ export const registrationFormFields = {
 
   conditionalFields: [
     {
-      when: { field: "role", value: "user" },
-      fields: {
-        dob: {
-          type: "text",
-          id: "dob",
-          name: "dob",
-          labelName: "Date of Birth",
-          placeholder: "Date of Birth",
-        },
-        drivingLicence: {
-          type: "text",
-          id: "drivingLicence",
-          name: "drivingLicence",
-          labelName: "Driving Licence",
-          placeholder: "Driving Licence",
-        },
-      },
-    },
-    {
       when: { field: "role", value: "admin" },
       fields: {
         password: {

@@ -20,8 +20,6 @@ const userRegistrationSchema = z
       role: z.literal("user"),
       name: z.string().min(1),
       email: z.string().email(),
-      dob: z.string().min(1, "Date of Birth is required"),
-      drivingLicence: z.string().min(1, "Driving Licence is required"),
     }),
   ])
   .superRefine((data, ctx) => {
@@ -45,8 +43,6 @@ const userEditSchema = z.discriminatedUnion("role", [
     role: z.literal("user"),
     name: z.string().min(1),
     email: z.string().email(),
-    dob: z.string().min(1, "Date of Birth is required"),
-    drivingLicence: z.string().min(1, "Driving Licence is required"),
   }),
 ]);
 
