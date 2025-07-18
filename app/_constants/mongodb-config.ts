@@ -13,5 +13,5 @@ export const DB_REFERENCE_TO_COL1 = "applicationId";
 export const DB_REFERENCE_TO_COL2 = "entityId";
 export const DB_REFERENCE_TO_COL3 = "accountId";
 
-//// LEVEL 4 NAME OF URL SLUG (USE TO NAVIGATE TO RESOURCE WINDOW AND FOR DIFFERENT APPS CAN BE DIFFERENT RESOURCE WINDOWS BY ADDING FOLDER TO application ->[appId]->entities->[entityId]->accounts->[accountId]... resources-app1, resources-app2 etc.)
+//// LEVEL 4 NAME OF URL SLUG (USE TO NAVIGATE TO RESOURCE WINDOW  application ->[appId]->entities->[entityId]->accounts->[accountId]->[resources-app])
 export const DB_COLLECTION_RESOURCE = "resources-app";
