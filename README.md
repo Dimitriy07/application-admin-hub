@@ -88,6 +88,7 @@ npm install
 ### 3. Configure Environment Variables:
 Create `.env.local` in the root folder:
 ```env
+NEXT_PUBLIC_APP_URL=<Deployed Domain URL> || "http://localhost:3000"  - before deployment  (change variable after deployment)
 MONGODB_URI=<your-mongodb-uri>
 RESEND_API_KEY=<your-resend-key>
 UPSTASH_REDIS_REST_URL=<url>
@@ -228,6 +229,27 @@ The `users` collection in `admin-resource` is **mandatory**.
 
 - Upload icons to the `public/` folder.
 - File names must match `icon` field value in the `applications` collection.
+
+---
+
+📧**"Resend" configurations**
+
+The **Resend** configuration handles sending email verifications.
+You can bypass this step for development and testing by manually adding an emailVerified field to the user document in your database. Example:
+```ts
+"emailVerified": {
+    "date": {
+      "$date": "2025-03-22T10:51:55.846Z"   - (any data and time)
+    }
+  }
+```
+Changing the "From" Email Address
+To customize the "from" email address in app/_lib/mail.ts, it must use a domain that you own.
+If you have purchased a domain:
+	1. Go to Resend Domains and click "Add Domain".
+	2. Enter your domain name and click "Add".
+	3. Follow the instructions to verify your DNS records by clicking "Verify DNS Records".
+Once verified, you can use an email like noreply@yourdomain.com as the from address in your configuration.<img width="1389" height="490" alt="image" src="https://github.com/user-attachments/assets/99352fc6-eb5e-4c5d-857d-5d5c5ff91f40" />
 
 ---
 
