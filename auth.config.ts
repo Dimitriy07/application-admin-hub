@@ -23,14 +23,17 @@ export default {
 
           // When deploying to production, set the NEXTAUTH_URL environment variable to the canonical URL of your site.
           try {
-            const res = await fetch(`http://localhost:3000/api/auth/user`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                email: email,
-                password: password,
-              }),
-            });
+            const res = await fetch(
+              `${process.env.NEXT_PUBLIC_APP_URL}api/auth/user`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  email: email,
+                  password: password,
+                }),
+              }
+            );
 
             if (!res.ok) throw new Error("Authentication failed");
             const user: UserSession = await res.json();
