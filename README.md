@@ -26,7 +26,7 @@ This database manages the hierarchical structure and access levels:
 
 > 📌 Similarly, if you change reference key names like `applicationId`, `entityId`, or `accountId`, update their uses in routes and database references accordingly.
 
-2. **Resource Units** (`admin-resource`)
+2. **Resource Units** (`admin-resources`)
 
 Handles application-specific resources. Each resource links to `applicationId`, `entityId`, and `accountId`.
 
@@ -106,7 +106,7 @@ INITIAL_APP_ICON=
 #### File: `app/_constants/mongodb-config.ts`
 ```ts
 export const DB_MANAGEMENT_NAME = "admin-management"
-export const DB_RESOURCES_NAME = "admin-resource"
+export const DB_RESOURCES_NAME = "admin-resources"
 export const DB_AUTHENTICATION_NAME = "admin-authentication"
 
 export const DB_COLLECTION_LEVEL_1 = "applications"
@@ -219,7 +219,7 @@ export function getRestrictions(collectionName, settings, resourcesArr) {
 
 👤 **User Access Control**
 
-The `users` collection in `admin-resource` is **mandatory**.
+The `users` collection in `admin-resources` is **mandatory**.
 - Registration logic is defined in `_config/formConfigs.ts > registrationFormFields`
 - Fields must align with `users` key inside `resourceConfig.ts` for the respective app.
 
