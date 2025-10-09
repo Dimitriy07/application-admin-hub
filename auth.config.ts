@@ -21,7 +21,7 @@ export default {
             return null;
           }
 
-          // When deploying to production, set the NEXTAUTH_URL environment variable to the canonical URL of your site.
+          // When deploying to production, set the NEXT_PUBLIC_APP_URL environment variable to the canonical URL of your site.
           try {
             const res = await fetch(
               `${process.env.NEXT_PUBLIC_APP_URL}api/auth/user`,

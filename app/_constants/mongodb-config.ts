@@ -1,6 +1,6 @@
 //// DB'S NAME
 export const DB_MANAGEMENT_NAME = "admin-management";
-export const DB_RESOURCES_NAME = "admin-resource";
+export const DB_RESOURCES_NAME = "admin-resources";
 export const DB_AUTHENTICATION_NAME = "admin-authentication";
 
 //// COLLECTIONS NAME
